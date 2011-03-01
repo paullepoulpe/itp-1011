@@ -23,14 +23,15 @@ public class Piece {
 	 *            Somme de contrôle SHA-1
 	 */
 	public Piece(int index, int sizeTab, byte[] hash) {
-		if (sizeTab % BLOCK_SIZE != 0) {
-			throw new IllegalArgumentException();
-		}
+		/*
+		 * if (sizeTab % BLOCK_SIZE != 0) { throw new
+		 * IllegalArgumentException(); }
+		 */
 		this.index = index;
 		this.sizeTab = sizeTab;
 		this.hash = hash;
 		this.data = new byte[sizeTab];
-		this.nbBlocs = sizeTab / BLOCK_SIZE;
+		this.nbBlocs = (int) Math.ceil((double) sizeTab / (double) BLOCK_SIZE);
 		this.receipt = new boolean[nbBlocs];
 	}
 
@@ -73,15 +74,18 @@ public class Piece {
 	 *            Un tableau de bytes representant les donnees du bloc.
 	 */
 	public void feed(int begin, byte[] bloc) {
-		// a rajouter (eventuellement): tester fin de tableau , plus si deja
-		// recu!
-		if (bloc.length != BLOCK_SIZE || begin % BLOCK_SIZE != 0) {
-			throw new IllegalArgumentException();
-		}
+		/*
+		 * if (bloc.length != BLOCK_SIZE || begin % BLOCK_SIZE != 0) { throw new
+		 * IllegalArgumentException(); }
+		 */
 		receipt[begin / BLOCK_SIZE] = true;
 		for (int i = 0; i < bloc.length; i++, begin++) {
 			this.data[begin] = bloc[i];
 		}
+		if (this.isComplete()) {
+			this.check();
+		}
+
 	}
 
 	/**
