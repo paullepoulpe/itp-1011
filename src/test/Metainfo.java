@@ -16,10 +16,10 @@ import bencoding.InvalidBEncodingException;
 
 public class Metainfo {
 	public static void main(String[] args) {
-		File file = new File("data/LePetitPrince.torrent");
+		File file = new File("data/Plus44.torrent");
 		BDecoder bob = null;
 		BEValue dico = null, a = null;
-		Map maHashTable = null, a0 = null;
+		Map maHashTable = null, a0 = null, a2 =null;
 		try {
 			bob = new BDecoder(new FileInputStream(file));
 			dico = bob.bdecodeMap();
@@ -31,6 +31,7 @@ public class Metainfo {
 			maHashTable = dico.getMap();
 			System.out.println(maHashTable);
 			a = (BEValue) maHashTable.get("info");
+			a2= ((BEValue) maHashTable.get("announce-list")).getMap();
 			a0 = a.getMap();
 		} catch (InvalidBEncodingException exc) {
 			System.out.println("Probleme:" + exc.getMessage());
@@ -38,7 +39,6 @@ public class Metainfo {
 			System.out.println(e.getLocalizedMessage());
 		}
 		String[] metaInfo = new String[8];
-		String a1 = a0.get("name").toString();
 		metaInfo[0] = maHashTable.get("announce").toString();
 		metaInfo[1] = maHashTable.get("created by").toString();
 		metaInfo[2] = maHashTable.get("creation date").toString();
@@ -47,6 +47,7 @@ public class Metainfo {
 		metaInfo[5] = a0.get("pieces").toString();
 		metaInfo[6] = a0.get("piece length").toString();
 		metaInfo[7] = a0.get("length").toString();
+		metaInfo[8] = a2.get("announce-list").toString();
 		for (int i = 0; i < metaInfo.length; i++) {
 			metaInfo[i] = metaInfo[i].substring(8, metaInfo[i].length() - 1);
 		}
