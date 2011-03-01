@@ -7,17 +7,19 @@ package test;
 import java.io.*;
 import java.sql.Date;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import bencoding.BDecoder;
 import bencoding.BEValue;
+import bencoding.InvalidBEncodingException;
 
 public class Metainfo {
 	public static void main(String[] args) {
 		File file = new File("data/LePetitPrince.torrent");
 		BDecoder bob = null;
-		BEValue dico = null;
-		Map maHashTable = null;
+		BEValue dico = null, a = null;
+		Map maHashTable = null, a0 = null;
 		try {
 			bob = new BDecoder(new FileInputStream(file));
 			dico = bob.bdecodeMap();
@@ -27,21 +29,40 @@ public class Metainfo {
 
 		try {
 			maHashTable = dico.getMap();
+			System.out.println(maHashTable);
+			a = (BEValue) maHashTable.get("info");
+			a0 = a.getMap();
+		} catch (InvalidBEncodingException exc) {
+			System.out.println("Probleme:" + exc.getMessage());
 		} catch (Exception e) {
 			System.out.println(e.getLocalizedMessage());
 		}
-		// String a = maHashTable.get("info").toString();
-		String b = maHashTable.get("announce").toString();
-		String c = maHashTable.get("created by").toString();
-		String d = maHashTable.get("creation date").toString();
-		String e = maHashTable.get("comment").toString();
+		String[] metaInfo = new String[8];
+		String a1 = a0.get("name").toString();
+		metaInfo[0] = maHashTable.get("announce").toString();
+		metaInfo[1] = maHashTable.get("created by").toString();
+		metaInfo[2] = maHashTable.get("creation date").toString();
+		metaInfo[3] = maHashTable.get("comment").toString();
+		metaInfo[4] = a0.get("name").toString();
+		metaInfo[5] = a0.get("pieces").toString();
+		metaInfo[6] = a0.get("piece length").toString();
+		metaInfo[7] = a0.get("length").toString();
+		for (int i = 0; i < metaInfo.length; i++) {
+			metaInfo[i] = metaInfo[i].substring(8, metaInfo[i].length() - 1);
+		}
+		Date date = new Date(Long.parseLong(metaInfo[2]) * 1000);
+		metaInfo[2] = date.toString();
+		metaInfo[0] = "Tracker : " + metaInfo[0];
+		metaInfo[1] = "Author : " + metaInfo[1];
+		metaInfo[2] = "Creation Date : " + metaInfo[2];
+		metaInfo[3] = "\nComment : " + metaInfo[3];
+		metaInfo[4] = "\nFilename: " + metaInfo[4];
+		metaInfo[5] = "Pieces: " + metaInfo[5];
+		metaInfo[6] = "PieceLength: " + metaInfo[6] + " Bytes";
+		metaInfo[7] = "Size: " + metaInfo[7] + " Bytes";
 
-		b = b.substring(8, b.length() - 1);
-		c = c.substring(8, c.length() - 1);
-		d = d.substring(8, d.length() - 1);
-		e = e.substring(8, e.length() - 1);
-		Date date = new Date(Long.parseLong(d)*1000);
-
-		System.out.println(b + "\n" + c + "\n" + date + "\n" + e);
+		for (int i = 0; i < metaInfo.length; i++) {
+			System.out.println(metaInfo[i]);
+		}
 	}
 }
