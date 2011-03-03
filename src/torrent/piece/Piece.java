@@ -10,6 +10,7 @@ public class Piece {
 	private byte[] hash;
 	private int index;
 	private int nbBlocs;
+	private boolean isChecked = false;
 	static public int BLOCK_SIZE = 1 << 14;
 
 	/**
@@ -74,16 +75,37 @@ public class Piece {
 	 *            Un tableau de bytes representant les donnees du bloc.
 	 */
 	public void feed(int begin, byte[] bloc) {
-		/*
-		 * if (bloc.length != BLOCK_SIZE || begin % BLOCK_SIZE != 0) { throw new
-		 * IllegalArgumentException(); }
-		 */
-		receipt[begin / BLOCK_SIZE] = true;
-		for (int i = 0; i < bloc.length; i++, begin++) {
-			this.data[begin] = bloc[i];
-		}
-		if (this.isComplete()) {
-			this.check();
+		if (this.isChecked != true) {
+			/*
+			 * le debut doit etre un multiple de BLOCK_SIZE et doit etre contenu
+			 * dans le tableau de bytes
+			 */
+			if (begin % BLOCK_SIZE != 0 || begin >= this.sizeTab || begin < 0) {
+				throw new IllegalArgumentException(
+						"Mauvais index de début de bloc");
+			}
+			/*
+			 * la taille du bloc doit etre egale a BLOCK_SIZE exepte pour le
+			 * dernier bloc et le dernier bloc doit tenir dans le tableau
+			 */
+			if ((bloc.length != BLOCK_SIZE)) {
+				if ((begin / BLOCK_SIZE) != receipt.length - 1) {
+					throw new IllegalArgumentException(
+							"Le bloc a la mauvaisse taille");
+				} else if (bloc.length != this.sizeTab - begin) {
+					throw new IllegalArgumentException(
+							"Le dernier bloc a la mauvaisse taille");
+				}
+
+			}
+
+			receipt[begin / BLOCK_SIZE] = true;
+			for (int i = 0; i < bloc.length; i++, begin++) {
+				this.data[begin] = bloc[i];
+			}
+			if (this.isComplete()) {
+				this.check();
+			}
 		}
 
 	}
@@ -125,6 +147,7 @@ public class Piece {
 					return false;
 				}
 			}
+			this.isChecked = true;
 			return true;
 		}
 		this.reset();
