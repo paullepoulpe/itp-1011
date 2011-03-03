@@ -24,10 +24,6 @@ public class Piece {
 	 *            Somme de contrôle SHA-1
 	 */
 	public Piece(int index, int sizeTab, byte[] hash) {
-		/*
-		 * if (sizeTab % BLOCK_SIZE != 0) { throw new
-		 * IllegalArgumentException(); }
-		 */
 		this.index = index;
 		this.sizeTab = sizeTab;
 		this.hash = hash;
@@ -75,7 +71,7 @@ public class Piece {
 	 *            Un tableau de bytes representant les donnees du bloc.
 	 */
 	public void feed(int begin, byte[] bloc) {
-		if (this.isChecked != true) {
+		if (!this.isChecked) {
 			/*
 			 * le debut doit etre un multiple de BLOCK_SIZE et doit etre contenu
 			 * dans le tableau de bytes
@@ -91,10 +87,10 @@ public class Piece {
 			if ((bloc.length != BLOCK_SIZE)) {
 				if ((begin / BLOCK_SIZE) != receipt.length - 1) {
 					throw new IllegalArgumentException(
-							"Le bloc a la mauvaisse taille");
+							"Le bloc a la mauvaise taille");
 				} else if (bloc.length != this.sizeTab - begin) {
 					throw new IllegalArgumentException(
-							"Le dernier bloc a la mauvaisse taille");
+							"Le dernier bloc a la mauvaise taille");
 				}
 
 			}
