@@ -6,9 +6,11 @@ package test;
 
 import java.io.*;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.net.URL;
 
 import bencoding.BDecoder;
 import bencoding.BEValue;
@@ -16,10 +18,13 @@ import bencoding.InvalidBEncodingException;
 
 public class Metainfo {
 	public static void main(String[] args) {
-		File file = new File("data/Plus44.torrent");
+		File file = new File("data/LePetitPrince.torrent");
 		BDecoder bob = null;
-		BEValue dico = null, a = null;
-		Map maHashTable = null, a0 = null, a2 =null;
+		BEValue dico = null, infoBEValue = null;
+		Map maHashTable = null, infoMap = null, a2 = null;
+		Object[] mInfo = new Object[9];
+		ArrayList<BEValue> announceList =null;
+		String aList = "";
 		try {
 			bob = new BDecoder(new FileInputStream(file));
 			dico = bob.bdecodeMap();
@@ -29,41 +34,50 @@ public class Metainfo {
 
 		try {
 			maHashTable = dico.getMap();
-			System.out.println(maHashTable);
-			a = (BEValue) maHashTable.get("info");
-			a2= ((BEValue) maHashTable.get("announce-list")).getMap();
-			a0 = a.getMap();
+			infoBEValue = (BEValue) maHashTable.get("info");
+			infoMap = infoBEValue.getMap();
+			mInfo[0] = ((BEValue) maHashTable.get("announce")).getString();
+			mInfo[1] = ((BEValue) maHashTable.get("created by")).getString();
+			mInfo[2] = ((BEValue) maHashTable.get("creation date")).getLong();
+			mInfo[3] = ((BEValue) maHashTable.get("comment")).getString();
+			mInfo[4] = ((BEValue) infoMap.get("name")).getString();
+			mInfo[5] = ((BEValue) infoMap.get("pieces")).getBytes().length;
+			mInfo[6] = ((BEValue) infoMap.get("piece length")).getLong();
+			mInfo[7] = ((BEValue) infoMap.get("length")).getInt();
+			if (maHashTable.get("announce-list") != (null)) {
+				mInfo[8] = ((BEValue) maHashTable.get("announce-list"))
+						.getList();
+				announceList  = (ArrayList<BEValue>)mInfo[8];
+				for(int i=0;i<announceList.size();i++){
+					for(int j=0;j<announceList.get(i).getList().size();j++){
+						aList = aList+"\t"+announceList.get(i).getList().get(j).getString()+"\n";
+					}
+				}
+				mInfo[8]=aList;
+			} else {
+				mInfo[8] = "";
+			}
+			 
 		} catch (InvalidBEncodingException exc) {
 			System.out.println("Probleme:" + exc.getMessage());
 		} catch (Exception e) {
-			System.out.println(e.getLocalizedMessage());
+			System.out.println("Probleme: " + e.getLocalizedMessage());
 		}
-		String[] metaInfo = new String[8];
-		metaInfo[0] = maHashTable.get("announce").toString();
-		metaInfo[1] = maHashTable.get("created by").toString();
-		metaInfo[2] = maHashTable.get("creation date").toString();
-		metaInfo[3] = maHashTable.get("comment").toString();
-		metaInfo[4] = a0.get("name").toString();
-		metaInfo[5] = a0.get("pieces").toString();
-		metaInfo[6] = a0.get("piece length").toString();
-		metaInfo[7] = a0.get("length").toString();
-		metaInfo[8] = a2.get("announce-list").toString();
-		for (int i = 0; i < metaInfo.length; i++) {
-			metaInfo[i] = metaInfo[i].substring(8, metaInfo[i].length() - 1);
-		}
-		Date date = new Date(Long.parseLong(metaInfo[2]) * 1000);
-		metaInfo[2] = date.toString();
-		metaInfo[0] = "Tracker : " + metaInfo[0];
-		metaInfo[1] = "Author : " + metaInfo[1];
-		metaInfo[2] = "Creation Date : " + metaInfo[2];
-		metaInfo[3] = "\nComment : " + metaInfo[3];
-		metaInfo[4] = "\nFilename: " + metaInfo[4];
-		metaInfo[5] = "Pieces: " + metaInfo[5];
-		metaInfo[6] = "PieceLength: " + metaInfo[6] + " Bytes";
-		metaInfo[7] = "Size: " + metaInfo[7] + " Bytes";
-
-		for (int i = 0; i < metaInfo.length; i++) {
-			System.out.println(metaInfo[i]);
-		}
+		String[] metaInfo = new String[9];
+		 Date date = new Date(((Long)mInfo[2]) * 1000);
+		 mInfo[2] = date.toString();
+		 mInfo[0] = "Tracker : " + mInfo[0];
+		 mInfo[1] = "Author : " + mInfo[1];
+		 mInfo[2] = "Creation Date : " + mInfo[2];
+		 mInfo[3] = "\nComment : " + mInfo[3];
+		 mInfo[4] = "\nFilename: " + mInfo[4];
+		 mInfo[5] = "SHA length: " + mInfo[5]+" Bytes";
+		 mInfo[6] = "PieceLength: " + mInfo[6] + " Bytes";
+		 mInfo[7] = "Size: " + mInfo[7] + " Bytes";
+		 mInfo[8] = "Tracker list: \n"+mInfo[8];
+		
+		 for (int i = 0; i < mInfo.length; i++) {
+		 System.out.println(mInfo[i]);
+		 }
 	}
 }
