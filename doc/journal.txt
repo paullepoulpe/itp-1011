@@ -1,0 +1,24 @@
+Journal du projet de technologie de l'information - Damien Engels et Maarten Sap (Groupe 44)
+21.02.2011
+- Inscription du groupe au projet
+22.02.2011
+- Fini de coder les classes KeyGenerator et Key pair, tous les tests passent sans probleme
+24.02.2011
+- Correction d'un bug dans KeyGenerator qui ne passait les test qu'environ une fois sur 4 enfait, p et q doivent etre differents sinon la calculation de phi est incorrecte.
+25.02.2011
+- La plus grosse partie de la classe Piece a ete codee, les tests bloquent sur plusieurs points, principalement du au levee d'exeptions(IllegalArgumentException)
+26-27.02.2011
+- On commence a inserer les commentaires pour la javadoc dans le code
+- Petits changements dans l'implementation de PIece.java un tableau de boolean permet de savoir si un bloc a ete recu
+28.02.2011
+- Debut du brouillon qui deviendra Metainfo.java
+01.03.2011
+- Amelioration de MetaInfo.java, mais on arrive pas a afficher les announce-list la structure est difficile a comprendre
+- Correction de Piece.java pour qu'il passe les tests.
+- On commence a lire ITP-03, il a l'air bien plus complexe que les deux premiers
+03.03.2011
+- La mise a jour du test pour Piece.java nous a permis de mieux comprendre le fonctionnement de la classe, les correctifs apportes corrigent tous les bugs precedent
+04.03.2011
+- Le fichier Metainfo fonctionne maintenant et affiche toutes les informations correctement.
+- On commence a coder les classes pour ITP-03
+
