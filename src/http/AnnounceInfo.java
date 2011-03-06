@@ -20,6 +20,6 @@ public class AnnounceInfo {
 	}
 
 	public AnnounceInfo(byte[] data) {
-
+		//recupere les info de la reponse de HTTPget et les mets sous forme lisible 
 	}
 }

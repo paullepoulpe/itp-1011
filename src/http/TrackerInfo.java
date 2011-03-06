@@ -7,8 +7,7 @@ package http;
 
 public class TrackerInfo {
 	public AnnounceInfo announce() {
-		HTTPGet request = new HTTPGet("");
-		AnnounceInfo info = new AnnounceInfo(request.get(null));
-		return info;
+		// crée un objet Announce info pour un certain tracker
+		return null;
 	}
 }
