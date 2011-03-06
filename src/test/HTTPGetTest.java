@@ -12,7 +12,7 @@ import java.net.URL;
 public class HTTPGetTest {
 	public static void main(String[] args) {
 		try {
-			URL announce = new URL("http://127.0.0.1:6969/announce");
+			URL announce = new URL("http://icsinsrv1.epfl.ch:6969/");
 			HTTPGet.get(announce);
 		} catch (Throwable e) {
 			System.out.println(e.getLocalizedMessage());
