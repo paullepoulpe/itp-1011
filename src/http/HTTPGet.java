@@ -33,7 +33,7 @@ public class HTTPGet {
 
 	}
 
-	public byte[] get(URL announce) {
+	public static byte[] get(URL announce) {
 		Socket socket = null;
 		BufferedWriter alice = null;
 		BufferedReader bob = null;
@@ -45,6 +45,7 @@ public class HTTPGet {
 			alice.flush();
 			bob = new BufferedReader(new InputStreamReader(
 					socket.getInputStream()));
+			System.out.println(bob.readLine());
 
 		} catch (Throwable e) {
 			System.out.println("Probleme : " + e.getLocalizedMessage());
