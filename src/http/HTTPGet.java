@@ -15,60 +15,61 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
 
+import torrent.peer.PeerIDGenerator;
+
 import bencoding.BDecoder;
 import bencoding.BEValue;
 
 import com.sun.xml.internal.ws.wsdl.writer.document.Port;
 
 public class HTTPGet {
+	private URL announce;
 	private String infoHash;
 	private String peerId;
 	private int port;
 	private int left;
-	private byte compact;
-	private Socket socket;
-	private int numWant;
+	private byte compact = 1;
+	private int numWant = 50;
 	private String event;
 	private String trackerId;
-	private String query;
 
-	public HTTPGet(String URLAnnounce) {
-		URL tracker = null;
-		String path, domain;
-		int serverPort;
+	public HTTPGet(String urlAnnounce) {
 		try {
-			tracker = new URL(URLAnnounce);
-		} catch (MalformedURLException f) {
-			System.out
-					.println("L'url fournie en paramètre n'est pas dans un bon format.");
+			announce = new URL(urlAnnounce);
+		} catch (MalformedURLException e) {
+			System.out.println(e.getMessage());
 		}
-		path = tracker.getPath();
-		domain = tracker.getHost();
-		serverPort = tracker.getPort();
-		try {
-			socket = new Socket(domain, serverPort);
-		} catch (UnknownHostException e) {
-		} catch (IOException f) {
-		}
-		infoHash = BinaryURLEncoder.encode(infoHash.getBytes());
-//		pour la methode qui suit, je suis pas sur que si un des parametres est null, cela marche quand meme
-//		il faudrait mettre des if() etc, mais ca m'a l'air vraiment long pour un truc aussi petit.
-		query = "GET" + path + "?info_hash=" + this.infoHash + "&peer_id="
-				+ this.peerId + "&port=" + port + "&left=" + this.left
-				+ "&compact=" + this.compact + "&event="+this.event+"HTTP/1.0\n\r\n\r\n";
+		infoHash = BinaryURLEncoder.encode(new byte[20]); // a changer
+		peerId = PeerIDGenerator.generateID();
+		port = 30000; // a changer
+		left = 500; // a changer
+		event = "started";
 
-		// a faire: initialiser tous les parametres, la plupart sont par
-		// default, a regarder dans le cours,
-		// infoHash a l'air complique (voir digestInputStream dans BDecoder)
-		// perrId et TrackerId, je sais pas comment faire
 	}
 
 	public byte[] get() {
-		BufferedWriter request= null;
-		try{
-			request = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-			request.write(this.query);
-		}catch(IOException e){}
+		Socket socket = null;
+		BufferedWriter request = null;
+		BufferedReader bob = null;
+		try {
+			socket = new Socket(announce.getHost(), announce.getPort());
+			request = new BufferedWriter(new OutputStreamWriter(socket
+					.getOutputStream()));
+			request.write("GET " + announce.getPath() + "?info_hash=" + infoHash
+					+ "&peer_id=" + peerId + "&port=" + port + "&compact="
+					+ compact + "&numwant=" + numWant + "&left=" + left
+					+ "&event=" + event + " HTTP/1.0\n\r\n\r\n");
+			request.flush();
+			System.out.println("ok1");
+			bob = new BufferedReader(new InputStreamReader(socket
+					.getInputStream()));
+			String blabla = "";
+			while (blabla != null) {
+				blabla = bob.readLine();
+				System.out.println(blabla);
+			}
+		} catch (IOException e) {
+		}
 		return null;
 	}
 }

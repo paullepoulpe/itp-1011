@@ -21,4 +21,8 @@ Journal du projet de technologie de l'information - Damien Engels et Maarten Sap
 04.03.2011
 - Le fichier Metainfo fonctionne maintenant et affiche toutes les informations correctement.
 - On commence a coder les classes pour ITP-03
+08.04.2011
+-Damien n'etant pas la, Maarten s'est concentre sur la comprehension de la conception des classes relatives a HTTPGet (en vain, d'ailleurs)
+14.03.2011
+-Première réponse du tracker (HOURRA!!), reste a comprendre ce qu'on met dans info_hash!!!
 
