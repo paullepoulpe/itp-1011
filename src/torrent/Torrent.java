@@ -6,7 +6,7 @@ import torrent.peer.*;
 
 public class Torrent {
 	private Peer[] list;
-	private File metainfo;
+	protected File metainfo;
 	private int numPort;
 	
 	public Torrent(File metainfo, int numPort) {
@@ -20,5 +20,8 @@ public class Torrent {
 
 	public void massAnnounce() {
 
+	}
+	public File getMetaInfo(){
+		return this.metainfo;
 	}
 }
