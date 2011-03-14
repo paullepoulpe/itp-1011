@@ -1,26 +1,15 @@
 package http;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
-import java.net.UnknownHostException;
-import java.security.MessageDigest;
-
 import torrent.peer.PeerIDGenerator;
 
-import bencoding.BDecoder;
-import bencoding.BEValue;
-
-import com.sun.xml.internal.ws.wsdl.writer.document.Port;
 
 public class HTTPGet {
 	private URL announce;
