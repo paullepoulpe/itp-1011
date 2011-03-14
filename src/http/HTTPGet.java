@@ -2,6 +2,7 @@ package http;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,8 +12,12 @@ import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import bencoding.BDecoder;
+import bencoding.BEValue;
+import bencoding.InvalidBEncodingException;
 import torrent.peer.PeerIDGenerator;
 
 public class HTTPGet {
@@ -33,12 +38,16 @@ public class HTTPGet {
 			System.out.println(e.getMessage());
 		}
 		BDecoder bob = null;
+
 		try {
 			bob = new BDecoder(new FileInputStream(metainfo));
+			infoHash = BinaryURLEncoder.encode(bob.getSpecialMapDigest());
 		} catch (FileNotFoundException e) {
-			System.out.println(e.getMessage());
+			System.out.println("Probleme1: " + e.getMessage());
+		} catch (IOException e) {
+			System.out.println("Probleme4: " + e.getMessage());
 		}
-		infoHash = BinaryURLEncoder.encode(bob.getSpecialMapDigest());
+
 		peerId = PeerIDGenerator.generateID();
 		port = 30000; // a changer
 		left = 500; // a changer
@@ -52,16 +61,15 @@ public class HTTPGet {
 		BufferedReader bob = null;
 		try {
 			socket = new Socket(announce.getHost(), announce.getPort());
-			request = new BufferedWriter(new OutputStreamWriter(
-					socket.getOutputStream()));
+			request = new BufferedWriter(new OutputStreamWriter(socket
+					.getOutputStream()));
 			request.write("GET " + announce.getPath() + "?info_hash="
 					+ infoHash + "&peer_id=" + peerId + "&port=" + port
 					+ "&compact=" + compact + "&numwant=" + numWant + "&left="
 					+ left + "&event=" + event + " HTTP/1.0\n\r\n\r\n");
 			request.flush();
-			System.out.println("ok1");
-			bob = new BufferedReader(new InputStreamReader(
-					socket.getInputStream()));
+			bob = new BufferedReader(new InputStreamReader(socket
+					.getInputStream()));
 			String blabla = "";
 			while (blabla != null) {
 				blabla = bob.readLine();
