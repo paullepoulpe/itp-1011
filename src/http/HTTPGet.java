@@ -28,6 +28,7 @@ public class HTTPGet {
 
 		try {
 			bob = new BDecoder(new FileInputStream(metainfo));
+			bob.bdecode();
 			infoHash = BinaryURLEncoder.encode(bob.getSpecialMapDigest());
 		} catch (FileNotFoundException e) {
 			System.out.println("Probleme1: " + e.getMessage());
@@ -45,11 +46,15 @@ public class HTTPGet {
 	public byte[] get() {
 		Socket socket = null;
 		BufferedWriter request = null;
-//		BufferedReader bob = null;
-		InputStream bobet = null;
+		// BufferedReader bob = null;
+		InputStream recu = null;
 		ByteArrayOutputStream reponse = null;
 		try {
-			socket = new Socket(announce.getHost(), announce.getPort());
+			int announcePort = 80;
+			if (announce.getPort() != -1) {
+				announcePort = announce.getPort();
+			}
+			socket = new Socket(announce.getHost(), announcePort);
 			request = new BufferedWriter(new OutputStreamWriter(socket
 					.getOutputStream()));
 			request.write("GET " + announce.getPath() + "?info_hash="
@@ -57,18 +62,13 @@ public class HTTPGet {
 					+ "&compact=" + compact + "&numwant=" + numWant + "&left="
 					+ left + "&event=" + event + " HTTP/1.0\n\r\n\r\n");
 			request.flush();
-			bobet = new BufferedInputStream(socket.getInputStream());
-			byte[] lecture = new byte[1];
+			recu = new BufferedInputStream(socket.getInputStream());
 			byte[] retourLigne = "\r\n".getBytes();
 			while (true) {
-				bobet.read(lecture);
-				if (lecture[0] == retourLigne[0]) {
-					bobet.read(lecture);
-					if (lecture[0] == retourLigne[1]) {
-						bobet.read(lecture);
-						if (lecture[0] == retourLigne[0]) {
-							bobet.read(lecture);
-							if (lecture[0] == retourLigne[1]) {
+				if (recu.read() == retourLigne[0]) {
+					if (recu.read() == retourLigne[1]) {
+						if (recu.read() == retourLigne[0]) {
+							if (recu.read() == retourLigne[1]) {
 								break;
 							}
 						}
@@ -76,21 +76,19 @@ public class HTTPGet {
 				}
 			}
 			reponse = new ByteArrayOutputStream();
-			bobet.read(lecture);
-			while(lecture[0]!=0){
+			int lecture = recu.read();
+			while (lecture != -1) {
 				reponse.write(lecture);
-				bobet.read(lecture);
+				lecture = recu.read();
 			}
-			
-			
 
-//			bob = new BufferedReader(new InputStreamReader(socket
-//					.getInputStream()));
-//			String blabla = "";
-//			while (blabla != null) {
-//				blabla = bob.readLine();
-//				System.out.println(blabla);
-//			}
+			// bob = new BufferedReader(new InputStreamReader(socket
+			// .getInputStream()));
+			// String blabla = "";
+			// while (blabla != null) {
+			// blabla = bob.readLine();
+			// System.out.println(blabla);
+			// }
 		} catch (IOException e) {
 			System.out.println(e.getLocalizedMessage());
 		}
