@@ -5,56 +5,65 @@
 
 package http;
 
-import java.awt.List;
-import java.util.HashMap;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Map;
-
 import bencoding.BDecoder;
 import bencoding.BEValue;
 import bencoding.InvalidBEncodingException;
-
-import torrent.peer.*;
 
 public class AnnounceInfo {
 	private int interval;
 	private int minInterval;
 	private String failureReason;
-	private String TrackerId;
+	private String trackerId;
 	private int complete;
 	private int incomplete;
-	private List peers;
+	private byte[] peers;
 
-	public List getPeers() {
+	public byte[] getPeers() {
 		return peers;
 	}
 
 	public AnnounceInfo(byte[] data) {
 		// recupere les info de la reponse de HTTPget et les mets sous forme
 		// lisible
-		BEValue decodeur = null;
-		Map dico = null;
+		BDecoder decodeur = null;
+		BEValue decodValue = null;
+		Map<String, BEValue> dico = null;
 
-		decodeur = new BEValue(data);
 		try {
-			dico = decodeur.getMap();
+			decodeur = new BDecoder(new ByteArrayInputStream(data));
+			decodValue = decodeur.bdecodeMap();
+			dico = decodValue.getMap();
 			this.interval = ((BEValue) dico.get("interval")).getInt();
 			this.minInterval = ((BEValue) dico.get("min interval")).getInt();
-			this.failureReason = ((BEValue) dico.get("failure reason"))
-					.getString();
+			if (dico.get("failure reason") != null) {
+				this.failureReason = ((BEValue) dico.get("failure reason"))
+						.getString();
+			} else {
+				failureReason = "none";
+			}
+			if (dico.get("tracker id") != null) {
+				this.trackerId = ((BEValue) dico.get("tracker id")).getString();
+			} else {
+				trackerId = "none";
+			}
 			this.complete = ((BEValue) dico.get("complete")).getInt();
 			this.incomplete = ((BEValue) dico.get("incomplete")).getInt();
-			this.peers = (List) ((BEValue) dico.get("peers")).getList();
+			this.peers = ((BEValue) dico.get("peers")).getBytes();
 		} catch (InvalidBEncodingException e) {
+			System.out.println(e.getLocalizedMessage());
+		} catch (IOException e) {
 			System.out.println(e.getLocalizedMessage());
 		}
 
 	}
 
 	public String toString() {
-		return "interval: " + interval + "\n" + "minInterval: " + minInterval
-				+ "\n" + "failureReason: " + failureReason + "\n"
-				+ "TrackerId: " + TrackerId + "\n" + "complet: " + complete
-				+ "\n" + "incomplete: " + incomplete + "\n" + "peers: " + peers
-				+ "\n";
+		return "Interval: " + interval + "\n" + "Min interval: " + minInterval
+				+ "\n" + "Failure reason: " + failureReason + "\n"
+				+ "TrackerId: " + trackerId + "\n" + "Complete: " + complete
+				+ "\n" + "Incomplete: " + incomplete;
 	}
 }

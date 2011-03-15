@@ -18,7 +18,7 @@ import bencoding.InvalidBEncodingException;
 
 public class Metainfo {
 	public static void main(String[] args) {
-		File file = new File("data/LePetitPrince.torrent");
+		File file = new File("data/katyperry.torrent");
 		BDecoder bob = null;
 		BEValue dico = null, infoBEValue = null;
 		Map maHashTable = null, infoMap = null, a2 = null;

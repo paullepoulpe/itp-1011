@@ -5,5 +5,6 @@
 	<classpathentry kind="lib" path="third_party/junit-4.9b2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="tracker.jar"/>
+	<classpathentry kind="lib" path="client.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
