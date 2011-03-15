@@ -28,7 +28,7 @@ public class Metainfo {
 		try {
 			bob = new BDecoder(new FileInputStream(file));
 			dico = bob.bdecodeMap();
-			System.out.println(dico);
+			//System.out.println(dico);
 		} catch (IOException e) {
 			System.out.println(e.getLocalizedMessage());
 		}
