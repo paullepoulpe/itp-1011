@@ -4,13 +4,18 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
-import bencoding.BDecoder;
 import torrent.peer.PeerIDGenerator;
 
+/**
+ * Cette classe sert uniquement a faire la requete http
+ * 
+ * @author Damien Engels et Maarten Sap
+ * 
+ */
 public class HTTPGet {
 	private URL announce;
 	private String infoHash;
-	private String peerId;
+	private static final String PEER_ID = PeerIDGenerator.generateID();
 	private int port;
 	private int left;
 	private byte compact = 1;
@@ -18,35 +23,59 @@ public class HTTPGet {
 	private String event;
 	private String trackerId;
 
-	public HTTPGet(String urlAnnounce, File metainfo) {
+	/**
+	 * Initialise tous les paramètres necessaires a la requete http
+	 * 
+	 * @param urlAnnounce
+	 *            String contenant l'url du tracker
+	 * @param infoHash
+	 *            une signature digitale du fichier Metainfo produite par
+	 *            l'algorithme SHA1. Cette signature sur 20 bytes doit être
+	 *            url-encodée
+	 * @param left
+	 *            le nombres de bytes que le client doit encore télécharger
+	 *            (codé en base 10 ASCII)
+	 * @param trackerId
+	 *            si le tracker a renvoyé un trackerid lors d’une précédente
+	 *            requête, il doit être renvoyé ici (par mesure de sécurité)
+	 * @param event
+	 *            soit “started”, “stopped”, ou “completed”. La première requête
+	 *            doit inclure l’évènement “started”
+	 * @param port
+	 *            numéro du port sur lequel le client accepte des connexions de
+	 *            pairs
+	 */
+	public HTTPGet(String urlAnnounce, byte[] infoHash, int left,
+			String trackerId, String event, int port) {
 		try {
 			announce = new URL(urlAnnounce);
 		} catch (MalformedURLException e) {
 			System.out.println(e.getMessage());
 		}
-		BDecoder bob = null;
-
-		try {
-			bob = new BDecoder(new FileInputStream(metainfo));
-			bob.bdecode();
-			infoHash = BinaryURLEncoder.encode(bob.getSpecialMapDigest());
-		} catch (FileNotFoundException e) {
-			System.out.println("Probleme1: " + e.getMessage());
-		} catch (IOException e) {
-			System.out.println("Probleme4: " + e.getMessage());
+		this.infoHash = BinaryURLEncoder.encode(infoHash);
+		this.port = port;
+		this.left = left;
+		this.event = event;
+		if (!trackerId.equals("<?>")) {
+			this.trackerId = "&trackerid=" + trackerId;
+		} else {
+			this.trackerId = "";
 		}
-
-		peerId = PeerIDGenerator.generateID();
-		port = 30000; // a changer
-		left = 500; // a changer
-		event = "started";
 
 	}
 
+	/**
+	 * Fait la requete et récupère la réponse du trakcer sous un tableau de byte
+	 * 
+	 * @return Un tableau de byte qui représente la réponse du tracker a partir
+	 *         du double retour a la ligne
+	 */
 	public byte[] get() {
+
+		System.out
+				.println("Envoi de la requete au tracker " + announce + "...");
 		Socket socket = null;
 		BufferedWriter request = null;
-		// BufferedReader bob = null;
 		InputStream recu = null;
 		ByteArrayOutputStream reponse = null;
 		try {
@@ -58,11 +87,15 @@ public class HTTPGet {
 			request = new BufferedWriter(new OutputStreamWriter(
 					socket.getOutputStream()));
 			request.write("GET " + announce.getPath() + "?info_hash="
-					+ infoHash + "&peer_id=" + peerId + "&port=" + port
-					+ "&compact=" + compact + "&numwant=" + numWant + "&left="
-					+ left + "&event=" + event + " HTTP/1.0\n\r\n\r\n");
+					+ infoHash + trackerId + "&peer_id=" + PEER_ID + "&port="
+					+ port + "&compact=" + compact + "&numwant=" + numWant
+					+ "&left=" + left + "&event=" + event
+					+ " HTTP/1.0\n\r\n\r\n");
 			request.flush();
 			recu = new BufferedInputStream(socket.getInputStream());
+
+			System.out.println("Reponse du tracker ...");
+
 			byte[] retourLigne = "\r\n".getBytes();
 			while (true) {
 				if (recu.read() == retourLigne[0]) {
@@ -81,14 +114,6 @@ public class HTTPGet {
 				reponse.write(lecture);
 				lecture = recu.read();
 			}
-
-			// bob = new BufferedReader(new InputStreamReader(socket
-			// .getInputStream()));
-			// String blabla = "";
-			// while (blabla != null) {
-			// blabla = bob.readLine();
-			// System.out.println(blabla);
-			// }
 		} catch (IOException e) {
 			System.out.println(e.getLocalizedMessage());
 		}

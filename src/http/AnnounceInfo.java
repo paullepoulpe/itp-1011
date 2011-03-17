@@ -1,8 +1,3 @@
-/*
- *	Author:      Damien Engels
- *	Date:        17.10.2010
- */
-
 package http;
 
 import java.io.ByteArrayInputStream;
@@ -12,6 +7,13 @@ import bencoding.BDecoder;
 import bencoding.BEValue;
 import bencoding.InvalidBEncodingException;
 
+/**
+ * Cette classe est un conteneur, qui decode la réponse d'une requete httpget et
+ * la met sous forme lisible
+ * 
+ * @author Damien Engels et Maarten Sap
+ * 
+ */
 public class AnnounceInfo {
 	private int interval;
 	private int minInterval;
@@ -21,13 +23,13 @@ public class AnnounceInfo {
 	private int incomplete;
 	private byte[] peers;
 
-	public byte[] getPeers() {
-		return peers;
-	}
-
+	/**
+	 * Récupère la réponse d'une requete httpget et la met sous forme lisible
+	 * 
+	 * @param data
+	 *            un tableau de byte qui correspond a la réponse du tracker
+	 */
 	public AnnounceInfo(byte[] data) {
-		// recupere les info de la reponse de HTTPget et les mets sous forme
-		// lisible
 		BDecoder decodeur = null;
 		BEValue decodValue = null;
 		Map<String, BEValue> dico = null;
@@ -60,6 +62,18 @@ public class AnnounceInfo {
 
 	}
 
+	/**
+	 * 
+	 * @return la liste des peers associés a ce trakcer sous forme compacte
+	 */
+	public byte[] getPeers() {
+		return peers;
+	}
+
+	/**
+	 * Imprime de manière lisible(human readable) les informations concernant
+	 * cette classe
+	 */
 	public String toString() {
 		return "Interval: " + interval + "\n" + "Min interval: " + minInterval
 				+ "\n" + "Failure reason: " + failureReason + "\n"
