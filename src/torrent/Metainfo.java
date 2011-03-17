@@ -7,12 +7,8 @@ package torrent;
 import java.io.*;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import bencoding.BDecoder;
 import bencoding.BEValue;
 import bencoding.InvalidBEncodingException;
@@ -22,7 +18,7 @@ import bencoding.InvalidBEncodingException;
  * aux donnés encodées dedans. Il sert de conteneur.
  * 
  * 
- * @author Damien et Maarten
+ * @author Damien Engels et Maarten Sap
  * 
  */
 public class Metainfo {
@@ -70,6 +66,9 @@ public class Metainfo {
 			this.piecesHash = infoMap.get("pieces").getBytes();
 			this.pieceLength = infoMap.get("piece length").getInt();
 			this.size = infoMap.get("length").getInt();
+
+			this.trackerList = new ArrayList<String>();
+
 			if (dicoMap.get("announce-list") != (null)) {
 				ArrayList<BEValue> announces = (ArrayList<BEValue>) dicoMap
 						.get("announce-list").getList();
@@ -86,9 +85,7 @@ public class Metainfo {
 				this.trackerList.add(dicoMap.get("announce").getString());
 			}
 		} catch (InvalidBEncodingException e) {
-			System.out.println("Probleme : " + e.getMessage());
-		} catch (Exception e) {
-			System.out.println("Probleme : " + e.getMessage());
+			System.out.println("Probleme1 : " + e.getMessage());
 		}
 	}
 
@@ -101,8 +98,9 @@ public class Metainfo {
 	 */
 	private String printTrackerList() {
 		String trackers = "";
-		for (int i = 0; i < trackerList.size(); i++) {
-			trackers = trackers.concat("\t" + trackerList.get(i) + "\n");
+		ListIterator<String> myIterator = trackerList.listIterator();
+		while (myIterator.hasNext()) {
+			trackers = trackers.concat("\t" + myIterator.next() + "\n");
 		}
 		return trackers;
 
@@ -114,11 +112,11 @@ public class Metainfo {
 	 */
 	public String toString() {
 		return "Informations sur le torrent : " + "\n\nNom du fichier :\t"
-				+ fileName + "\nAuteur :\t" + createdBy
+				+ fileName + "\nAuteur :\t\t" + createdBy
 				+ "\nDate de création :\t" + creationDate
-				+ "\n\nCommentaire:\t" + comment
-				+ "\n\n Taille d'une pièce :\t" + pieceLength
-				+ "\n Taille du fichier :\t" + size
-				+ "\n\nList des trackers : \n" + printTrackerList();
+				+ "\n\nCommentaire:\t" + comment + "\n\nTaille d'une pièce :\t"
+				+ pieceLength + " Bytes" + "\nTaille du fichier :\t" + size
+				+ " Bytes" + "\n\nList des trackers : \n\n"
+				+ printTrackerList();
 	}
 }
