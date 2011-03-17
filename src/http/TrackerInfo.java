@@ -63,8 +63,7 @@ public class TrackerInfo {
 	 * compacte qui se trouve dans l'objet announce info
 	 */
 	private void initPeers() {
-		System.out.println("Initialisation des pairs reliés au tracker "
-				+ urlAnnounce + "...");
+		System.out.println("Initialisation des pairs ...\n");
 		byte[] peers = info.getPeers();
 		if (peers.length % 6 != 0) {
 			System.out.println("Erreur taille tableau de pairs");

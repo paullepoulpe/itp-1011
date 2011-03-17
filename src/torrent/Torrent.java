@@ -17,11 +17,14 @@ public class Torrent {
 		this.metainfo = new Metainfo(metainfo);
 		this.numPort = numPort;
 		this.peerList = new ArrayList<Peer>();
+		System.out.println(this.metainfo);
 	}
 
 	public Torrent(File metainfo) {
 		this.metainfo = new Metainfo(metainfo);
 		this.numPort = 6881 + (int) (Math.random() * 30001);
+		this.peerList = new ArrayList<Peer>();
+		System.out.println(this.metainfo);
 	}
 
 	public void massAnnounce() {
@@ -38,10 +41,13 @@ public class Torrent {
 				}
 			}
 		}
+		System.out.println("\nTous les pairs initialisés :\n\n");
+		for (int i = 0; i < this.peerList.size(); i++) {
+			System.out.println(peerList.get(i));
+		}
 
 	}
 
-	
 	public Metainfo getMetainfo() {
 		return metainfo;
 	}
