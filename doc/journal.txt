@@ -28,4 +28,7 @@ Journal du projet de technologie de l'information - Damien Engels et Maarten Sap
 15.03.2011
 -Enfait notre info-hash était correct, etant donné qu'il fonctionne sur le tracker local.
 -Difficultes a recuperer le tableau de bytes de la reponse
+-Le info-hash n'etait pas normal :) enfait on a oublié d'appeler bdecode avant d'appeler specialMapDigest
+17.03.2011
+-Toutes les classes relatives a itp-03 sont finies et commentées, il ne manque que les tests unitaires, mais a priori tout fonctionne parfaitement bien, la liste des pairs s'affiche correctement!
 
