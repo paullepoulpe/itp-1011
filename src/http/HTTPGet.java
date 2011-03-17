@@ -55,8 +55,8 @@ public class HTTPGet {
 				announcePort = announce.getPort();
 			}
 			socket = new Socket(announce.getHost(), announcePort);
-			request = new BufferedWriter(new OutputStreamWriter(socket
-					.getOutputStream()));
+			request = new BufferedWriter(new OutputStreamWriter(
+					socket.getOutputStream()));
 			request.write("GET " + announce.getPath() + "?info_hash="
 					+ infoHash + "&peer_id=" + peerId + "&port=" + port
 					+ "&compact=" + compact + "&numwant=" + numWant + "&left="
