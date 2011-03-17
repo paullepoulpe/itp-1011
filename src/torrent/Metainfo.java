@@ -17,84 +17,108 @@ import bencoding.BDecoder;
 import bencoding.BEValue;
 import bencoding.InvalidBEncodingException;
 
+/**
+ * Cette classe permet de décoder le fichier "*.torrent" et de faciliter l'accès
+ * aux donnés encodées dedans. Il sert de conteneur.
+ * 
+ * 
+ * @author Damien et Maarten
+ * 
+ */
 public class Metainfo {
-	private Object[] mInfo = new Object[9];
-	private Map maHashTable=null;
-	public void readMetaInfo() {
-		File file = new File("data/LePetitPrince.torrent");
-		BDecoder bob = null;
+	private byte[] infoHash; // hash du fichier Métainfo
+	private String createdBy;
+	private String comment;
+	private Date creationDate;
+	private String fileName;
+	private byte[] piecesHash;
+	private int pieceLength;
+	private int size;
+	private ArrayList<String> trackerList;
+
+	/**
+	 * Ce constructeur initialise tous les paramètres en les extrayants du
+	 * fichier file;
+	 * 
+	 * @param file
+	 *            le fichier "*.torrent" qui contient les informations
+	 */
+	public Metainfo(File file) {
+		BDecoder myDecoder = null;
 		BEValue dico = null, infoBEValue = null;
-		Map infoMap = null, a2 = null;
-		
-		ArrayList<BEValue> announceList = null;
-		String aList = "";
+		Map<String, BEValue> dicoMap = null, infoMap = null;
+
 		try {
-			bob = new BDecoder(new FileInputStream(file));
-			dico = bob.bdecodeMap();
-			System.out.println(dico);
+			myDecoder = new BDecoder(new FileInputStream(file));
+			dico = myDecoder.bdecodeMap();
+			this.infoHash = myDecoder.getSpecialMapDigest();
+
 		} catch (IOException e) {
 			System.out.println(e.getLocalizedMessage());
 		}
 
 		try {
-			maHashTable = dico.getMap();
-			infoBEValue = (BEValue) maHashTable.get("info");
+			dicoMap = dico.getMap();
+			infoBEValue = dicoMap.get("info");
 			infoMap = infoBEValue.getMap();
-			mInfo[0] = ((BEValue) maHashTable.get("announce")).getString();
-			mInfo[1] = ((BEValue) maHashTable.get("created by")).getString();
-			mInfo[2] = ((BEValue) maHashTable.get("creation date")).getLong();
-			mInfo[3] = ((BEValue) maHashTable.get("comment")).getString();
-			mInfo[4] = ((BEValue) infoMap.get("name")).getString();
-			mInfo[5] = ((BEValue) infoMap.get("pieces")).getBytes().length;
-			mInfo[6] = ((BEValue) infoMap.get("piece length")).getLong();
-			mInfo[7] = ((BEValue) infoMap.get("length")).getInt();
-			if (maHashTable.get("announce-list") != (null)) {
-				mInfo[8] = ((BEValue) maHashTable.get("announce-list"))
-						.getList();
-				announceList = (ArrayList<BEValue>) mInfo[8];
-				for (int i = 0; i < announceList.size(); i++) {
-					for (int j = 0; j < announceList.get(i).getList().size(); j++) {
-						aList = aList
-								+ "\t\t"
-								+ announceList.get(i).getList().get(j)
-										.getString() + "\n";
+
+			this.createdBy = dicoMap.get("created by").getString();
+			this.creationDate = new Date(
+					dicoMap.get("creation date").getLong() * 1000);
+			this.comment = dicoMap.get("comment").getString();
+			this.fileName = infoMap.get("name").getString();
+			this.piecesHash = infoMap.get("pieces").getBytes();
+			this.pieceLength = infoMap.get("piece length").getInt();
+			this.size = infoMap.get("length").getInt();
+			if (dicoMap.get("announce-list") != (null)) {
+				ArrayList<BEValue> announces = (ArrayList<BEValue>) dicoMap
+						.get("announce-list").getList();
+				for (int i = 0; i < announces.size(); i++) {
+					for (int j = 0; j < announces.get(i).getList().size(); j++) {
+						if (!announces.get(i).getList().get(j).getString()
+								.substring(0, 3).equals("udp")) {
+							this.trackerList.add(announces.get(i).getList()
+									.get(j).getString());
+						}
 					}
 				}
-				mInfo[8] = aList;
 			} else {
-				mInfo[8] = "";
+				this.trackerList.add(dicoMap.get("announce").getString());
 			}
-
-		} catch (InvalidBEncodingException exc) {
-			System.out.println("Probleme:" + exc.getMessage());
+		} catch (InvalidBEncodingException e) {
+			System.out.println("Probleme : " + e.getMessage());
 		} catch (Exception e) {
-			System.out.println("Probleme: " + e.getLocalizedMessage());
-		}
-		String[] metaInfo = new String[9];
-		Date date = new Date(((Long) mInfo[2]) * 1000);
-		mInfo[2] = date.toString();
-		mInfo[0] = "Tracker : \t" + mInfo[0];
-		mInfo[1] = "Author : \t" + mInfo[1];
-		mInfo[2] = "Creation Date : " + mInfo[2];
-		mInfo[3] = "\nComment : \t" + mInfo[3];
-		mInfo[4] = "\nFilename: \t" + mInfo[4];
-		mInfo[5] = "SHA length: \t" + mInfo[5] + " Bytes";
-		mInfo[6] = "PieceLength: \t" + mInfo[6] + " Bytes";
-		mInfo[7] = "Size: \t\t" + mInfo[7] + " Bytes";
-		if (!mInfo[8].equals("")) {
-			mInfo[8] = "Tracker list: \n" + mInfo[8];
-		}
-
-		for (int i = 0; i < mInfo.length; i++) {
-			System.out.println(mInfo[i]);
+			System.out.println("Probleme : " + e.getMessage());
 		}
 	}
-	public URL getTrackerURL(){
-		URL tracker = null;
-		try{
-			tracker=new URL (((BEValue) maHashTable.get("announce")).getString());
-		}catch(InvalidBEncodingException e){}
-		catch(MalformedURLException f){}
-		return tracker;
+
+	/**
+	 * Mets touts le nom de tous les trackers bout a bout dans une seule chaine
+	 * de caractère
+	 * 
+	 * @return Une String qui comporte le nom de chaque tracker bout a bout,
+	 *         séparés par des retours a la ligne
+	 */
+	private String printTrackerList() {
+		String trackers = "";
+		for (int i = 0; i < trackerList.size(); i++) {
+			trackers = trackers.concat("\t" + trackerList.get(i) + "\n");
+		}
+		return trackers;
+
+	}
+
+	/**
+	 * Retourne une String (human readable) contenant toutes les informations
+	 * relatives a cette classe
+	 */
+	public String toString() {
+		return "Informations sur le torrent : " + "\n\nNom du fichier :\t"
+				+ fileName + "\nAuteur :\t" + createdBy
+				+ "\nDate de création :\t" + creationDate
+				+ "\n\nCommentaire:\t" + comment
+				+ "\n\n Taille d'une pièce :\t" + pieceLength
+				+ "\n Taille du fichier :\t" + size
+				+ "\n\nList des trackers : \n" + printTrackerList();
 	}
 }
