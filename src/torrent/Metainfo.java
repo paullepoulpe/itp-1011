@@ -1,7 +1,3 @@
-/*
- *	Author:      Damien Engels
- *	Date:        17.10.2010
- */
 package torrent;
 
 import java.io.*;
@@ -118,5 +114,21 @@ public class Metainfo {
 				+ pieceLength + " Bytes" + "\nTaille du fichier :\t" + size
 				+ " Bytes" + "\n\nList des trackers : \n\n"
 				+ printTrackerList();
+	}
+
+	/**
+	 * 
+	 * @returnla liste des trackers
+	 */
+	public ArrayList<String> getTrackerList() {
+		return trackerList;
+	}
+
+	public byte[] getInfoHash() {
+		return infoHash;
+	}
+
+	public int getSize() {
+		return size;
 	}
 }
