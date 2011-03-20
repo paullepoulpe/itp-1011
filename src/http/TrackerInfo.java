@@ -18,7 +18,7 @@ public class TrackerInfo {
 	private ArrayList<Peer> peersList;
 
 	/**
-	 * Crée un objet Tracker info paramétrisé par l'adresse url du tracker
+	 * Cree un objet Tracker info parametrisee par l'adresse url du tracker
 	 * 
 	 * @param urlAnnounce
 	 *            Un String contenant l'adresse url du tracker
@@ -31,19 +31,19 @@ public class TrackerInfo {
 	 * 
 	 * @param infoHash
 	 *            une signature digitale du fichier Metainfo produite par
-	 *            l'algorithme SHA1. Cette signature sur 20 bytes doit être
-	 *            url-encodée
+	 *            l'algorithme SHA1. Cette signature sur 20 bytes doit etre
+	 *            url-encodee
 	 * @param left
-	 *            le nombres de bytes que le client doit encore télécharger
-	 *            (codé en base 10 ASCII)
+	 *            le nombres de bytes que le client doit encore telecharger
+	 *            (code en base 10 ASCII)
 	 * @param trackerId
-	 *            si le tracker a renvoyé un trackerid lors d’une précédente
-	 *            requête, il doit être renvoyé ici (par mesure de sécurité)
+	 *            si le tracker a renvoye un trackerid lors d’une precedente
+	 *            requete, il doit etre renvoye ici (par mesure de securite)
 	 * @param event
-	 *            soit “started”, “stopped”, ou “completed”. La première requête
-	 *            doit inclure l’évènement “started”
+	 *            soit started, stopped, ou completed. La première requete
+	 *            doit inclure l evenement started
 	 * @param port
-	 *            numéro du port sur lequel le client accepte des connexions de
+	 *            numero du port sur lequel le client accepte des connexions de
 	 *            pairs
 	 * @return un objet AnnounceInfo relatif a ce tracker
 	 */
@@ -79,7 +79,7 @@ public class TrackerInfo {
 	}
 
 	/**
-	 * Imprime de manière lisible(human readable) les informations concernant
+	 * Imprime de maniere lisible(human readable) les informations concernant
 	 * cette classe
 	 */
 	public String toString() {
@@ -94,7 +94,7 @@ public class TrackerInfo {
 
 	/**
 	 * 
-	 * @return la liste de pairs recencés par ce tracker
+	 * @return la liste de pairs recences par ce tracker
 	 */
 	public ArrayList<Peer> getPeersList() {
 		return peersList;

@@ -109,7 +109,7 @@ public class Metainfo {
 	public String toString() {
 		return "Informations sur le torrent : " + "\n\nNom du fichier :\t"
 				+ fileName + "\nAuteur :\t\t" + createdBy
-				+ "\nDate de création :\t" + creationDate
+				+ "\nDate de creation :\t" + creationDate
 				+ "\n\nCommentaire:\t" + comment + "\n\nTaille d'une pièce :\t"
 				+ pieceLength + " Bytes" + "\nTaille du fichier :\t" + size
 				+ " Bytes" + "\n\nList des trackers : \n\n"
