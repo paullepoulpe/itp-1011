@@ -32,4 +32,9 @@ public class Peer {
 	public String getId() {
 		return id;
 	}
+
+	public boolean equals(Peer peer2) {
+		return (this.ipAdress.equals(peer2.ipAdress))
+				&& (this.port == peer2.port);
+	}
 }

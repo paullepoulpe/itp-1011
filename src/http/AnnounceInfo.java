@@ -8,8 +8,8 @@ import bencoding.BEValue;
 import bencoding.InvalidBEncodingException;
 
 /**
- * Cette classe est un conteneur, qui decode la réponse d'une requete httpget et
- * la met sous forme lisible
+ * Cette classe est un conteneur, qui decode la réponse d'une requete httpget
+ * et la met sous forme lisible
  * 
  * @author Damien Engels et Maarten Sap
  * 
@@ -24,10 +24,10 @@ public class AnnounceInfo {
 	private byte[] peers;
 
 	/**
-	 * Récupère la réponse d'une requete httpget et la met sous forme lisible
+	 * Recupere la reponse d'une requete httpget et la met sous forme lisible
 	 * 
 	 * @param data
-	 *            un tableau de byte qui correspond a la réponse du tracker
+	 *            un tableau de byte qui correspond a la reponse du tracker
 	 */
 	public AnnounceInfo(byte[] data) {
 		BDecoder decodeur = null;
@@ -41,19 +41,18 @@ public class AnnounceInfo {
 			this.interval = ((BEValue) dico.get("interval")).getInt();
 			this.minInterval = ((BEValue) dico.get("min interval")).getInt();
 			if (dico.get("failure reason") != null) {
-				this.failureReason = ((BEValue) dico.get("failure reason"))
-						.getString();
+				this.failureReason = dico.get("failure reason").getString();
 			} else {
-				failureReason = "none";
+				this.failureReason = "none";
 			}
 			if (dico.get("tracker id") != null) {
-				this.trackerId = ((BEValue) dico.get("tracker id")).getString();
+				this.trackerId = dico.get("tracker id").getString();
 			} else {
-				trackerId = "none";
+				this.trackerId = "none";
 			}
-			this.complete = ((BEValue) dico.get("complete")).getInt();
-			this.incomplete = ((BEValue) dico.get("incomplete")).getInt();
-			this.peers = ((BEValue) dico.get("peers")).getBytes();
+			this.complete = dico.get("complete").getInt();
+			this.incomplete = dico.get("incomplete").getInt();
+			this.peers = dico.get("peers").getBytes();
 		} catch (InvalidBEncodingException e) {
 			System.out.println(e.getLocalizedMessage());
 		} catch (IOException e) {
@@ -64,14 +63,14 @@ public class AnnounceInfo {
 
 	/**
 	 * 
-	 * @return la liste des peers associés a ce trakcer sous forme compacte
+	 * @return la liste des peers associes a ce tracker sous forme compacte
 	 */
 	public byte[] getPeers() {
 		return peers;
 	}
 
 	/**
-	 * Imprime de manière lisible(human readable) les informations concernant
+	 * Imprime de maniere lisible(human readable) les informations concernant
 	 * cette classe
 	 */
 	public String toString() {
