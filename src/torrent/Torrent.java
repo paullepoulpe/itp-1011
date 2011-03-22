@@ -4,11 +4,13 @@ import http.TrackerInfo;
 
 import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.LinkedList;
+
 
 import torrent.peer.*;
 import torrent.piece.*;
@@ -58,7 +60,7 @@ public class Torrent {
 				}
 			}
 		}
-		System.out.println("\nTous les pairs initialisés :\n\n");
+		System.out.println("\nTous les pairs initialises :\n\n");
 		for (int i = 0; i < this.peerList.size(); i++) {
 			System.out.println(peerList.get(i));
 		}
@@ -79,16 +81,16 @@ public boolean isComplete(){
 		File folder = new File(System.getProperty("user.home"), "Downloads"
 				+ File.separator);
 		String[] liste = folder.list();
-		boolean trouvé = false;
+		boolean trouve = false;
 		int indexFichier = -1;
-		for (int i = 0; i < liste.length && !trouvé; i++) {
+		for (int i = 0; i < liste.length && !trouve; i++) {
 			System.out.println(liste[i]);
 			if (liste[i].contains(metainfo.getFileName())) {
-				trouvé = true;
+				trouve = true;
 				indexFichier = i;
 			}
 		}
-		if (trouvé) {
+		if (trouve) {
 			File file = new File(System.getProperty("user.home"), "Downloads"
 					+ File.separator + liste[indexFichier]);
 			DataInputStream lecteur = null;
