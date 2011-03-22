@@ -11,7 +11,7 @@ import torrent.piece.*;
 
 public class Torrent {
 	private ArrayList<Peer> peerList;
-	private LinkedList<Piece> pieces;
+	private Piece[] pieces;
 	private TrackerInfo[] trackers;
 	private Metainfo metainfo;
 	private int numPort;
@@ -20,6 +20,15 @@ public class Torrent {
 		this.metainfo = new Metainfo(metainfo);
 		this.numPort = numPort;
 		this.peerList = new ArrayList<Peer>();
+		this.pieces = new Piece[(int) Math.ceil(((double) this.metainfo.getSize())
+				/ ((double) this.metainfo.getPieceLength()))];
+		for(int i = 0;i<this.pieces.length;i++){
+			byte[] pieceHash = new byte[20];
+			for(int j=0;j<pieceHash.length;j++){
+			pieceHash[j]=this.metainfo.getPiecesHash()[(20*i)+j];	
+			}
+			pieces[i]= new Piece(i,(byte)this.metainfo.getPieceLength(),pieceHash);
+		}
 		System.out.println(this.metainfo);
 	}
 
@@ -54,4 +63,8 @@ public class Torrent {
 	public Metainfo getMetainfo() {
 		return metainfo;
 	}
+	
+	public
+	
+	
 }
