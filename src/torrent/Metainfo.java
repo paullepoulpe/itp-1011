@@ -10,8 +10,8 @@ import bencoding.BEValue;
 import bencoding.InvalidBEncodingException;
 
 /**
- * Cette classe permet de décoder le fichier "*.torrent" et de faciliter l'accès
- * aux donnés encodées dedans. Il sert de conteneur.
+ * Cette classe permet de décoder le fichier "*.torrent" et de faciliter
+ * l'accès aux donnés encodées dedans. Il sert de conteneur.
  * 
  * 
  * @author Damien Engels et Maarten Sap
@@ -25,6 +25,23 @@ public class Metainfo {
 	private String fileName;
 	private byte[] piecesHash;
 	private int pieceLength;
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public byte[] getPiecesHash() {
+		return piecesHash;
+	}
+
+	public int getPieceLength() {
+		return pieceLength;
+	}
+
 	private int size;
 	private ArrayList<String> trackerList;
 
@@ -110,20 +127,25 @@ public class Metainfo {
 		return "Informations sur le torrent : " + "\n\nNom du fichier :\t"
 				+ fileName + "\nAuteur :\t\t" + createdBy
 				+ "\nDate de creation :\t" + creationDate
-				+ "\n\nCommentaire:\t" + comment + "\n\nTaille d'une pièce :\t"
-				+ pieceLength + " Bytes" + "\nTaille du fichier :\t" + size
-				+ " Bytes" + "\n\nList des trackers : \n\n"
-				+ printTrackerList();
+				+ "\n\nCommentaire:\t" + comment
+				+ "\n\nTaille d'une pièce :\t" + pieceLength + " Bytes"
+				+ "\nTaille du fichier :\t" + size + " Bytes"
+				+ "\n\nList des trackers : \n\n" + printTrackerList();
 	}
 
 	/**
 	 * 
-	 * @returnla liste des trackers
+	 * @return la liste des trackers
 	 */
 	public ArrayList<String> getTrackerList() {
 		return trackerList;
 	}
 
+	/**
+	 * Get InfoHash
+	 * 
+	 * @return le InfoHash
+	 */
 	public byte[] getInfoHash() {
 		return infoHash;
 	}

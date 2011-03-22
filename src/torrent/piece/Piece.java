@@ -21,7 +21,7 @@ public class Piece {
 	 * @param sizeTab
 	 *            Taille de la piece en bytes
 	 * @param hash
-	 *            Somme de contrôle SHA-1
+	 *            Somme de controle SHA-1
 	 */
 	public Piece(int index, int sizeTab, byte[] hash) {
 		this.index = index;
