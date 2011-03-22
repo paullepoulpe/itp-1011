@@ -128,7 +128,7 @@ public class Metainfo {
 				+ fileName + "\nAuteur :\t\t" + createdBy
 				+ "\nDate de creation :\t" + creationDate
 				+ "\n\nCommentaire:\t" + comment
-				+ "\n\nTaille d'une pièce :\t" + pieceLength + " Bytes"
+				+ "\n\nTaille d'une piece :\t" + pieceLength + " Bytes"
 				+ "\nTaille du fichier :\t" + size + " Bytes"
 				+ "\n\nList des trackers : \n\n" + printTrackerList();
 	}
