@@ -4,11 +4,14 @@ import http.TrackerInfo;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import torrent.peer.*;
+import torrent.piece.*;
 
 public class Torrent {
 	private ArrayList<Peer> peerList;
+	private LinkedList<Piece> pieces;
 	private TrackerInfo[] trackers;
 	private Metainfo metainfo;
 	private int numPort;
