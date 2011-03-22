@@ -2,7 +2,10 @@ package torrent;
 
 import http.TrackerInfo;
 
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -20,23 +23,23 @@ public class Torrent {
 		this.metainfo = new Metainfo(metainfo);
 		this.numPort = numPort;
 		this.peerList = new ArrayList<Peer>();
-		this.pieces = new Piece[(int) Math.ceil(((double) this.metainfo.getSize())
+		this.pieces = new Piece[(int) Math.ceil(((double) this.metainfo
+				.getSize())
 				/ ((double) this.metainfo.getPieceLength()))];
-		for(int i = 0;i<this.pieces.length;i++){
+		for (int i = 0; i < this.pieces.length; i++) {
 			byte[] pieceHash = new byte[20];
-			for(int j=0;j<pieceHash.length;j++){
-			pieceHash[j]=this.metainfo.getPiecesHash()[(20*i)+j];	
+			for (int j = 0; j < pieceHash.length; j++) {
+				pieceHash[j] = this.metainfo.getPiecesHash()[(20 * i) + j];
 			}
-			pieces[i]= new Piece(i,(byte)this.metainfo.getPieceLength(),pieceHash);
+			pieces[i] = new Piece(i, (byte) this.metainfo.getPieceLength(),
+					pieceHash);
 		}
 		System.out.println(this.metainfo);
 	}
 
 	public Torrent(File metainfo) {
-		this.metainfo = new Metainfo(metainfo);
-		this.numPort = 6881 + (int) (Math.random() * 30001);
-		this.peerList = new ArrayList<Peer>();
-		System.out.println(this.metainfo);
+		this(metainfo, 6881 + (int) (Math.random() * 30001));
+
 	}
 
 	public void massAnnounce() {
@@ -63,8 +66,42 @@ public class Torrent {
 	public Metainfo getMetainfo() {
 		return metainfo;
 	}
-	
-	public
-	
-	
+
+	public boolean readFromFile() {
+		File folder = new File(System.getProperty("user.home"), "Downloads"
+				+ File.separator);
+		String[] liste = folder.list();
+		boolean trouvé = false;
+		int indexFichier = -1;
+		for (int i = 0; i < liste.length && !trouvé; i++) {
+			System.out.println(liste[i]);
+			if (liste[i].contains(metainfo.getFileName())) {
+				trouvé = true;
+				indexFichier = i;
+			}
+		}
+		if (trouvé) {
+			File file = new File(System.getProperty("user.home"), "Downloads"
+					+ File.separator + liste[indexFichier]);
+			DataInputStream lecteur = null;
+			try {
+				lecteur = new DataInputStream(new FileInputStream(file));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			for (int i = 0; i < pieces.length; i++) {
+				byte[] read = new byte[this.metainfo.getPieceLength()];
+
+				try {
+					lecteur.read(read);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			return true;
+		} else {
+			System.out.println("File not found!");
+			return false;
+		}
+	}
 }
