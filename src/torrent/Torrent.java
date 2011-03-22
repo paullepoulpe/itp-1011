@@ -4,8 +4,9 @@ import http.TrackerInfo;
 
 import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -18,14 +19,15 @@ public class Torrent {
 	private TrackerInfo[] trackers;
 	private Metainfo metainfo;
 	private int numPort;
+	
+	
 
 	public Torrent(File metainfo, int numPort) {
 		this.metainfo = new Metainfo(metainfo);
 		this.numPort = numPort;
 		this.peerList = new ArrayList<Peer>();
 		this.pieces = new Piece[(int) Math.ceil(((double) this.metainfo
-				.getSize())
-				/ ((double) this.metainfo.getPieceLength()))];
+				.getSize()) / ((double) this.metainfo.getPieceLength()))];
 		for (int i = 0; i < this.pieces.length; i++) {
 			byte[] pieceHash = new byte[20];
 			for (int j = 0; j < pieceHash.length; j++) {
@@ -62,7 +64,13 @@ public class Torrent {
 		}
 
 	}
-
+public boolean isComplete(){
+	boolean complet=true;
+	for (int i=0;i<this.pieces.length;i++){
+		complet=complet && this.pieces[i].isComplete() ;
+	}
+	return complet;
+}
 	public Metainfo getMetainfo() {
 		return metainfo;
 	}
