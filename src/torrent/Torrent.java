@@ -3,9 +3,10 @@ package torrent;
 import http.TrackerInfo;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
@@ -21,23 +22,31 @@ public class Torrent {
 	private TrackerInfo[] trackers;
 	private Metainfo metainfo;
 	private int numPort;
-	
-	
+	private PieceManager pieceManager;
 
 	public Torrent(File metainfo, int numPort) {
 		this.metainfo = new Metainfo(metainfo);
 		this.numPort = numPort;
 		this.peerList = new ArrayList<Peer>();
 		this.pieces = new Piece[(int) Math.ceil(((double) this.metainfo
-				.getSize()) / ((double) this.metainfo.getPieceLength()))];
+				.getSize())
+				/ ((double) this.metainfo.getPieceLength()))];
 		for (int i = 0; i < this.pieces.length; i++) {
 			byte[] pieceHash = new byte[20];
 			for (int j = 0; j < pieceHash.length; j++) {
 				pieceHash[j] = this.metainfo.getPiecesHash()[(20 * i) + j];
 			}
-			pieces[i] = new Piece(i, (byte) this.metainfo.getPieceLength(),
-					pieceHash);
+			if (i == pieces.length - 1) {
+				int length = this.metainfo.getSize()
+						- ((pieces.length - 1) * this.metainfo.getPieceLength());
+				pieces[i] = new Piece(i, length, pieceHash);
+			} else {
+				pieces[i] = new Piece(i, this.metainfo.getPieceLength(),
+						pieceHash);
+			}
+
 		}
+		// this.pieceManager = new PieceManager(this);
 		System.out.println(this.metainfo);
 	}
 
@@ -66,17 +75,76 @@ public class Torrent {
 		}
 
 	}
-public boolean isComplete(){
-	boolean complet=true;
-	for (int i=0;i<this.pieces.length;i++){
-		complet=complet && this.pieces[i].isComplete() ;
+
+	public boolean isComplete() {
+		boolean complet = true;
+		for (int i = 0; i < this.pieces.length; i++) {
+			complet = complet && this.pieces[i].isComplete();
+		}
+		return complet;
 	}
-	return complet;
-}
+
+	public Piece[] getPieces() {
+		return pieces;
+	}
+
+	public boolean writeToFile() {
+		File file = new File(System.getProperty("user.home"), "Downloads"
+				+ File.separator + this.numPort + "_suffix_"
+				+ metainfo.getFileName());
+
+		if (this.isComplete()) {
+			DataOutputStream lecteur = null;
+			try {
+				lecteur = new DataOutputStream(new FileOutputStream(file));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			for (int i = 0; i < pieces.length; i++) {
+				if (pieces[i].getData() == null) {
+					try {
+						for (int j = 0; j < pieces[i].getSizeTab(); i++) {
+							lecteur.write(0);
+						}
+
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} else {
+					try {
+						lecteur.write(pieces[i].getData());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+
+			}
+			try {
+				lecteur.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return true;
+
+		} else {
+			return false;
+		}
+
+	}
+
 	public Metainfo getMetainfo() {
 		return metainfo;
 	}
 
+	/**
+	 * Cette methode permet d'initialiser les pieces d'un torrent depuis un
+	 * fichier. Elle regarde dans le dossier Downloads/ si un fichier contient
+	 * le nom du fichier contenu dans metainfo, il le lit et essaye
+	 * d'initialiser les pièces avec. La piece s'occupe de verifier qu'elle soit
+	 * correcte. Si le fichier n'est pas trouve cette metode retourne false
+	 * 
+	 * @return true si le fichier a ete trouve, false sinon
+	 */
 	public boolean readFromFile() {
 		File folder = new File(System.getProperty("user.home"), "Downloads"
 				+ File.separator);
@@ -99,15 +167,24 @@ public boolean isComplete(){
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			byte[] read;
 			for (int i = 0; i < pieces.length; i++) {
-				byte[] read = new byte[this.metainfo.getPieceLength()];
+
+				read = new byte[this.pieces[i].getSizeTab()];
 
 				try {
 					lecteur.read(read);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				this.pieces[i].setData(read);
 			}
+			try {
+				lecteur.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
 			return true;
 		} else {
 			System.out.println("File not found!");

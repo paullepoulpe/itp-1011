@@ -159,4 +159,21 @@ public class Piece {
 		}
 
 	}
+
+	public int getSizeTab() {
+		return sizeTab;
+	}
+
+	public void setData(byte[] data) {
+		if (data.length != this.data.length) {
+			System.out.println("problème de taille pour data");
+		} else {
+			this.data = data;
+			for (int i = 0; i < this.receipt.length; i++) {
+				this.receipt[i] = true;
+			}
+			this.check();
+		}
+
+	}
 }
