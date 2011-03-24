@@ -10,8 +10,8 @@ import bencoding.BEValue;
 import bencoding.InvalidBEncodingException;
 
 /**
- * Cette classe permet de décoder le fichier "*.torrent" et de faciliter
- * l'accès aux donnés encodées dedans. Il sert de conteneur.
+ * Cette classe permet de décoder le fichier "*.torrent" et de faciliter l'accès
+ * aux donnés encodées dedans. Il sert de conteneur.
  * 
  * 
  * @author Damien Engels et Maarten Sap
@@ -127,10 +127,10 @@ public class Metainfo {
 		return "Informations sur le torrent : " + "\n\nNom du fichier :\t"
 				+ fileName + "\nAuteur :\t\t" + createdBy
 				+ "\nDate de creation :\t" + creationDate
-				+ "\n\nCommentaire:\t" + comment
-				+ "\n\nTaille d'une piece :\t" + pieceLength + " Bytes"
-				+ "\nTaille du fichier :\t" + size + " Bytes"
-				+ "\n\nList des trackers : \n\n" + printTrackerList();
+				+ "\n\nCommentaire:\t" + comment + "\n\nTaille d'une piece :\t"
+				+ pieceLength + " Bytes" + "\nTaille du fichier :\t" + size
+				+ " Bytes" + "\n\nList des trackers : \n\n"
+				+ printTrackerList();
 	}
 
 	/**
@@ -152,5 +152,13 @@ public class Metainfo {
 
 	public int getSize() {
 		return size;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
 	}
 }
