@@ -1,5 +1,6 @@
-package http;
+package torrent.tracker;
 
+import http.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -40,8 +41,8 @@ public class TrackerInfo {
 	 *            si le tracker a renvoye un trackerid lors d’une precedente
 	 *            requete, il doit etre renvoye ici (par mesure de securite)
 	 * @param event
-	 *            soit started, stopped, ou completed. La première requete
-	 *            doit inclure l evenement started
+	 *            soit started, stopped, ou completed. La première requete doit
+	 *            inclure l evenement started
 	 * @param port
 	 *            numero du port sur lequel le client accepte des connexions de
 	 *            pairs
@@ -98,5 +99,9 @@ public class TrackerInfo {
 	 */
 	public ArrayList<Peer> getPeersList() {
 		return peersList;
+	}
+
+	public String getUrlAnnounce() {
+		return urlAnnounce;
 	}
 }
