@@ -1,6 +1,6 @@
 package torrent;
 
-import torrent.tracker.TrackerInfo;
+import http.TrackerInfo;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -9,9 +9,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.LinkedList;
+
 
 import torrent.peer.*;
 import torrent.piece.*;
@@ -76,15 +76,6 @@ public class Torrent {
 
 	}
 
-	public int getCompleteness() {
-		int completeness = 0;
-		for (int i = 0; i < pieces.length; i++) {
-			completeness += pieces[i].getDownloadCompleteness();
-		}
-		return completeness / pieces.length;
-
-	}
-
 	public boolean isComplete() {
 		boolean complet = true;
 		for (int i = 0; i < this.pieces.length; i++) {
@@ -113,7 +104,7 @@ public class Torrent {
 				if (pieces[i].getData() == null) {
 					try {
 						for (int j = 0; j < pieces[i].getSizeTab(); i++) {
-							lecteur.writeByte(0);
+							lecteur.write(0);
 						}
 
 					} catch (IOException e) {
@@ -182,7 +173,7 @@ public class Torrent {
 				read = new byte[this.pieces[i].getSizeTab()];
 
 				try {
-					lecteur.readFully(read);
+					lecteur.read(read);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -199,9 +190,5 @@ public class Torrent {
 			System.out.println("File not found!");
 			return false;
 		}
-	}
-
-	public TrackerInfo[] getTrackers() {
-		return trackers;
 	}
 }
