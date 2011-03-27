@@ -1,26 +1,22 @@
 package torrent;
 
-import http.TrackerInfo;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
-
-import torrent.peer.*;
-import torrent.piece.*;
+import torrent.peer.Peer;
+import torrent.piece.Piece;
+import torrent.tracker.TrackerInfo;
 
 public class Torrent {
 	private ArrayList<Peer> peerList;
 	private Piece[] pieces;
 	private TrackerInfo[] trackers;
-	private Metainfo metainfo;
+	private Metainfo metainfo; 
 	private int numPort;
 	private PieceManager pieceManager;
 
