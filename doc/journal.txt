@@ -1,4 +1,4 @@
-Journal du projet de technologie de l'information - Damien Engels et Maarten Sap (Groupe 44)
+﻿Journal du projet de technologie de l'information - Damien Engels et Maarten Sap (Groupe 44)
 21.02.2011
 - Inscription du groupe au projet
 22.02.2011
@@ -24,13 +24,15 @@ Journal du projet de technologie de l'information - Damien Engels et Maarten Sap
 08.04.2011
 -Damien n'etant pas la, Maarten s'est concentre sur la comprehension de la conception des classes relatives a HTTPGet (en vain, d'ailleurs)
 14.03.2011
--Première réponse du tracker (HOURRA!!), reste a comprendre ce qu'on met dans info_hash!!!
+-Premiere reponse du tracker (HOURRA!!), reste a comprendre ce qu'on met dans info_hash!!!
 15.03.2011
--Enfait notre info-hash était correct, etant donné qu'il fonctionne sur le tracker local.
+-Enfait notre info-hash etait correct, etant donne qu'il fonctionne sur le tracker local.
 -Difficultes a recuperer le tableau de bytes de la reponse
--Le info-hash n'etait pas normal :) enfait on a oublié d'appeler bdecode avant d'appeler specialMapDigest
+-Le info-hash n'etait pas normal :) enfait on a oublie d'appeler bdecode avant d'appeler specialMapDigest
 17.03.2011
--Toutes les classes relatives a itp-03 sont finies et commentées, il ne manque que les tests unitaires, mais a priori tout fonctionne parfaitement bien, la liste des pairs s'affiche correctement!
+-Toutes les classes relatives a itp-03 sont finies et commentees, il ne manque que les tests unitaires, mais a priori tout fonctionne parfaitement bien, la liste des pairs s'affiche correctement!
 22.03.2011
--Fini de coder les méthodes readfrom file et writetofile de torrent.Quelques questions restent en suspens concernant le critères qu'il faut pour écrire le fichier su le disque(doit-il forcement etre complet).
--On a commence piece manager, mais on attends itp-6 et l'echange reele de pieces pour la finir car on a pas très bien compris comment elles va etre structuree.
+-Fini de coder les methodes readfrom file et writetofile de torrent.Quelques questions restent en suspens concernant le criteres qu'il faut pour ecrire le fichier su le disque(doit-il forcement etre complet).
+-On a commence piece manager, mais on attends itp-5 et l'echange reel de pieces pour la finir car on a pas tres bien compris comment elles va etre structuree.
+28.03.2011
+-On a cree le squelette des principales classes pour itp-05, sans le contenu des methodes
