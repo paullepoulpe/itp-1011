@@ -8,7 +8,7 @@ import torrent.piece.*;
  * Cette classe s'occupe de la gestion des pieces. Elle selectionne lesquelles
  * doivent etre demandees aux peers.
  * 
- * @author msap
+ * @author msap, engels
  * 
  */
 public class PieceManager {
