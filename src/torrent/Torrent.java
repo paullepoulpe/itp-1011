@@ -42,7 +42,7 @@ public class Torrent {
 			}
 
 		}
-		// this.pieceManager = new PieceManager(this);
+		this.pieceManager = new PieceManager(this);
 		System.out.println(this.metainfo);
 	}
 

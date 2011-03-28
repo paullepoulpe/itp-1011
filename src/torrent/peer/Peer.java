@@ -6,7 +6,7 @@ import java.net.UnknownHostException;
 public class Peer {
 	private InetAddress ipAdress;
 	private int port;
-	private String id;
+	private byte[] id;
 
 	public Peer(byte[] data) {
 		byte[] ip = { data[0], data[1], data[2], data[3] };
@@ -17,7 +17,7 @@ public class Peer {
 		}
 		port = (int) (((data[4] << 8) + data[5]) & 0xffff);
 
-		this.id = "<?>";
+		this.id = "<?>".getBytes();
 
 	}
 
@@ -25,12 +25,16 @@ public class Peer {
 		return "IpAdress : " + ipAdress + "\n" + "Port : " + port + "\n";
 	}
 
-	public void setId(String id) {
+	public void setId(byte[] id) {
 		this.id = id;
 	}
 
-	public String getId() {
+	public byte[] getId() {
 		return id;
+	}
+	
+	public InetAddress getIPAddress(){
+		return this.ipAdress;
 	}
 
 	public boolean equals(Peer peer2) {
