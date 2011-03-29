@@ -9,15 +9,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import torrent.peer.Peer;
+import torrent.peer.PeerIDGenerator;
 import torrent.piece.Piece;
+import torrent.piece.PieceManager;
 import torrent.tracker.TrackerInfo;
 
 public class Torrent {
 	private ArrayList<Peer> peerList;
 	private Piece[] pieces;
 	private TrackerInfo[] trackers;
-	private Metainfo metainfo; 
+	private Metainfo metainfo;
 	private int numPort;
+	public final static String PEER_ID = PeerIDGenerator.generateID();
 	private PieceManager pieceManager;
 
 	public Torrent(File metainfo, int numPort) {
@@ -42,7 +45,7 @@ public class Torrent {
 			}
 
 		}
-		this.pieceManager = new PieceManager(this);
+		//this.pieceManager = new PieceManager(this);
 		System.out.println(this.metainfo);
 	}
 
@@ -55,9 +58,8 @@ public class Torrent {
 		ArrayList<String> trackersUrl = metainfo.getTrackerList();
 		this.trackers = new TrackerInfo[trackersUrl.size()];
 		for (int i = 0; i < trackers.length; i++) {
-			trackers[i] = new TrackerInfo(trackersUrl.get(i));
-			trackers[i].announce(metainfo.getInfoHash(), metainfo.getSize(),
-					"<?>", "started", this.numPort);
+			trackers[i] = new TrackerInfo(trackersUrl.get(i), this);
+			trackers[i].announce();
 			ArrayList<Peer> peers = trackers[i].getPeersList();
 			for (int j = 0; j < peers.size(); j++) {
 				if (!this.peerList.contains(peers.get(j))) {
@@ -78,10 +80,6 @@ public class Torrent {
 			complet = complet && this.pieces[i].isComplete();
 		}
 		return complet;
-	}
-
-	public Piece[] getPieces() {
-		return pieces;
 	}
 
 	public boolean writeToFile() {
@@ -126,10 +124,6 @@ public class Torrent {
 			return false;
 		}
 
-	}
-
-	public Metainfo getMetainfo() {
-		return metainfo;
 	}
 
 	/**
@@ -186,5 +180,17 @@ public class Torrent {
 			System.out.println("File not found!");
 			return false;
 		}
+	}
+
+	public int getNumPort() {
+		return numPort;
+	}
+
+	public Piece[] getPieces() {
+		return pieces;
+	}
+
+	public Metainfo getMetainfo() {
+		return metainfo;
 	}
 }

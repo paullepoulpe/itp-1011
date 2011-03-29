@@ -5,43 +5,25 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.Map;
-import bencoding.BDecoder;
-import bencoding.BEValue;
-import bencoding.InvalidBEncodingException;
+import bencoding.*;
+import torrent.tracker.TorrentHash;
 
 /**
- * Cette classe permet de décoder le fichier "*.torrent" et de faciliter
- * l'accès aux donnés encodées dedans. Il sert de conteneur.
+ * Cette classe permet de décoder le fichier "*.torrent" et de faciliter l'accès
+ * aux donnés encodées dedans. Il sert de conteneur.
  * 
  * 
  * @author Damien Engels et Maarten Sap
  * 
  */
 public class Metainfo {
-	private byte[] infoHash; // hash du fichier Métainfo
+	private TorrentHash infoHash; // hash du fichier Métainfo
 	private String createdBy;
 	private String comment;
 	private Date creationDate;
 	private String fileName;
 	private byte[] piecesHash;
 	private int pieceLength;
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public String getFileName() {
-		return fileName;
-	}
-
-	public byte[] getPiecesHash() {
-		return piecesHash;
-	}
-
-	public int getPieceLength() {
-		return pieceLength;
-	}
-
 	private int size;
 	private ArrayList<String> trackerList;
 
@@ -60,7 +42,7 @@ public class Metainfo {
 		try {
 			myDecoder = new BDecoder(new FileInputStream(file));
 			dico = myDecoder.bdecodeMap();
-			this.infoHash = myDecoder.getSpecialMapDigest();
+			this.infoHash = new TorrentHash(myDecoder.getSpecialMapDigest());
 
 		} catch (IOException e) {
 			System.out.println(e.getLocalizedMessage());
@@ -127,10 +109,10 @@ public class Metainfo {
 		return "Informations sur le torrent : " + "\n\nNom du fichier :\t"
 				+ fileName + "\nAuteur :\t\t" + createdBy
 				+ "\nDate de creation :\t" + creationDate
-				+ "\n\nCommentaire:\t" + comment
-				+ "\n\nTaille d'une piece :\t" + pieceLength + " Bytes"
-				+ "\nTaille du fichier :\t" + size + " Bytes"
-				+ "\n\nList des trackers : \n\n" + printTrackerList();
+				+ "\n\nCommentaire:\t" + comment + "\n\nTaille d'une piece :\t"
+				+ pieceLength + " Bytes" + "\nTaille du fichier :\t" + size
+				+ " Bytes" + "\n\nList des trackers : \n\n"
+				+ printTrackerList();
 	}
 
 	/**
@@ -144,13 +126,33 @@ public class Metainfo {
 	/**
 	 * Get InfoHash
 	 * 
-	 * @return le InfoHash
+	 * @return le infohash
 	 */
-	public byte[] getInfoHash() {
+	public TorrentHash getInfoHash() {
 		return infoHash;
 	}
 
+	/**
+	 * 
+	 * @return la taille du fichier en bytes
+	 */
 	public int getSize() {
 		return size;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public byte[] getPiecesHash() {
+		return piecesHash;
+	}
+
+	public int getPieceLength() {
+		return pieceLength;
 	}
 }
