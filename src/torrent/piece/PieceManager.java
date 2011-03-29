@@ -1,8 +1,9 @@
-package torrent;
+package torrent.piece;
 
 import java.util.Collections;
 import java.util.LinkedList;
-import torrent.piece.*;
+
+import torrent.Torrent;
 
 /**
  * Cette classe s'occupe de la gestion des pieces. Elle selectionne lesquelles
