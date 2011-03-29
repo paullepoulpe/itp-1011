@@ -1,11 +1,13 @@
 package torrent.messages;
 
+/*
+ * Ce message est constitue d'un entier qui correspond a l index de la piece qu on possede.
+ */
 public class Have extends Message {
 	private int pieceIndex;
 
-	public Have(byte[] message) {
-		pieceIndex = (message[0] << 24) + (message[1] << 16)
-				+ (message[2] << 8) + message[3];
+	public Have(int i) {
+		pieceIndex = i;
 	}
 
 	public int getPieceIndex() {
