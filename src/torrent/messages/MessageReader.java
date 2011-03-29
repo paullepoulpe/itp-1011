@@ -1,5 +1,10 @@
 package torrent.messages;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import torrent.messages.ID;
 
 /**
@@ -10,16 +15,24 @@ import torrent.messages.ID;
  * 
  */
 public class MessageReader {
-	private byte[] message;
+	private byte[] mess;
+	private byte id;
 	private int lengthMess;
+	private Message messages;
 
-	public MessageReader(byte[] mess) {
-		lengthMess = (mess[0] << 24) + (mess[1] << 16) + (mess[2] << 8)
-				+ mess[3];
-		//verifier que 0<mess[4]<9
-		switch (ID.values()[mess[4]]) {
+	public MessageReader(DataInputStream input) {
+		try {
+			lengthMess = input.readInt();
+			id=input.readByte();
+			mess = new byte[lengthMess];
+			input.readFully(mess);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		// verifier que 0<mess[4]<9
+		switch (ID.values()[id]) {
 		case choke:
-			
+
 			break;
 		case unchoke:
 			break;
@@ -44,5 +57,4 @@ public class MessageReader {
 		}
 
 	}
-	
 }

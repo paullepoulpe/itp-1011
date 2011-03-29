@@ -6,9 +6,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import torrent.PieceManager;
 import torrent.messages.*;
-import torrent.piece.Piece;
+import torrent.piece.*;
 
 public class PeerHandler implements Runnable {
 	private Socket socket;
