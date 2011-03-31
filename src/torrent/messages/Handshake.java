@@ -12,10 +12,10 @@ public class Handshake {
 
 	public Handshake(Peer peer) {
 		length = (byte) protocol.getBytes().length;
-		infoHash = torrent.getMetainfo().getInfoHash();
+		infoHash = torrent.getMetainfo().getInfoHash().binaryHash();
 		reserved = new byte[8];
 		peerID = peer.getId();
-		Handshake = protocol+length+reserved+infoHash+peerID;
+		Handshake = protocol + length + reserved + infoHash + peerID;
 	}
 
 	public void setReserved(byte[] seq) {
