@@ -4,7 +4,6 @@ import http.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import torrent.Torrent;
 import torrent.peer.*;
 
 /**
@@ -16,7 +15,6 @@ import torrent.peer.*;
  */
 public class TrackerInfo {
 	private String urlAnnounce;
-	private Torrent torrent;
 	private AnnounceInfo info;
 	private ArrayList<Peer> peersList;
 
@@ -25,35 +23,40 @@ public class TrackerInfo {
 	 * 
 	 * @param urlAnnounce
 	 *            Un String contenant l'adresse url du tracker
-	 * 
-	 * @param torrent
-	 *            le torrent associé
 	 */
-	public TrackerInfo(String urlAnnounce, Torrent torrent) {
+	public TrackerInfo(String urlAnnounce) {
 		this.urlAnnounce = urlAnnounce;
-		this.torrent = torrent;
 	}
 
 	/**
-	 * Fait l'announce au tracker
+	 * 
+	 * @param infoHash
+	 *            une signature digitale du fichier Metainfo produite par
+	 *            l'algorithme SHA1. Cette signature sur 20 bytes doit etre
+	 *            url-encodee
+	 * @param left
+	 *            le nombres de bytes que le client doit encore telecharger
+	 *            (code en base 10 ASCII)
+	 * @param trackerId
+	 *            si le tracker a renvoye un trackerid lors d’une precedente
+	 *            requete, il doit etre renvoye ici (par mesure de securite)
+	 * @param event
+	 *            soit started, stopped, ou completed. La première requete doit
+	 *            inclure l evenement started
+	 * @param port
+	 *            numero du port sur lequel le client accepte des connexions de
+	 *            pairs
+	 * @return un objet AnnounceInfo relatif a ce tracker
 	 */
-	public void announce() {
-		HTTPGet query = new HTTPGet(urlAnnounce);
-		query
-				.add("info_hash", torrent.getMetainfo().getInfoHash()
-						.urlEncoded());
-		query.add("peer_id", Torrent.PEER_ID);
-		query.add("port", torrent.getNumPort() + "");
-		query.add("compact", "1");
-		query.add("numwamt", "50");
-		query.add("left", torrent.getMetainfo().getSize() + "");
-		query.add("event", "started");
-
+	public AnnounceInfo announce(byte[] infoHash, int left, String trackerId,
+			String event, int port) {
+		HTTPGet query = new HTTPGet(urlAnnounce, infoHash, left, trackerId,
+				event, port);
 		this.info = new AnnounceInfo(query.get());
-
 		this.peersList = new ArrayList<Peer>();
 		initPeers();
 
+		return null;
 	}
 
 	/**
