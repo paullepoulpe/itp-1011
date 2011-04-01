@@ -14,7 +14,7 @@ public class Handshake {
 		length = (byte) protocol.getBytes().length;
 		infoHash = torrent.getMetainfo().getInfoHash().binaryHash();
 		reserved = new byte[8];
-		peerID = peer.getId();
+		peerID = peer.getId().getBytes();
 		Handshake = protocol + length + reserved + infoHash + peerID;
 	}
 
