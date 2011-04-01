@@ -9,6 +9,7 @@ import java.util.Map;
 import bencoding.BDecoder;
 import bencoding.BEValue;
 import bencoding.InvalidBEncodingException;
+import torrent.tracker.*;
 
 /**
  * Cette classe permet de décoder le fichier "*.torrent" et de faciliter l'accès
@@ -19,7 +20,7 @@ import bencoding.InvalidBEncodingException;
  * 
  */
 public class Metainfo {
-	private byte[] infoHash; // hash du fichier Métainfo
+	private TorrentHash infoHash; // hash du fichier Métainfo
 	private String createdBy;
 	private String comment;
 	private Date creationDate;
@@ -47,7 +48,7 @@ public class Metainfo {
 		try {
 			myDecoder = new BDecoder(new FileInputStream(file));
 			dico = myDecoder.bdecodeMap();
-			this.infoHash = myDecoder.getSpecialMapDigest();
+			this.infoHash = new TorrentHash(myDecoder.getSpecialMapDigest());
 
 		} catch (IOException e) {
 			System.out.println(e.getLocalizedMessage());
@@ -175,7 +176,7 @@ public class Metainfo {
 	 * 
 	 * @return le InfoHash
 	 */
-	public byte[] getInfoHash() {
+	public TorrentHash getInfoHash() {
 		return infoHash;
 	}
 
