@@ -3,10 +3,12 @@ package torrent;
 import java.io.*;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Map;
-import bencoding.*;
-import torrent.tracker.TorrentHash;
+import bencoding.BDecoder;
+import bencoding.BEValue;
+import bencoding.InvalidBEncodingException;
 
 /**
  * Cette classe permet de décoder le fichier "*.torrent" et de faciliter l'accès
@@ -17,7 +19,7 @@ import torrent.tracker.TorrentHash;
  * 
  */
 public class Metainfo {
-	private TorrentHash infoHash; // hash du fichier Métainfo
+	private byte[] infoHash; // hash du fichier Métainfo
 	private String createdBy;
 	private String comment;
 	private Date creationDate;
@@ -26,6 +28,9 @@ public class Metainfo {
 	private int pieceLength;
 	private int size;
 	private ArrayList<String> trackerList;
+	private boolean isMultifile;
+	private ArrayList<String[]> FilesPath;
+	private int[] filesLength;
 
 	/**
 	 * Ce constructeur initialise tous les paramètres en les extrayants du
@@ -42,7 +47,7 @@ public class Metainfo {
 		try {
 			myDecoder = new BDecoder(new FileInputStream(file));
 			dico = myDecoder.bdecodeMap();
-			this.infoHash = new TorrentHash(myDecoder.getSpecialMapDigest());
+			this.infoHash = myDecoder.getSpecialMapDigest();
 
 		} catch (IOException e) {
 			System.out.println(e.getLocalizedMessage());
@@ -52,15 +57,42 @@ public class Metainfo {
 			dicoMap = dico.getMap();
 			infoBEValue = dicoMap.get("info");
 			infoMap = infoBEValue.getMap();
+			if (dicoMap.get("created by") != null) {
+				this.createdBy = dicoMap.get("created by").getString();
+			}
 
-			this.createdBy = dicoMap.get("created by").getString();
-			this.creationDate = new Date(
-					dicoMap.get("creation date").getLong() * 1000);
-			this.comment = dicoMap.get("comment").getString();
-			this.fileName = infoMap.get("name").getString();
+			if (dicoMap.get("creation date") != null) {
+				this.creationDate = new Date(dicoMap.get("creation date")
+						.getLong() * 1000);
+			}
+			if (dicoMap.get("comment") != null) {
+				this.comment = dicoMap.get("comment").getString();
+			}
+
 			this.piecesHash = infoMap.get("pieces").getBytes();
 			this.pieceLength = infoMap.get("piece length").getInt();
-			this.size = infoMap.get("length").getInt();
+			this.fileName = infoMap.get("name").getString();
+
+			if (infoMap.get("length") != null) {
+				this.size = infoMap.get("length").getInt();
+			} else {
+				isMultifile = true;
+				ArrayList<BEValue> files = (ArrayList<BEValue>) infoMap.get(
+						"files").getList();
+				filesLength = new int[files.size()];
+				FilesPath = new ArrayList<String[]>();
+				for (int i = 0; i < files.size(); i++) {
+					filesLength[i] = files.get(i).getMap().get("length")
+							.getInt();
+					ArrayList<BEValue> pathList = (ArrayList<BEValue>) files
+							.get(i).getMap().get("path").getList();
+					String[] path = new String[pathList.size()];
+					for (int j = 0; j < path.length; j++) {
+						path[j] = pathList.get(j).getString();
+					}
+					FilesPath.add(path);
+				}
+			}
 
 			this.trackerList = new ArrayList<String>();
 
@@ -106,17 +138,32 @@ public class Metainfo {
 	 * relatives a cette classe
 	 */
 	public String toString() {
-		return "Informations sur le torrent : " + "\n\nNom du fichier :\t"
+		String s = "Informations sur le torrent : " + "\n\nNom du fichier :\t"
 				+ fileName + "\nAuteur :\t\t" + createdBy
 				+ "\nDate de creation :\t" + creationDate
 				+ "\n\nCommentaire:\t" + comment + "\n\nTaille d'une piece :\t"
 				+ pieceLength + " Bytes" + "\nTaille du fichier :\t" + size
 				+ " Bytes" + "\n\nList des trackers : \n\n"
 				+ printTrackerList();
+		if (isMultifile) {
+			for (int i = 0; i < FilesPath.size(); i++) {
+				for (int j = 0; j < FilesPath.get(i).length; j++) {
+					s = s + File.separator + FilesPath.get(i)[j];
+				}
+				s = s + "\n";
+			}
+
+		} else {
+
+		}
+		return s;
+	}
+
+	public boolean isMultifile() {
+		return isMultifile;
 	}
 
 	/**
-	 * 
 	 * @return la liste des trackers
 	 */
 	public ArrayList<String> getTrackerList() {
@@ -126,16 +173,12 @@ public class Metainfo {
 	/**
 	 * Get InfoHash
 	 * 
-	 * @return le infohash
+	 * @return le InfoHash
 	 */
-	public TorrentHash getInfoHash() {
+	public byte[] getInfoHash() {
 		return infoHash;
 	}
 
-	/**
-	 * 
-	 * @return la taille du fichier en bytes
-	 */
 	public int getSize() {
 		return size;
 	}
@@ -155,4 +198,5 @@ public class Metainfo {
 	public int getPieceLength() {
 		return pieceLength;
 	}
+
 }
