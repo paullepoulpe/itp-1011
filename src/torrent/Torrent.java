@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import torrent.peer.Peer;
-import torrent.piece.Piece;
+import torrent.piece.*;
 import torrent.tracker.TrackerInfo;
 
 public class Torrent {

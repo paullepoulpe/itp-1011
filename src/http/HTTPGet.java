@@ -8,9 +8,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import sun.awt.geom.AreaOp.AddOp;
-import torrent.peer.PeerIDGenerator;
-
 /**
  * Cette classe sert uniquement a faire la requete http
  * 
@@ -23,6 +20,7 @@ public class HTTPGet {
 
 	public HTTPGet(String urlAnnounce) {
 		query = new HashMap<String, String>();
+
 		try {
 			announce = new URL(urlAnnounce);
 		} catch (MalformedURLException e) {
@@ -30,14 +28,15 @@ public class HTTPGet {
 		}
 	}
 
-	// a recoder pour meilleure encapsulation
 	public HTTPGet(String urlAnnounce, HashMap<String, String> query) {
 		try {
 			announce = new URL(urlAnnounce);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		this.query = query;
+
+		this.query = (HashMap<String, String>) query.clone();
+
 	}
 
 	public void add(String key, String value) {
@@ -49,7 +48,6 @@ public class HTTPGet {
 		BufferedWriter envoi = null;
 		InputStream recu = null;
 		ByteArrayOutputStream reponse = null;
-		String requete = "";
 		try {
 			int announcePort = 80;
 			if (announce.getPort() != -1) {
