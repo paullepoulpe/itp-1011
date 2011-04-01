@@ -1,5 +1,7 @@
 package torrent;
 
+import http.FailureReasonExeption;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -58,13 +60,19 @@ public class Torrent {
 		this.trackers = new ArrayList<TrackerInfo>();
 		for (int i = 0; i < trackersUrl.size(); i++) {
 			trackers.add(new TrackerInfo(trackersUrl.get(i), this));
-			trackers.get(i).announce();
-			ArrayList<Peer> peers = trackers.get(i).getPeersList();
-			for (int j = 0; j < peers.size(); j++) {
-				if (!this.peerList.contains(peers.get(j))) {
-					peerList.add(peers.get(j));
+			try {
+				trackers.get(i).announce();
+				ArrayList<Peer> peers = trackers.get(i).getPeersList();
+				for (int j = 0; j < peers.size(); j++) {
+					if (!this.peerList.contains(peers.get(j))) {
+						peerList.add(peers.get(j));
+					}
 				}
+			} catch (FailureReasonExeption e) {
+				System.out.println("Connection failed : "
+						+ e.getFailureReason());
 			}
+
 		}
 		System.out.println("\nTous les pairs initialises :\n\n");
 		for (int i = 0; i < this.peerList.size(); i++) {

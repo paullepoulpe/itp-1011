@@ -31,8 +31,8 @@ public class TrackerInfo {
 		this.torrent = torrent;
 	}
 
-	public void announce() {
-		System.out.println("Requete à " + urlAnnounce + "...");
+	public void announce() throws FailureReasonExeption {
+		System.out.println("\nRequete à " + urlAnnounce + "...");
 		HTTPGet query = new HTTPGet(urlAnnounce);
 		query
 				.add("info_hash", torrent.getMetainfo().getInfoHash()
@@ -40,12 +40,17 @@ public class TrackerInfo {
 		query.add("peer_id", Torrent.PEER_ID);
 		query.add("port", torrent.getNumPort() + "");
 		query.add("uploaded", "0");
-		query.add("uploaded", "0");
+		query.add("downloaded", "0");
 		query.add("left", torrent.getMetainfo().getSize() + "");
 		query.add("compact", "1");
 		query.add("event", "started");
 		query.add("numwant", "50");
-		this.info = new AnnounceInfo(query.get());
+		try {
+			this.info = new AnnounceInfo(query.get());
+		} catch (FailureReasonExeption e) {
+			throw e;
+		}
+
 		this.peersList = new ArrayList<Peer>();
 		initPeers();
 
@@ -56,7 +61,7 @@ public class TrackerInfo {
 	 * compacte qui se trouve dans l'objet announce info
 	 */
 	private void initPeers() {
-		System.out.println("Initialisation des pairs ...\n");
+		System.out.println("Initialisation des pairs ...");
 		byte[] peers = info.getPeers();
 		if (peers.length % 6 != 0) {
 			System.out.println("Erreur taille tableau de pairs");

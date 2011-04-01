@@ -85,6 +85,7 @@ public class Metainfo {
 				for (int i = 0; i < files.size(); i++) {
 					filesLength[i] = files.get(i).getMap().get("length")
 							.getInt();
+					size += filesLength[i];
 					ArrayList<BEValue> pathList = (ArrayList<BEValue>) files
 							.get(i).getMap().get("path").getList();
 					String[] path = new String[pathList.size()];
@@ -139,15 +140,23 @@ public class Metainfo {
 	 * relatives a cette classe
 	 */
 	public String toString() {
-		String s = "Informations sur le torrent : " + "\n\nNom du fichier :\t"
-				+ fileName + "\nAuteur :\t\t" + createdBy
-				+ "\nDate de creation :\t" + creationDate
-				+ "\n\nCommentaire:\t" + comment + "\n\nTaille d'une piece :\t"
-				+ pieceLength + " Bytes" + "\nTaille du fichier :\t" + size
-				+ " Bytes" + "\n\nList des trackers : \n\n"
-				+ printTrackerList();
+		String s = "Informations sur le torrent : ";
+		if (!isMultifile) {
+			s += "\n\nNom du fichier :\t" + fileName;
+		}
+		s += "\nAuteur :\t\t" + createdBy + "\nDate de creation :\t"
+				+ creationDate + "\n\nCommentaire:\t" + comment
+				+ "\n\nTaille d'une piece :\t" + pieceLength + " Bytes";
+		if (!isMultifile) {
+			s += "\nTaille du fichier :\t" + size + " Bytes";
+		} else {
+			s += "\nTaille totale des fichiers :\t" + size + " Bytes";
+		}
+		s += "\n\nList des trackers : \n\n" + printTrackerList();
 		if (isMultifile) {
+			s += "\n\nListe des fichiers :\n\n";
 			for (int i = 0; i < FilesPath.size(); i++) {
+				s += "\t" + fileName;
 				for (int j = 0; j < FilesPath.get(i).length; j++) {
 					s = s + File.separator + FilesPath.get(i)[j];
 				}
