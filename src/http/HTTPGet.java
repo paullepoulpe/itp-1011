@@ -43,7 +43,7 @@ public class HTTPGet {
 		query.put(key, value);
 	}
 
-	public byte[] get() {
+	public byte[] get() throws FailureReasonExeption {
 		Socket socket = null;
 		BufferedWriter envoi = null;
 		InputStream recu = null;
@@ -95,7 +95,8 @@ public class HTTPGet {
 				lecture = recu.read();
 			}
 		} catch (IOException e) {
-			System.out.println(e.getLocalizedMessage());
+			throw new FailureReasonExeption(e.getMessage());
+			// System.out.println(e.getLocalizedMessage());
 		}
 		return reponse.toByteArray();
 	}
