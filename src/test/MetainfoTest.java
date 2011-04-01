@@ -9,8 +9,9 @@ import torrent.Metainfo;
 
 public class MetainfoTest {
 	public static void main(String[] args) {
-		File file = new File("data/LePetitPrince.torrent");
+		File file = new File("data/mariacarree.torrent");
 		Metainfo metainfo = new Metainfo(file);
 		System.out.println(metainfo);
+		System.out.println(metainfo.isMultifile());
 	}
 }
