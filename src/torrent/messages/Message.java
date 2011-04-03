@@ -5,10 +5,5 @@ package torrent.messages;
   * 
   */
 public abstract class Message {
-	private int length;
-	private byte[] body;
-	public Message() {
-		
-	}
 	
 }
