@@ -27,6 +27,10 @@ public class AnnounceInfo {
 	 * 
 	 * @param data
 	 *            un tableau de byte qui correspond a la reponse du tracker
+	 * 
+	 * @throws FailureReasonExeption
+	 *             Leve une exception si le parametre "failure reason" est
+	 *             present dans la reponse du tracker
 	 */
 	public AnnounceInfo(byte[] data) throws FailureReasonExeption {
 		BDecoder decodeur = null;
