@@ -22,7 +22,12 @@ public class Handshake {
 		this.reserved = seq;
 	}
 
-	public String getHandshake() {
-		return this.Handshake;
+	// est ce que le handshake cest un byte[] ou un String ?
+	public byte[] getHandshake() {
+		return this.Handshake.getBytes();
+	}
+	
+	public int getLength(){
+		return this.length;
 	}
 }

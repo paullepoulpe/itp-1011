@@ -1,5 +1,9 @@
 package torrent.messages;
 
+import java.util.LinkedList;
+
+import torrent.piece.Piece;
+
 /*
  * Ce message correspond a un tableau de bits de taille egale au nombre de pieces du torrent.
  * Les bits a 1 sont ceux que le pair possede. Va savoir comment transformer des 
@@ -27,7 +31,7 @@ public class BitField extends Message {
 			}
 		}
 	}
-
+//continuer la methode generateBitfield dans piecemanager !!!!
 	public boolean[] getPosessedPieces() {
 		return posessedPieces;
 	}

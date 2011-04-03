@@ -29,6 +29,14 @@ public class Peer {
 		this.id = id;
 	}
 
+	public InetAddress getIpAdress() {
+		return ipAdress;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
 	public String getId() {
 		return id;
 	}

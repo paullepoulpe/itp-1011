@@ -45,4 +45,9 @@ public class PieceManager {
 			
 		}
 	}
+	public byte[] generateBitField(){
+		byte[] bitField = new byte[(int)Math.ceil(allPieces.size()/8)+5];
+		//continuer
+		return bitField;
+	}
 }
