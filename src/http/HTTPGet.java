@@ -18,16 +18,27 @@ public class HTTPGet {
 	private HashMap<String, String> query;
 	private URL announce;
 
+	/**
+	 * Initialise l'adresse a laquelle il faut faire l'annonce a l'aide
+	 * d'urlAnnounce.
+	 * 
+	 * @param urlAnnounce
+	 *            Une string representant l'url a laquelle faire l'annonce
+	 */
 	public HTTPGet(String urlAnnounce) {
-		query = new HashMap<String, String>();
-
-		try {
-			announce = new URL(urlAnnounce);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
+		this(urlAnnounce, new HashMap<String, String>());
 	}
 
+	/**
+	 * Initialise l'adresse a laquelle il faut faire l'annonce a l'aide
+	 * d'urlAnnounce et la liste de paramètres à l'aide de query!
+	 * 
+	 * @param urlAnnounce
+	 *            Une string representant l'url a laquelle faire l'annonce
+	 * 
+	 * @param query
+	 *            La liste des paramètres de la requete
+	 */
 	public HTTPGet(String urlAnnounce, HashMap<String, String> query) {
 		try {
 			announce = new URL(urlAnnounce);
@@ -39,10 +50,27 @@ public class HTTPGet {
 
 	}
 
+	/**
+	 * Permet d'ajouter un parametre a la requete
+	 * 
+	 * @param key
+	 *            Le nom du parametre
+	 * @param value
+	 *            La valeur du parametre
+	 */
 	public void add(String key, String value) {
 		query.put(key, value);
 	}
 
+	/**
+	 * Cette methode fait la requete au serveur et renvoye la reponse sous la
+	 * forme d'un tableau de bytes
+	 * 
+	 * @return Un tableau de bytes qui represente la reponse du serveur
+	 * 
+	 * @throws FailureReasonExeption
+	 *             Renvoie une exception si la requete echoue
+	 */
 	public byte[] get() throws FailureReasonExeption {
 		Socket socket = null;
 		BufferedWriter envoi = null;
@@ -55,8 +83,8 @@ public class HTTPGet {
 			}
 
 			socket = new Socket(announce.getHost(), announcePort);
-			envoi = new BufferedWriter(new OutputStreamWriter(socket
-					.getOutputStream()));
+			envoi = new BufferedWriter(new OutputStreamWriter(
+					socket.getOutputStream()));
 			recu = new BufferedInputStream(socket.getInputStream());
 
 			Iterator<Entry<String, String>> entries = query.entrySet()
