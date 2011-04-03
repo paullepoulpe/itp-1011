@@ -9,6 +9,4 @@ public interface MessageVisitor {
 	public void visit(BitField b);
 	public void visit(SendBlock s);
 	public void visit(Unchoke u);
-//	public void visit(Stop);
-//	public void visit(Cancel);
 }

@@ -17,6 +17,7 @@ public class MessageHandler implements MessageVisitor {
 	public void visit(Request r) {
 		// TODO si on recoit cela, on doit idealement preparer un message
 		// SendBloc dans notre queue de messages avec les attributs de request
+		
 	}
 
 	@Override

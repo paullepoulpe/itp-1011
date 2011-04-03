@@ -41,7 +41,7 @@ public class MessageReader {
 				// attention, lengthMess est-ce la longueur du tableau de bytes
 				// ou le nombre de bits dans le message + 1 ????
 				input.readFully(mess);
-//				message = new BitField();
+				message = new BitField(mess);
 				break;
 
 			case interested:
