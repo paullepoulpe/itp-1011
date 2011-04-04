@@ -29,8 +29,7 @@ public class Torrent {
 		this.numPort = numPort;
 		this.peerList = new ArrayList<Peer>();
 		this.pieces = new Piece[(int) Math.ceil(((double) this.metainfo
-				.getSize())
-				/ ((double) this.metainfo.getPieceLength()))];
+				.getSize()) / ((double) this.metainfo.getPieceLength()))];
 		for (int i = 0; i < this.pieces.length; i++) {
 			byte[] pieceHash = new byte[20];
 			for (int j = 0; j < pieceHash.length; j++) {
@@ -60,24 +59,13 @@ public class Torrent {
 		this.trackers = new ArrayList<TrackerInfo>();
 		for (int i = 0; i < trackersUrl.size(); i++) {
 			trackers.add(new TrackerInfo(trackersUrl.get(i), this));
-			try {
-				trackers.get(i).announce();
-				ArrayList<Peer> peers = trackers.get(i).getPeersList();
-				for (int j = 0; j < peers.size(); j++) {
-					if (!this.peerList.contains(peers.get(j))) {
-						peerList.add(peers.get(j));
-					}
-				}
-			} catch (FailureReasonExeption e) {
-				System.out.println("Connection failed : "
-						+ e.getFailureReason());
-			}
+			trackers.get(i).start();
+		}
 
-		}
-		System.out.println("\nTous les pairs initialises :\n\n");
-		for (int i = 0; i < this.peerList.size(); i++) {
-			System.out.println(peerList.get(i));
-		}
+		// System.out.println("\nTous les pairs initialises :\n\n");
+		// for (int i = 0; i < this.peerList.size(); i++) {
+		// System.out.println(peerList.get(i));
+		// }
 
 	}
 
@@ -199,5 +187,16 @@ public class Torrent {
 
 	public int getNumPort() {
 		return numPort;
+	}
+
+	public boolean addPeer(Peer peer) {
+		if (peerList.contains(peer)) {
+			return false;
+		} else {
+			peerList.add(peer);
+			System.out.println("Nouveau pair : " + peer);
+			return true;
+		}
+
 	}
 }
