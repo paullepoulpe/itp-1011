@@ -123,7 +123,7 @@ public class HTTPGet {
 				lecture = recu.read();
 			}
 		} catch (IOException e) {
-			throw new FailureReasonExeption(e.getMessage());
+			throw new FailureReasonExeption(e.getLocalizedMessage());
 			// System.out.println(e.getLocalizedMessage());
 		}
 		return reponse.toByteArray();

@@ -14,11 +14,12 @@ import torrent.peer.*;
  * @author Damien Engels et Maarten Sap
  * 
  */
-public class TrackerInfo {
+public class TrackerInfo extends Thread {
 	private String urlAnnounce;
 	private Torrent torrent;
 	private AnnounceInfo info;
 	private ArrayList<Peer> peersList;
+	private boolean failed;
 
 	/**
 	 * Cree un objet Tracker info parametrisee par l'adresse url du tracker
@@ -29,14 +30,24 @@ public class TrackerInfo {
 	public TrackerInfo(String urlAnnounce, Torrent torrent) {
 		this.urlAnnounce = urlAnnounce;
 		this.torrent = torrent;
+		failed = false;
+	}
+
+	public void run() {
+		try {
+			announce();
+		} catch (FailureReasonExeption e) {
+			failed = true;
+			System.out.println("Connection failed (" + urlAnnounce + ") : "
+					+ e.getFailureReason());
+		}
+
 	}
 
 	public void announce() throws FailureReasonExeption {
 		System.out.println("\nRequete à " + urlAnnounce + "...");
 		HTTPGet query = new HTTPGet(urlAnnounce);
-		query
-				.add("info_hash", torrent.getMetainfo().getInfoHash()
-						.urlEncoded());
+		query.add("info_hash", torrent.getMetainfo().getInfoHash().urlEncoded());
 		query.add("peer_id", Torrent.PEER_ID);
 		query.add("port", torrent.getNumPort() + "");
 		query.add("uploaded", "0");
@@ -50,8 +61,6 @@ public class TrackerInfo {
 		} catch (FailureReasonExeption e) {
 			throw e;
 		}
-
-		this.peersList = new ArrayList<Peer>();
 		initPeers();
 
 	}
@@ -61,7 +70,7 @@ public class TrackerInfo {
 	 * compacte qui se trouve dans l'objet announce info
 	 */
 	private void initPeers() {
-		System.out.println("Initialisation des pairs ...");
+		this.peersList = new ArrayList<Peer>();
 		byte[] peers = info.getPeers();
 		if (peers.length % 6 != 0) {
 			System.out.println("Erreur taille tableau de pairs");
@@ -71,7 +80,12 @@ public class TrackerInfo {
 			for (int j = 0; j < 6; j++) {
 				data[j] = peers[i + j];
 			}
-			this.peersList.add(new Peer(data));
+			Peer peer = new Peer(data);
+
+			this.peersList.add(peer);
+			synchronized (torrent) {
+				torrent.addPeer(peer);
+			}
 
 		}
 	}
@@ -101,4 +115,5 @@ public class TrackerInfo {
 	public String getUrlAnnounce() {
 		return urlAnnounce;
 	}
+
 }
