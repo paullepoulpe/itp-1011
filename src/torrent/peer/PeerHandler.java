@@ -9,6 +9,7 @@ import java.util.LinkedList;
 
 import torrent.messages.*;
 import torrent.piece.*;
+
 /*
  * Un PeerHandler par pair
  */
@@ -25,46 +26,50 @@ public class PeerHandler implements Runnable {
 	private LinkedList<Message> queue;
 
 	public void run() {
-		/*
-		 * Choses a faire :
-		 *  - initialiser le socket relaif au pair (dabord tester si il existe deja,
-		 *    dans quel cas il ne faut plus rien faire) sinon il faut initialiser
-		 *    les flots entrant et sortant.
-		 *  -  
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 */
-		if (socket == null){
+		if (socket == null) {
 			try {
-				//initialisation des streams
+				// initialisation des streams
 				socket = new Socket(peer.getIpAdress(), peer.getPort());
 				input = socket.getInputStream();
 				output = socket.getOutputStream();
-				
-				//etablissement du Handshake
+
+				// etablissement du Handshake
 				Handshake ourHS = new Handshake(peer);
 				output.write(ourHS.getHandshake());
-				byte[] theirHandshake = new byte[49+ourHS.getLength()];
+				byte[] theirHandshake = new byte[49 + ourHS.getPstrLength()];
 				input.read(theirHandshake);
-				
-				//test si le handshake est non nul
-				if(!theirHandshake.equals(new byte[49+ourHS.getLength()])){
+
+				// test si le handshake est non nul
+				if (!theirHandshake.equals(new byte[49 + ourHS.getPstrLength()])) {
+					// ecrire un bitfield au client pour lui ondiquer quelles
+					// pieces on a
+					output.write(pieceMgr.generateBitField());
+					// demarrer le thread KeepAlive, qui envoie des messages
+					// KeepAlive toutes les 2 minutes
+					KeepAlive kA = new KeepAlive(output);
+					kA.start();
+					// preparer des requetes (max 10 normalement)
+					/*
+					 * 1 demander au PieceMng quelle piece on doi requeter (si
+					 * yen a pas, arreter) 2 envoyer un interested si le pair
+					 * est en etat de Choking (seulement si on avait pas deja
+					 * envoye de Interested) 3 une fois quon est plus etrangle,
+					 * on envoie une requete dans la queue des messages
+					 */
 					
-				}else{
+
+				} else {
 					input.close();
 					output.close();
 					socket.close();
-					//il faut arreter lexecution du thread
+					// il faut arreter lexecution du thread
 				}
-				
-			}catch (IOException e){
+
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
-		} else{
+
+		} else {
 			// il faut arreter l'execution du thread
 		}
 	}

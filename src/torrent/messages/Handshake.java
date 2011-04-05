@@ -4,30 +4,48 @@ import torrent.Torrent;
 import torrent.peer.Peer;
 
 public class Handshake {
-	private String Handshake;
+	private byte[] Handshake;
 	private Torrent torrent;
-	private byte length;
+	private byte pstrLength;
 	private byte[] infoHash, reserved, peerID;
-	private static final String protocol = "BitTorrent Protocol";
+	private static final byte[] protocol = "BitTorrent Protocol".getBytes();
 
 	public Handshake(Peer peer) {
-		length = (byte) protocol.getBytes().length;
+		pstrLength = (byte) protocol.length;
 		infoHash = torrent.getMetainfo().getInfoHash().binaryHash();
 		reserved = new byte[8];
 		peerID = peer.getId().getBytes();
-		Handshake = protocol + length + reserved + infoHash + peerID;
+		Handshake = new byte[49 + pstrLength];
+		Handshake[0] = pstrLength;
+		for (int i = 0; i < pstrLength; i++) {
+			Handshake[1 + i] = protocol[i];
+		}
+		for (int i = 0; i < 8; i++) {
+			Handshake[1 + pstrLength + i] = reserved[i];
+		}
+		for (int i = 0; i < 20; i++) {
+			Handshake[9 + pstrLength] = infoHash[i];
+		}
+		for (int i = 0; i < 20; i++) {
+			Handshake[29 + pstrLength] = peerID[i];
+		}
+
 	}
 
-	public void setReserved(byte[] seq) {
-		this.reserved = seq;
+	public void setReserved(byte[] seq) throws IllegalArgumentException {
+		if (seq.length != 8) {
+			throw new IllegalArgumentException();
+		} else {
+			this.reserved = seq.clone();
+		}
+
 	}
 
-	// est ce que le handshake cest un byte[] ou un String ?
 	public byte[] getHandshake() {
-		return this.Handshake.getBytes();
+		return this.Handshake.clone();
 	}
-	
-	public int getLength(){
-		return this.length;
+
+	public byte getPstrLength() {
+		return pstrLength;
 	}
 }
