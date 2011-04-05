@@ -36,3 +36,12 @@
 -On a commence piece manager, mais on attends itp-5 et l'echange reel de pieces pour la finir car on a pas tres bien compris comment elles va etre structuree.
 28.03.2011
 -On a cree le squelette des principales classes pour itp-05, sans le contenu des methodes
+29.03.2011
+-Recodé itp-03 et la requete HTTPGet en OO parce qu'elle n'etait absolument pas reutilisable
+01.03.2011
+-Le svn a legerement planté(aucune idée de la raison) on a perdu tout ce qu'on avait recodé de itp-03, heureusement on a pu recuperer certains des fichiers sur un des ordis ('ouf)
+-On arrive pas a comprendre pourquoi on doit utiliser message visitor dans le projet, ainsi que comment les classes d'itp-05 interagissent entre elles.
+-On code tout de meme les squelette des classes d'itp-05;
+-Comme on avance pas beaucoup sur itp-05 on code des supplements, gestion du multifile pour la lecture du metainfo et requetes simultanées aux trackers!
+05.03.2011
+-On a demandé a un gentil assistant a propos du message visitor, ce qui nous permet de mieux comprendre ce qu'on doit faire pour itp-5, ca devrait aller plus vite maintenant.

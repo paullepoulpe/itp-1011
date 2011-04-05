@@ -65,4 +65,8 @@ public class BitField extends Message {
 	public void accept(MessageVisitor v) {
 		v.visit(this);
 	}
+
+	public byte[] getBitField() {
+		return bitField;
+	}
 }

@@ -1,33 +1,55 @@
 package torrent.messages;
 
+import java.io.DataInputStream;
+import java.io.IOException;
+
 import torrent.Torrent;
 import torrent.peer.Peer;
 
 public class Handshake {
-	private byte[] Handshake;
+	private byte[] handshake;
 	private Torrent torrent;
 	private byte pstrLength;
 	private byte[] infoHash, reserved, peerID;
-	private static final byte[] protocol = "BitTorrent Protocol".getBytes();
+	private byte[] protocol;
 
 	public Handshake(Peer peer) {
+		protocol = "BitTorrent Protocol".getBytes();
 		pstrLength = (byte) protocol.length;
 		infoHash = torrent.getMetainfo().getInfoHash().binaryHash();
 		reserved = new byte[8];
 		peerID = peer.getId().getBytes();
-		Handshake = new byte[49 + pstrLength];
-		Handshake[0] = pstrLength;
+		handshake = new byte[49 + pstrLength];
+		handshake[0] = pstrLength;
 		for (int i = 0; i < pstrLength; i++) {
-			Handshake[1 + i] = protocol[i];
+			handshake[1 + i] = protocol[i];
 		}
 		for (int i = 0; i < 8; i++) {
-			Handshake[1 + pstrLength + i] = reserved[i];
+			handshake[1 + pstrLength + i] = reserved[i];
 		}
 		for (int i = 0; i < 20; i++) {
-			Handshake[9 + pstrLength] = infoHash[i];
+			handshake[9 + pstrLength] = infoHash[i];
 		}
 		for (int i = 0; i < 20; i++) {
-			Handshake[29 + pstrLength] = peerID[i];
+			handshake[29 + pstrLength] = peerID[i];
+		}
+
+	}
+
+	public Handshake(DataInputStream input) {
+		try {
+			pstrLength = input.readByte();
+			protocol = new byte[pstrLength];
+			input.readFully(protocol);
+			reserved = new byte[8];
+			input.readFully(reserved);
+			infoHash = new byte[20];
+			input.readFully(infoHash);
+			peerID = new byte[20];
+			input.readFully(peerID);
+
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 	}
@@ -41,11 +63,21 @@ public class Handshake {
 
 	}
 
+	public boolean isCompatible(Handshake otherHanshake) {
+		return this.protocol.equals(otherHanshake.protocol)
+				&& this.infoHash.equals(otherHanshake.infoHash)
+				&& this.reserved.equals(otherHanshake.reserved);
+	}
+
 	public byte[] getHandshake() {
-		return this.Handshake.clone();
+		return this.handshake.clone();
 	}
 
 	public byte getPstrLength() {
 		return pstrLength;
+	}
+
+	public byte[] getPeerID() {
+		return peerID;
 	}
 }
