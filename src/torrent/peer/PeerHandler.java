@@ -1,5 +1,6 @@
 package torrent.peer;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,7 +14,7 @@ import torrent.piece.*;
 /*
  * Un PeerHandler par pair
  */
-public class PeerHandler implements Runnable {
+public class PeerHandler extends Thread {
 	private Socket socket;
 	private Peer peer;
 	private MessageReader messageReader;
@@ -25,6 +26,12 @@ public class PeerHandler implements Runnable {
 	private LinkedList<Request> pendingRequests;
 	private LinkedList<Message> queue;
 
+	public PeerHandler(Peer peer) {
+		this.peer = peer;
+		this.messageHandler = new MessageHandler(this);
+
+	}
+
 	public void run() {
 		if (socket == null) {
 			try {
@@ -32,6 +39,8 @@ public class PeerHandler implements Runnable {
 				socket = new Socket(peer.getIpAdress(), peer.getPort());
 				input = socket.getInputStream();
 				output = socket.getOutputStream();
+				this.messageReader = new MessageReader(new DataInputStream(
+						input));
 
 				// etablissement du Handshake
 				Handshake ourHS = new Handshake(peer);
@@ -40,10 +49,12 @@ public class PeerHandler implements Runnable {
 				input.read(theirHandshake);
 
 				// test si le handshake est non nul
-				if (!theirHandshake.equals(new byte[49 + ourHS.getPstrLength()])) {
+				if (!theirHandshake
+						.equals(new byte[49 + ourHS.getPstrLength()])) {
 					// ecrire un bitfield au client pour lui ondiquer quelles
 					// pieces on a
-					output.write(pieceMgr.generateBitField());
+
+					// output.write(pieceMgr.generateBitField());
 					// demarrer le thread KeepAlive, qui envoie des messages
 					// KeepAlive toutes les 2 minutes
 					KeepAlive kA = new KeepAlive(output);
@@ -56,7 +67,6 @@ public class PeerHandler implements Runnable {
 					 * envoye de Interested) 3 une fois quon est plus etrangle,
 					 * on envoie une requete dans la queue des messages
 					 */
-					
 
 				} else {
 					input.close();
@@ -73,4 +83,5 @@ public class PeerHandler implements Runnable {
 			// il faut arreter l'execution du thread
 		}
 	}
+
 }

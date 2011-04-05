@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class Peer {
+	private PeerHandler peerHandler;
 	private InetAddress ipAdress;
 	private int port;
 	private String id;
@@ -18,6 +19,7 @@ public class Peer {
 		port = (int) (((data[4] << 8) + data[5]) & 0xffff);
 
 		this.id = "<?>";
+		this.peerHandler = new PeerHandler(this);
 
 	}
 
@@ -44,5 +46,9 @@ public class Peer {
 	public boolean equals(Peer peer2) {
 		return (this.ipAdress.equals(peer2.ipAdress))
 				&& (this.port == peer2.port);
+	}
+
+	public void runPeerHandler() {
+		peerHandler.start();
 	}
 }

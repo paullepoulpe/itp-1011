@@ -1,15 +1,23 @@
 package torrent.messages;
 
+import torrent.peer.PeerHandler;
+
 /*
  * 
  */
 public class MessageHandler implements MessageVisitor {
+	PeerHandler peerHandler;
+
+	public MessageHandler(PeerHandler peerHandler) {
+		this.peerHandler = peerHandler;
+	}
 
 	@Override
 	public void visit(Choke c) {
 		// TODO Quand on recoit un message Choke, on ne fait plus partie de la
 		// liste des pairs interesants de l emetteur. Le pair emetteur ne
 		// repondra plus a nos requetes
+		;
 
 	}
 
@@ -17,7 +25,7 @@ public class MessageHandler implements MessageVisitor {
 	public void visit(Request r) {
 		// TODO si on recoit cela, on doit idealement preparer un message
 		// SendBloc dans notre queue de messages avec les attributs de request
-		
+
 	}
 
 	@Override
