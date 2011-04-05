@@ -1,7 +1,7 @@
 package torrent.messages;
 
-import java.util.LinkedList;
-
+import java.io.DataOutputStream;
+import java.io.IOException;
 import torrent.Torrent;
 import torrent.piece.Piece;
 
@@ -12,14 +12,10 @@ import torrent.piece.Piece;
  */
 public class BitField extends Message {
 	private boolean[] posessedPieces;
-	private byte[] bitField;
+	private boolean noPieces;
 
 	public BitField(byte[] bitField) {
-		// verifier que le bit field soit de la bonne taille sinon, se
-		// deconnecter du pair
-		this.bitField = bitField.clone();
 		posessedPieces = new boolean[bitField.length * 8];
-
 		for (int i = 0; i < bitField.length; i++) {
 			byte bits = bitField[i];
 			for (int j = 0; j < 8; j++) {
@@ -37,25 +33,14 @@ public class BitField extends Message {
 
 	public BitField(Torrent torrent) {
 		Piece[] pieces = torrent.getPieces();
-		this.bitField = new byte[(int) Math.ceil(pieces.length / 8) + 5];
-		int length = bitField.length - 4;
-		for (int i = 0; i < 4; i++) {
-			bitField[3 - i] = (byte) (length % (1 << 8));
-			length >>= 8;
+		noPieces = true;
+		posessedPieces = new boolean[pieces.length];
+		for (int i = 0; i < pieces.length; i++) {
+			boolean b = pieces[i].isComplete();
+			posessedPieces[i] = b;
+			noPieces = noPieces && !b;
 		}
-		for (int i = 0; i < bitField.length; i++) {
-			byte bit = 0;
-			for (int j = 0; j < 8; j++) {
-				if ((i * 8) + j < pieces.length) {
-					if (pieces[(i * 8) + j].isComplete()) {
 
-						bit &= 1;
-					}
-				}
-				bit <<= 1;
-			}
-			bitField[i + 5] = bit;
-		}
 	}
 
 	public boolean[] getPosessedPieces() {
@@ -66,7 +51,26 @@ public class BitField extends Message {
 		v.visit(this);
 	}
 
-	public byte[] getBitField() {
-		return bitField;
+	public void send(DataOutputStream output) {
+		if (!noPieces) {
+			try {
+				output.write(1 + (int) Math.ceil(posessedPieces.length / 8.0));
+				output.writeByte(5);
+				for (int i = 0; i < posessedPieces.length; i++) {
+					byte bit = 0;
+					for (int j = 0; j < 8; j++) {
+						if ((i * 8) + j < posessedPieces.length) {
+							if (posessedPieces[(i * 8) + j]) {
+								bit |= 1;
+							}
+						}
+						bit <<= 1;
+					}
+					output.writeByte(bit);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

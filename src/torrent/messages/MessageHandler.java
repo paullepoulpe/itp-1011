@@ -1,15 +1,18 @@
 package torrent.messages;
 
+import torrent.Torrent;
 import torrent.peer.PeerHandler;
 
 /*
  * 
  */
 public class MessageHandler implements MessageVisitor {
-	PeerHandler peerHandler;
+	private PeerHandler peerHandler;
+	private Torrent torrent;
 
-	public MessageHandler(PeerHandler peerHandler) {
+	public MessageHandler(PeerHandler peerHandler, Torrent torrent) {
 		this.peerHandler = peerHandler;
+		this.torrent = torrent;
 	}
 
 	@Override
@@ -25,6 +28,9 @@ public class MessageHandler implements MessageVisitor {
 	public void visit(Request r) {
 		// TODO si on recoit cela, on doit idealement preparer un message
 		// SendBloc dans notre queue de messages avec les attributs de request
+		SendBlock sendBlock = new SendBlock(r.getIndex(), r.getBegin(),
+				torrent.getPieces()[r.getIndex()].getBlock(r.getBegin()));
+		peerHandler.addAEnvoer(sendBlock);
 
 	}
 
@@ -32,6 +38,8 @@ public class MessageHandler implements MessageVisitor {
 	public void visit(NotInterested n) {
 		// TODO On doit preparer un message choke pour le pair qui nous envoie
 		// cela, afin de eviter les requetes inutiles
+		peerHandler.setInterested(false);
+		peerHandler.addAEnvoer(new Choke());
 
 	}
 
@@ -53,6 +61,7 @@ public class MessageHandler implements MessageVisitor {
 		// mettre dans la queue de messages
 
 		peerHandler.setInterested(true);
+		peerHandler.addAEnvoer(new Unchoke());
 
 	}
 
@@ -71,6 +80,8 @@ public class MessageHandler implements MessageVisitor {
 
 		peerHandler.getPieceMgr().feedPiece(s.getPieceIndex(), s.getBloc(),
 				s.getBlocIndex());
+		// int index = peerHandler.getPieceMgr().updatePriorities();
+		// peerHandler.addAEnvoer(new Request(index, begin, length));
 
 	}
 
@@ -81,6 +92,8 @@ public class MessageHandler implements MessageVisitor {
 		// liste de pieces interessantes etc
 
 		peerHandler.setChocking(false);
+		// int index = peerHandler.getPieceMgr().updatePriorities();
+		// peerHandler.addAEnvoer(new Request(index, begin, length));
 	}
 
 }

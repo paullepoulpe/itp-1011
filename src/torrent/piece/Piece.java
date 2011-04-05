@@ -176,7 +176,16 @@ public class Piece {
 		}
 
 	}
+
 	public int getIndex() {
 		return index;
+	}
+
+	public byte[] getBlock(int begin) {
+		byte[] bloc = new byte[BLOCK_SIZE];
+		for (int i = 0; i < bloc.length; i++) {
+			bloc[i] = data[i + begin];
+		}
+		return bloc;
 	}
 }

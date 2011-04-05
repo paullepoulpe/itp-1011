@@ -1,6 +1,7 @@
 package torrent.peer;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -21,8 +22,8 @@ public class PeerHandler extends Thread {
 	private Torrent torrent;
 	private MessageReader messageReader;
 	private MessageHandler messageHandler;
-	private InputStream input;
-	private OutputStream output;
+	private DataInputStream input;
+	private DataOutputStream output;
 	private PieceManager pieceMgr;
 	private boolean[] peerPiecesIndex;
 	private LinkedList<Message> aTraiter;
@@ -34,12 +35,15 @@ public class PeerHandler extends Thread {
 
 	public PeerHandler(Peer peer, Torrent torrent) {
 		this.peer = peer;
-		this.messageHandler = new MessageHandler(this);
+		this.messageHandler = new MessageHandler(this, torrent);
+		this.peerPiecesIndex = new boolean[torrent.getPieces().length];
+		this.aTraiter = new LinkedList<Message>();
+		this.aEnvoyer = new LinkedList<Message>();
 		this.torrent = torrent;
-		amChocking = true;
-		amInterested = false;
-		isChocking = true;
-		isInterested = false;
+		this.amChocking = true;
+		this.amInterested = false;
+		this.isChocking = true;
+		this.isInterested = false;
 
 	}
 
@@ -48,30 +52,40 @@ public class PeerHandler extends Thread {
 			try {
 				// initialisation des streams
 				socket = new Socket(peer.getIpAdress(), peer.getPort());
-				input = socket.getInputStream();
-				output = socket.getOutputStream();
-				this.messageReader = new MessageReader(new DataInputStream(
-						input));
+				input = new DataInputStream(socket.getInputStream());
+				output = new DataOutputStream(socket.getOutputStream());
 
 				// etablissement du Handshake
 				Handshake ourHS = new Handshake(peer);
-				output.write(ourHS.getHandshake());
-				Handshake theirHS = new Handshake(new DataInputStream(input));
+				ourHS.send(output);
+				Handshake theirHS = new Handshake(input);
 
 				// test si le handshake est non nul
 				if (theirHS.isCompatible(ourHS)) {
 					this.peer.setId(theirHS.getPeerID().toString());
 					// ecrire un bitfield au client pour lui indiquer quelles
 					// pieces on a
-					if (torrent.isEmpty()) {
-						BitField bitField = new BitField(torrent);
-						output.write(bitField.getBitField());
-					}
+					BitField bitField = new BitField(torrent);
+					bitField.send(output);
 
 					// demarrer le thread KeepAlive, qui envoie des messages
 					// KeepAlive toutes les 2 minutes
-					// KeepAlive kA = new KeepAlive(output);
-					// kA.start();
+					KeepAlive kA = new KeepAlive(output);
+					kA.start();
+					this.messageReader = new MessageReader(this, input);
+					messageReader.start();
+
+					while (true) {
+						if (!aTraiter.isEmpty()) {
+							aTraiter.getFirst().accept(messageHandler);
+							aTraiter.removeFirst();
+						}
+						if (!aEnvoyer.isEmpty()) {
+							aEnvoyer.getFirst().send(output);
+							aEnvoyer.removeFirst();
+						}
+
+					}
 					// preparer des requetes (max 10 normalement)
 					/*
 					 * 1 demander au PieceMng quelle piece on doi requeter (si
@@ -122,6 +136,16 @@ public class PeerHandler extends Thread {
 	}
 
 	public void setPeerPiecesIndex(boolean[] peerPiecesIndex) {
-		this.peerPiecesIndex = peerPiecesIndex.clone();
+		for (int i = 0; i < this.peerPiecesIndex.length; i++) {
+			this.peerPiecesIndex[i] = peerPiecesIndex[i];
+		}
+	}
+
+	public void addATraiter(Message message) {
+		aTraiter.addLast(message);
+	}
+
+	public void addAEnvoer(Message message) {
+		aEnvoyer.addLast(message);
 	}
 }
