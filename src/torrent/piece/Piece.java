@@ -176,4 +176,7 @@ public class Piece {
 		}
 
 	}
+	public int getIndex() {
+		return index;
+	}
 }

@@ -22,4 +22,7 @@ public class SendBlock extends Message {
 		return bloc;
 	}
 
+	public void accept(MessageVisitor v) {
+		v.visit(this);
+	}
 }

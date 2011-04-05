@@ -13,4 +13,7 @@ public class Have extends Message {
 	public int getPieceIndex() {
 		return pieceIndex;
 	}
+	public void accept(MessageVisitor v) {
+		v.visit(this);
+	}
 }
