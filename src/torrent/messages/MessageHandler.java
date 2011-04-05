@@ -17,7 +17,7 @@ public class MessageHandler implements MessageVisitor {
 		// TODO Quand on recoit un message Choke, on ne fait plus partie de la
 		// liste des pairs interesants de l emetteur. Le pair emetteur ne
 		// repondra plus a nos requetes
-		;
+		
 
 	}
 
