@@ -47,7 +47,9 @@ public class TrackerInfo extends Thread {
 	public void announce() throws FailureReasonExeption {
 		System.out.println("\nRequete à " + urlAnnounce + "...");
 		HTTPGet query = new HTTPGet(urlAnnounce);
-		query.add("info_hash", torrent.getMetainfo().getInfoHash().urlEncoded());
+		query
+				.add("info_hash", torrent.getMetainfo().getInfoHash()
+						.urlEncoded());
 		query.add("peer_id", Torrent.PEER_ID);
 		query.add("port", torrent.getNumPort() + "");
 		query.add("uploaded", "0");
@@ -80,7 +82,7 @@ public class TrackerInfo extends Thread {
 			for (int j = 0; j < 6; j++) {
 				data[j] = peers[i + j];
 			}
-			Peer peer = new Peer(data);
+			Peer peer = new Peer(data, torrent);
 
 			this.peersList.add(peer);
 			synchronized (torrent) {
