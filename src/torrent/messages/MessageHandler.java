@@ -17,7 +17,7 @@ public class MessageHandler implements MessageVisitor {
 		// TODO Quand on recoit un message Choke, on ne fait plus partie de la
 		// liste des pairs interesants de l emetteur. Le pair emetteur ne
 		// repondra plus a nos requetes
-		
+		peerHandler.setChocking(true);
 
 	}
 
@@ -41,6 +41,9 @@ public class MessageHandler implements MessageVisitor {
 		// du message (attribut pieceIndex de Have). il faudrait donc ajouter
 		// cette piece a la liste des pieces que le pair possede
 
+		// DONE
+		peerHandler.addPeerPiece(h.getPieceIndex());
+
 	}
 
 	@Override
@@ -49,12 +52,15 @@ public class MessageHandler implements MessageVisitor {
 		// faut donc (si on le veut bien sur) preparer un message Unchoke a
 		// mettre dans la queue de messages
 
+		peerHandler.setInterested(true);
+
 	}
 
 	@Override
 	public void visit(BitField b) {
 		// TODO donne la liste des pieces que le pair emetteur possede.
 
+		peerHandler.setPeerPiecesIndex(b.getPosessedPieces());
 	}
 
 	@Override
@@ -62,6 +68,9 @@ public class MessageHandler implements MessageVisitor {
 		// TODO on recoit un bloc... il faut le mettre dans notre liste de
 		// blocs, mettre a jour tout! (liste de pieces interessantes
 		// (updatePriorities de PieceManager)
+
+		peerHandler.getPieceMgr().feedPiece(s.getPieceIndex(), s.getBloc(),
+				s.getBlocIndex());
 
 	}
 
@@ -71,6 +80,7 @@ public class MessageHandler implements MessageVisitor {
 		// chercher quelle piece on veut requester dans notre updatePriorities
 		// liste de pieces interessantes etc
 
+		peerHandler.setChocking(false);
 	}
 
 }

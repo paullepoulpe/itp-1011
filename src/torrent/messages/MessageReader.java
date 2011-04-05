@@ -11,76 +11,85 @@ import java.io.IOException;
  * 
  */
 public class MessageReader {
-	private byte[] mess;
-	private byte id;
-	private int lengthMess;
-	private Message message;
+	private DataInputStream input;
 
 	public MessageReader(DataInputStream input) {
+		this.input = input;
+	}
+
+	public Message readMessage() {
+		Message message = null;
+		int lengthMess;
+		byte id;
+		byte[] mess;
 		try {
 			lengthMess = input.readInt();
-			id = input.readByte();
-			mess = new byte[lengthMess-1];
-			// input.readFully(mess);
-			// verifier que 0<mess[4]<9
-			switch (ID.values()[id]) {
+			if (lengthMess == 0) {
+				return null;
+			} else {
+				id = input.readByte();
+				mess = new byte[lengthMess - 1];
 
-			case choke:
-				message = new Choke();
-				break;
+				// verifier que 0<mess[4]<9
+				switch (ID.values()[id]) {
 
-			case unchoke:
-				message = new Unchoke();
-				break;
+				case choke:
+					message = new Choke();
+					break;
 
-			case have:
-				message = new Have(input.readInt());
-				break;
+				case unchoke:
+					message = new Unchoke();
+					break;
 
-			case bitField:
-				// attention, lengthMess est-ce la longueur du tableau de bytes
-				// ou le nombre de bits dans le message + 1 ????
-				input.readFully(mess);
-				message = new BitField(mess);
-				break;
+				case have:
+					message = new Have(input.readInt());
+					break;
 
-			case interested:
-				message = new Interested();
-				break;
+				case bitField:
+					input.readFully(mess);
+					message = new BitField(mess);
+					break;
 
-			case notInterested:
-				message = new NotInterested();
-				break;
+				case interested:
+					message = new Interested();
+					break;
 
-			case request:
-				input.readFully(mess);
-				message = new Request(mess);
-				break;
+				case notInterested:
+					message = new NotInterested();
+					break;
 
-			case piece:
-				int numPiece, numBloc;
-				numPiece = input.readInt();
-				numBloc = input.readInt();
-				input.readFully(mess);
-				message = new SendBlock(numPiece,numBloc,mess);
-				break;
+				case request:
+					input.readFully(mess);
+					message = new Request(mess);
+					break;
 
-			case cancel:
-				input.skipBytes(lengthMess-1);
-				break;
+				case piece:
+					int numPiece,
+					numBloc;
+					numPiece = input.readInt();
+					numBloc = input.readInt();
+					input.readFully(mess);
+					message = new SendBlock(numPiece, numBloc, mess);
+					break;
 
-			case port:
-				input.skipBytes(lengthMess-1);
-				break;
+				case cancel:
+					input.skipBytes(lengthMess - 1);
+					break;
 
-			default:
-				break;
+				case port:
+					input.skipBytes(lengthMess - 1);
+					break;
+
+				default:
+					break;
+				}
+
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-	public Message getMessage() {
 		return message;
+
 	}
+
 }

@@ -65,6 +65,23 @@ public class Torrent {
 
 	}
 
+	public int getDownloadedCompleteness() {
+		int downloadedCompleteness = 0;
+		for (int i = 0; i < this.pieces.length; i++) {
+			downloadedCompleteness += downloadedCompleteness
+					+ this.pieces[i].getDownloadCompleteness();
+		}
+		return downloadedCompleteness / this.pieces.length;
+	}
+
+	public boolean isEmpty() {
+		boolean vide = true;
+		for (int i = 0; i < this.pieces.length; i++) {
+			vide = vide && !this.pieces[i].isComplete();
+		}
+		return vide;
+	}
+
 	public boolean isComplete() {
 		boolean complet = true;
 		for (int i = 0; i < this.pieces.length; i++) {

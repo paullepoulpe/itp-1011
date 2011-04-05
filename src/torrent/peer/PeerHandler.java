@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import torrent.Torrent;
 import torrent.messages.*;
 import torrent.piece.*;
 
@@ -17,18 +18,28 @@ import torrent.piece.*;
 public class PeerHandler extends Thread {
 	private Socket socket;
 	private Peer peer;
+	private Torrent torrent;
 	private MessageReader messageReader;
 	private MessageHandler messageHandler;
 	private InputStream input;
 	private OutputStream output;
 	private PieceManager pieceMgr;
-	private ArrayList<Piece> peerPieces;
-	private LinkedList<Request> pendingRequests;
-	private LinkedList<Message> queue;
+	private boolean[] peerPiecesIndex;
+	private LinkedList<Message> aTraiter;
+	private LinkedList<Message> aEnvoyer;
+	private boolean amChocking;
+	private boolean amInterested;
+	private boolean isChocking;
+	private boolean isInterested;
 
-	public PeerHandler(Peer peer) {
+	public PeerHandler(Peer peer, Torrent torrent) {
 		this.peer = peer;
 		this.messageHandler = new MessageHandler(this);
+		this.torrent = torrent;
+		amChocking = true;
+		amInterested = false;
+		isChocking = true;
+		isInterested = false;
 
 	}
 
@@ -45,20 +56,22 @@ public class PeerHandler extends Thread {
 				// etablissement du Handshake
 				Handshake ourHS = new Handshake(peer);
 				output.write(ourHS.getHandshake());
-				byte[] theirHandshake = new byte[49 + ourHS.getPstrLength()];
-				input.read(theirHandshake);
+				Handshake theirHS = new Handshake(new DataInputStream(input));
 
 				// test si le handshake est non nul
-				if (!theirHandshake
-						.equals(new byte[49 + ourHS.getPstrLength()])) {
-					// ecrire un bitfield au client pour lui ondiquer quelles
+				if (theirHS.isCompatible(ourHS)) {
+					this.peer.setId(theirHS.getPeerID().toString());
+					// ecrire un bitfield au client pour lui indiquer quelles
 					// pieces on a
+					if (torrent.isEmpty()) {
+						BitField bitField = new BitField(torrent);
+						output.write(bitField.getBitField());
+					}
 
-					// output.write(pieceMgr.generateBitField());
 					// demarrer le thread KeepAlive, qui envoie des messages
 					// KeepAlive toutes les 2 minutes
-					KeepAlive kA = new KeepAlive(output);
-					kA.start();
+					// KeepAlive kA = new KeepAlive(output);
+					// kA.start();
 					// preparer des requetes (max 10 normalement)
 					/*
 					 * 1 demander au PieceMng quelle piece on doi requeter (si
@@ -84,4 +97,31 @@ public class PeerHandler extends Thread {
 		}
 	}
 
+	public void setAmChocking(boolean amChocking) {
+		this.amChocking = amChocking;
+	}
+
+	public void setAmInterested(boolean amInterested) {
+		this.amInterested = amInterested;
+	}
+
+	public void setInterested(boolean isInterested) {
+		this.isInterested = isInterested;
+	}
+
+	public void setChocking(boolean isChocking) {
+		this.isChocking = isChocking;
+	}
+
+	public void addPeerPiece(int index) {
+		peerPiecesIndex[index] = true;
+	}
+
+	public PieceManager getPieceMgr() {
+		return pieceMgr;
+	}
+
+	public void setPeerPiecesIndex(boolean[] peerPiecesIndex) {
+		this.peerPiecesIndex = peerPiecesIndex.clone();
+	}
 }

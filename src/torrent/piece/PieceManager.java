@@ -46,4 +46,8 @@ public class PieceManager {
 		}
 		return -1;
 	}
+
+	public void feedPiece(int pieceIndex, byte[] bloc, int begin) {
+		torrent.getPieces()[pieceIndex].feed(begin, bloc);
+	}
 }
