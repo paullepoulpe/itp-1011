@@ -3,6 +3,8 @@ package torrent.messages;
 import java.io.DataInputStream;
 import java.io.IOException;
 
+import torrent.peer.PeerHandler;
+
 /**
  * Cette classe s'occupe de lire les messages recus par le pair et des les
  * mettres dans le bon format.
@@ -10,27 +12,28 @@ import java.io.IOException;
  * @author engels
  * 
  */
-public class MessageReader {
+public class MessageReader extends Thread {
 	private DataInputStream input;
+	private PeerHandler peerHandler;
 
-	public MessageReader(DataInputStream input) {
+	public MessageReader(PeerHandler peerHandler, DataInputStream input) {
 		this.input = input;
+		this.peerHandler = peerHandler;
 	}
 
 	public Message readMessage() {
 		Message message = null;
 		int lengthMess;
 		byte id;
-		byte[] mess;
 		try {
-			lengthMess = input.readInt();
+			do {
+				lengthMess = input.readInt();
+			} while (lengthMess != 0);
+
 			if (lengthMess == 0) {
 				return null;
 			} else {
 				id = input.readByte();
-				mess = new byte[lengthMess - 1];
-
-				// verifier que 0<mess[4]<9
 				switch (ID.values()[id]) {
 
 				case choke:
@@ -41,15 +44,6 @@ public class MessageReader {
 					message = new Unchoke();
 					break;
 
-				case have:
-					message = new Have(input.readInt());
-					break;
-
-				case bitField:
-					input.readFully(mess);
-					message = new BitField(mess);
-					break;
-
 				case interested:
 					message = new Interested();
 					break;
@@ -58,18 +52,29 @@ public class MessageReader {
 					message = new NotInterested();
 					break;
 
+				case have:
+					message = new Have(input.readInt());
+					break;
+
+				case bitField:
+					byte[] bitField = new byte[lengthMess - 1];
+					input.readFully(bitField);
+					message = new BitField(bitField);
+					break;
+
 				case request:
-					input.readFully(mess);
-					message = new Request(mess);
+					int index = input.readInt();
+					int begin = input.readInt();
+					int length = input.readInt();
+					message = new Request(index, begin, length);
 					break;
 
 				case piece:
-					int numPiece,
-					numBloc;
-					numPiece = input.readInt();
-					numBloc = input.readInt();
-					input.readFully(mess);
-					message = new SendBlock(numPiece, numBloc, mess);
+					int pieceIndex = input.readInt();
+					int blocIndex = input.readInt();
+					byte[] bloc = new byte[lengthMess - 9];
+					input.readFully(bloc);
+					message = new SendBlock(pieceIndex, blocIndex, bloc);
 					break;
 
 				case cancel:
@@ -92,4 +97,12 @@ public class MessageReader {
 
 	}
 
+	@Override
+	public void run() {
+		Message message = readMessage();
+		synchronized (peerHandler) {
+			peerHandler.addATraiter(message);
+		}
+
+	}
 }

@@ -1,12 +1,15 @@
 package torrent.messages;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 public class SendBlock extends Message {
 	private int pieceIndex, blocIndex;
 	private byte[] bloc;
 
-	public SendBlock(int pieceInd, int blocInd, byte[] bloc) {
-		this.pieceIndex = pieceInd;
-		this.blocIndex = blocInd;
+	public SendBlock(int pieceIndex, int blocIndex, byte[] bloc) {
+		this.pieceIndex = pieceIndex;
+		this.blocIndex = blocIndex;
 		this.bloc = bloc;
 	}
 
@@ -24,5 +27,19 @@ public class SendBlock extends Message {
 
 	public void accept(MessageVisitor v) {
 		v.visit(this);
+	}
+
+	@Override
+	public void send(DataOutputStream output) {
+		try {
+			output.write(9 + bloc.length);
+			output.writeByte(7);
+			output.write(pieceIndex);
+			output.write(blocIndex);
+			output.write(bloc);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 }

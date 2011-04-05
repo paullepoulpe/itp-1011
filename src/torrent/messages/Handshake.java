@@ -1,13 +1,13 @@
 package torrent.messages;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 
 import torrent.Torrent;
 import torrent.peer.Peer;
 
 public class Handshake {
-	private byte[] handshake;
 	private Torrent torrent;
 	private byte pstrLength;
 	private byte[] infoHash, reserved, peerID;
@@ -19,21 +19,6 @@ public class Handshake {
 		infoHash = torrent.getMetainfo().getInfoHash().binaryHash();
 		reserved = new byte[8];
 		peerID = peer.getId().getBytes();
-		handshake = new byte[49 + pstrLength];
-		handshake[0] = pstrLength;
-		for (int i = 0; i < pstrLength; i++) {
-			handshake[1 + i] = protocol[i];
-		}
-		for (int i = 0; i < 8; i++) {
-			handshake[1 + pstrLength + i] = reserved[i];
-		}
-		for (int i = 0; i < 20; i++) {
-			handshake[9 + pstrLength] = infoHash[i];
-		}
-		for (int i = 0; i < 20; i++) {
-			handshake[29 + pstrLength] = peerID[i];
-		}
-
 	}
 
 	public Handshake(DataInputStream input) {
@@ -69,8 +54,16 @@ public class Handshake {
 				&& this.reserved.equals(otherHanshake.reserved);
 	}
 
-	public byte[] getHandshake() {
-		return this.handshake.clone();
+	public void send(DataOutputStream output) {
+		try {
+			output.writeByte(pstrLength);
+			output.write(protocol);
+			output.write(reserved);
+			output.write(infoHash);
+			output.write(peerID);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public byte getPstrLength() {

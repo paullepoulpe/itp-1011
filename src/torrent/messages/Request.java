@@ -1,15 +1,15 @@
 package torrent.messages;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 public class Request extends Message {
 	private int index, begin, length;
 
-	public Request(byte[] message) {
-		index = (message[0] << 24) + (message[1] << 16) + (message[2] << 8)
-				+ message[3];
-		begin = (message[4] << 24) + (message[5] << 16) + (message[6] << 8)
-				+ message[7];
-		length = (message[8] << 24) + (message[9] << 16) + (message[10] << 8)
-				+ message[11];
+	public Request(int index, int begin, int length) {
+		this.index = index;
+		this.begin = begin;
+		this.length = length;
 	}
 
 	public int getIndex() {
@@ -23,7 +23,22 @@ public class Request extends Message {
 	public int getLength() {
 		return length;
 	}
+
 	public void accept(MessageVisitor v) {
 		v.visit(this);
+	}
+
+	@Override
+	public void send(DataOutputStream output) {
+		try {
+			output.write(13);
+			output.writeByte(6);
+			output.write(index);
+			output.write(begin);
+			output.write(length);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 }
