@@ -37,7 +37,7 @@ public class BitField extends Message {
 
 	public BitField(Torrent torrent) {
 		Piece[] pieces = torrent.getPieces();
-		byte[] bitField = new byte[(int) Math.ceil(pieces.length / 8) + 5];
+		this.bitField = new byte[(int) Math.ceil(pieces.length / 8) + 5];
 		int length = bitField.length - 4;
 		for (int i = 0; i < 4; i++) {
 			bitField[3 - i] = (byte) (length % (1 << 8));
@@ -48,6 +48,7 @@ public class BitField extends Message {
 			for (int j = 0; j < 8; j++) {
 				if ((i * 8) + j < pieces.length) {
 					if (pieces[(i * 8) + j].isComplete()) {
+
 						bit &= 1;
 					}
 				}
@@ -55,7 +56,6 @@ public class BitField extends Message {
 			}
 			bitField[i + 5] = bit;
 		}
-		this(bitField);
 	}
 
 	public boolean[] getPosessedPieces() {

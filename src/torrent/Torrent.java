@@ -29,7 +29,8 @@ public class Torrent {
 		this.numPort = numPort;
 		this.peerList = new ArrayList<Peer>();
 		this.pieces = new Piece[(int) Math.ceil(((double) this.metainfo
-				.getSize()) / ((double) this.metainfo.getPieceLength()))];
+				.getSize())
+				/ ((double) this.metainfo.getPieceLength()))];
 		for (int i = 0; i < this.pieces.length; i++) {
 			byte[] pieceHash = new byte[20];
 			for (int j = 0; j < pieceHash.length; j++) {
@@ -62,11 +63,6 @@ public class Torrent {
 			trackers.get(i).start();
 		}
 
-		// System.out.println("\nTous les pairs initialises :\n\n");
-		// for (int i = 0; i < this.peerList.size(); i++) {
-		// System.out.println(peerList.get(i));
-		// }
-
 	}
 
 	public boolean isComplete() {
@@ -77,8 +73,14 @@ public class Torrent {
 		return complet;
 	}
 
-	public Piece[] getPieces() {
-		return pieces;
+	public boolean addPeer(Peer peer) {
+		if (peerList.contains(peer)) {
+			return false;
+		} else {
+			peerList.add(peer);
+			System.out.println("Nouveau pair : " + peer);
+			return true;
+		}
 	}
 
 	public boolean writeToFile() {
@@ -123,10 +125,6 @@ public class Torrent {
 			return false;
 		}
 
-	}
-
-	public Metainfo getMetainfo() {
-		return metainfo;
 	}
 
 	/**
@@ -189,14 +187,12 @@ public class Torrent {
 		return numPort;
 	}
 
-	public boolean addPeer(Peer peer) {
-		if (peerList.contains(peer)) {
-			return false;
-		} else {
-			peerList.add(peer);
-			System.out.println("Nouveau pair : " + peer);
-			return true;
-		}
-
+	public Piece[] getPieces() {
+		return pieces;
 	}
+
+	public Metainfo getMetainfo() {
+		return metainfo;
+	}
+
 }

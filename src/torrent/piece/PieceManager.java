@@ -46,26 +46,4 @@ public class PieceManager {
 		}
 		return -1;
 	}
-
-	public byte[] generateBitField() {
-		byte[] bitField = new byte[(int) Math.ceil(allPieces.size() / 8) + 5];
-		int length = bitField.length - 4;
-		for (int i = 0; i < 4; i++) {
-			bitField[3 - i] = (byte) (length % (1 << 8));
-			length >>= 8;
-		}
-		for (int i = 0; i < bitField.length; i++) {
-			byte bit = 0;
-			for (int j = 0; j < 8; j++) {
-				if ((i * 8) + j < allPieces.size()) {
-					if (allPieces.get((i * 8) + j).isComplete()) {
-						bit &= 1;
-					}
-				}
-				bit <<= 1;
-			}
-			bitField[i + 5] = bit;
-		}
-		return bitField;
-	}
 }
