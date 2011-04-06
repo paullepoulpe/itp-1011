@@ -28,9 +28,11 @@ public class MessageHandler implements MessageVisitor {
 	public void visit(Request r) {
 		// TODO si on recoit cela, on doit idealement preparer un message
 		// SendBloc dans notre queue de messages avec les attributs de request
-		SendBlock sendBlock = new SendBlock(r.getIndex(), r.getBegin(),
-				torrent.getPieces()[r.getIndex()].getBlock(r.getBegin()));
-		peerHandler.addAEnvoer(sendBlock);
+		/*
+		 * SendBlock sendBlock = new SendBlock(r.getIndex(), r.getBegin(),
+		 * torrent.getPieces()[r.getIndex()].getBlock(r.getBegin()));
+		 * peerHandler.addAEnvoer(sendBlock);
+		 */
 
 	}
 
@@ -80,8 +82,10 @@ public class MessageHandler implements MessageVisitor {
 
 		peerHandler.getPieceMgr().feedPiece(s.getPieceIndex(), s.getBloc(),
 				s.getBlocIndex());
-		// int index = peerHandler.getPieceMgr().updatePriorities();
-		// peerHandler.addAEnvoer(new Request(index, begin, length));
+		peerHandler.getPieceMgr().updatePriorities();
+		if (torrent.isComplete()) {
+			torrent.writeToFile();
+		}
 
 	}
 

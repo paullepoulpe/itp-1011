@@ -28,6 +28,7 @@ public class PeerHandler extends Thread {
 	private boolean[] peerPiecesIndex;
 	private LinkedList<Message> aTraiter;
 	private LinkedList<Message> aEnvoyer;
+	private LinkedList<Request> requetes;
 	private boolean amChocking;
 	private boolean amInterested;
 	private boolean isChocking;
@@ -44,6 +45,7 @@ public class PeerHandler extends Thread {
 		this.amInterested = false;
 		this.isChocking = true;
 		this.isInterested = false;
+		this.pieceMgr = torrent.getPieceManager();
 
 	}
 
@@ -80,9 +82,20 @@ public class PeerHandler extends Thread {
 							aTraiter.getFirst().accept(messageHandler);
 							aTraiter.removeFirst();
 						}
+						if (requetes.size() < 10 && !isChocking) {
+							int index = pieceMgr.getPieceOfInterest();
+							int begin = torrent.getPieces()[index]
+									.getBlockOfInterest(this);
+							requetes.add(new Request(index, begin,
+									Piece.BLOCK_SIZE));
+						}
 						if (!aEnvoyer.isEmpty()) {
 							aEnvoyer.getFirst().send(output);
 							aEnvoyer.removeFirst();
+						}
+						if (!isChocking && !requetes.isEmpty()) {
+							requetes.getFirst().send(output);
+							requetes.removeFirst();
 						}
 
 					}
@@ -147,5 +160,14 @@ public class PeerHandler extends Thread {
 
 	public void addAEnvoer(Message message) {
 		aEnvoyer.addLast(message);
+	}
+
+	public void removeRequest(int index, int begin) {
+		for (int i = 0; i < requetes.size(); i++) {
+			if ((requetes.get(i)).getBegin() == begin
+					&& requetes.get(i).getIndex() == index) {
+				requetes.remove(i);
+			}
+		}
 	}
 }

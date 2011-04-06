@@ -2,6 +2,9 @@ package torrent.piece;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+
+import torrent.peer.PeerHandler;
 
 public class Piece {
 	private byte[] data;
@@ -12,6 +15,7 @@ public class Piece {
 	private int nbBlocs;
 	private boolean isChecked = false;
 	static public int BLOCK_SIZE = 1 << 14;
+	private ArrayList<ArrayList<PeerHandler>> peerHandlers;
 
 	/**
 	 * Constructeur
@@ -30,6 +34,10 @@ public class Piece {
 		this.data = new byte[sizeTab];
 		this.nbBlocs = (int) Math.ceil((double) sizeTab / (double) BLOCK_SIZE);
 		this.receipt = new boolean[nbBlocs];
+		this.peerHandlers = new ArrayList<ArrayList<PeerHandler>>();
+		for (int i = 0; i < nbBlocs; i++) {
+			peerHandlers.add(i, new ArrayList<PeerHandler>());
+		}
 	}
 
 	/**
@@ -98,6 +106,9 @@ public class Piece {
 			receipt[begin / BLOCK_SIZE] = true;
 			for (int i = 0; i < bloc.length; i++, begin++) {
 				this.data[begin] = bloc[i];
+			}
+			for (int i = 0; i < peerHandlers.get(begin).size(); i++) {
+				peerHandlers.get(begin).get(i).removeRequest(this.index, begin);
 			}
 			if (this.isComplete()) {
 				this.check();
@@ -187,5 +198,18 @@ public class Piece {
 			bloc[i] = data[i + begin];
 		}
 		return bloc;
+	}
+
+	public int getBlockOfInterest(PeerHandler peerHandler) {
+		int index = 0;
+		int min = 0;
+		for (int i = 0; i < peerHandlers.size(); i++) {
+			if (min > peerHandlers.get(i).size()) {
+				index = i;
+				min = peerHandlers.get(i).size();
+			}
+		}
+		peerHandlers.get(index).add(peerHandler);
+		return index;
 	}
 }
