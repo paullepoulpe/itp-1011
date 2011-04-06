@@ -24,7 +24,14 @@ public class Handshake {
 
 	public Handshake(DataInputStream input) {
 		try {
-			pstrLength = input.readByte();
+			boolean lu = false;
+			while (!lu) {
+				if (input.available() > 0) {
+					pstrLength = input.readByte();
+					lu = true;
+				}
+			}
+
 			protocol = new byte[pstrLength];
 			input.readFully(protocol);
 			reserved = new byte[8];

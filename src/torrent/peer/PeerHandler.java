@@ -53,7 +53,17 @@ public class PeerHandler extends Thread {
 		if (socket == null) {
 			try {
 				// initialisation des streams
-				socket = new Socket(peer.getIpAdress(), peer.getPort());
+				boolean connect = false;
+				while (!connect) {
+					try {
+						socket = new Socket(peer.getIpAdress(), peer.getPort());
+						connect = true;
+					} catch (IOException e) {
+						connect = false;
+					}
+				}
+				System.out.println("Connection a " + peer.getIpAdress()
+						+ " reussie!");
 				input = new DataInputStream(socket.getInputStream());
 				output = new DataOutputStream(socket.getOutputStream());
 
@@ -61,6 +71,7 @@ public class PeerHandler extends Thread {
 				Handshake ourHS = new Handshake(peer, torrent);
 				ourHS.send(output);
 				Handshake theirHS = new Handshake(input);
+				System.out.println("Handshake recu");
 
 				// test si le handshake est non nul
 				if (theirHS.isCompatible(ourHS)) {
