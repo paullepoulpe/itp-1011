@@ -3,6 +3,7 @@ package torrent.messages;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import torrent.Torrent;
 import torrent.peer.Peer;
@@ -14,11 +15,12 @@ public class Handshake {
 	private byte[] protocol;
 
 	public Handshake(Peer peer, Torrent torrent) {
-		protocol = "BitTorrent Protocol".getBytes();
+		protocol = "BitTorrent protocol".getBytes();
 		pstrLength = (byte) protocol.length;
 		this.torrent = torrent;
 		infoHash = torrent.getMetainfo().getInfoHash().binaryHash();
 		reserved = new byte[8];
+		Arrays.fill(reserved, (byte) 0);
 		peerID = peer.getId().getBytes();
 	}
 
@@ -57,9 +59,11 @@ public class Handshake {
 	}
 
 	public boolean isCompatible(Handshake otherHanshake) {
-		return this.protocol.equals(otherHanshake.protocol)
-				&& this.infoHash.equals(otherHanshake.infoHash)
-				&& this.reserved.equals(otherHanshake.reserved);
+		System.out.println(Arrays.toString(this.reserved)
+				+ Arrays.toString(otherHanshake.reserved));
+		return Arrays.equals(this.protocol, otherHanshake.protocol)
+				&& Arrays.equals(this.infoHash, otherHanshake.infoHash)
+				&& Arrays.equals(this.reserved, otherHanshake.reserved);
 	}
 
 	public void send(DataOutputStream output) {
@@ -80,5 +84,17 @@ public class Handshake {
 
 	public byte[] getPeerID() {
 		return peerID;
+	}
+
+	public byte[] getProtocol() {
+		return protocol;
+	}
+
+	public byte[] getInfoHash() {
+		return infoHash;
+	}
+
+	public byte[] getReserved() {
+		return reserved;
 	}
 }
