@@ -2,6 +2,7 @@ package torrent.peer;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 
 import torrent.Torrent;
 import torrent.piece.PieceManager;
@@ -33,6 +34,14 @@ public class Peer {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public void setId(byte[] id) {
+		char[] idChar = new char[id.length];
+		for (int i = 0; i < id.length; i++) {
+			idChar[i] = (char) id[i];
+		}
+		this.id = String.valueOf(idChar);
 	}
 
 	public InetAddress getIpAdress() {

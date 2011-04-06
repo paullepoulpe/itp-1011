@@ -20,7 +20,6 @@ public class Handshake {
 		this.torrent = torrent;
 		infoHash = torrent.getMetainfo().getInfoHash().binaryHash();
 		reserved = new byte[8];
-		Arrays.fill(reserved, (byte) 0);
 		peerID = peer.getId().getBytes();
 	}
 
@@ -59,11 +58,13 @@ public class Handshake {
 	}
 
 	public boolean isCompatible(Handshake otherHanshake) {
-		System.out.println(Arrays.toString(this.reserved)
-				+ Arrays.toString(otherHanshake.reserved));
+		/*
+		 * System.out.println(Arrays.toString(this.reserved) +
+		 * Arrays.toString(otherHanshake.reserved));
+		 */
 		return Arrays.equals(this.protocol, otherHanshake.protocol)
 				&& Arrays.equals(this.infoHash, otherHanshake.infoHash)
-				&& Arrays.equals(this.reserved, otherHanshake.reserved);
+		/* && Arrays.equals(this.reserved, otherHanshake.reserved) */;
 	}
 
 	public void send(DataOutputStream output) {
