@@ -58,7 +58,7 @@ public class PeerHandler extends Thread {
 				output = new DataOutputStream(socket.getOutputStream());
 
 				// etablissement du Handshake
-				Handshake ourHS = new Handshake(peer);
+				Handshake ourHS = new Handshake(peer, torrent);
 				ourHS.send(output);
 				Handshake theirHS = new Handshake(input);
 
