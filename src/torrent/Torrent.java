@@ -1,7 +1,5 @@
 package torrent;
 
-import http.FailureReasonExeption;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -23,14 +21,14 @@ public class Torrent {
 	private int numPort;
 	private PieceManager pieceManager;
 	public static String PEER_ID = PeerIDGenerator.generateID();
+	private boolean writtenOnFile;
 
 	public Torrent(File metainfo, int numPort) {
 		this.metainfo = new Metainfo(metainfo);
 		this.numPort = numPort;
 		this.peerList = new ArrayList<Peer>();
 		this.pieces = new Piece[(int) Math.ceil(((double) this.metainfo
-				.getSize())
-				/ ((double) this.metainfo.getPieceLength()))];
+				.getSize()) / ((double) this.metainfo.getPieceLength()))];
 		for (int i = 0; i < this.pieces.length; i++) {
 			byte[] pieceHash = new byte[20];
 			for (int j = 0; j < pieceHash.length; j++) {
@@ -46,8 +44,9 @@ public class Torrent {
 			}
 
 		}
-		// this.pieceManager = new PieceManager(this);
+
 		System.out.println(this.metainfo);
+		this.pieceManager = new PieceManager(this);
 	}
 
 	public Torrent(File metainfo) {
@@ -101,47 +100,52 @@ public class Torrent {
 	}
 
 	public boolean writeToFile() {
-		File file = new File(System.getProperty("user.home"), "Downloads"
-				+ File.separator + this.numPort + "_suffix_"
-				+ metainfo.getFileName());
+		if (isComplete() && !writtenOnFile) {
+			File file = new File(System.getProperty("user.home"), "Downloads"
+					+ File.separator + this.numPort + "_suffix_"
+					+ metainfo.getFileName());
 
-		if (this.isComplete()) {
-			DataOutputStream lecteur = null;
-			try {
-				lecteur = new DataOutputStream(new FileOutputStream(file));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			for (int i = 0; i < pieces.length; i++) {
-				if (pieces[i].getData() == null) {
-					try {
-						for (int j = 0; j < pieces[i].getSizeTab(); i++) {
-							lecteur.write(0);
-						}
-
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				} else {
-					try {
-						lecteur.write(pieces[i].getData());
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+			if (this.isComplete()) {
+				DataOutputStream lecteur = null;
+				try {
+					lecteur = new DataOutputStream(new FileOutputStream(file));
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
+				for (int i = 0; i < pieces.length; i++) {
+					if (pieces[i].getData() == null) {
+						try {
+							for (int j = 0; j < pieces[i].getSizeTab(); i++) {
+								lecteur.write(0);
+							}
 
-			}
-			try {
-				lecteur.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return true;
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					} else {
+						try {
+							lecteur.write(pieces[i].getData());
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
 
-		} else {
-			return false;
+				}
+				try {
+					lecteur.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				writtenOnFile = true;
+				System.out.println("Fichier ecrit dans "
+						+ System.getProperty("user.home") + "Downloads");
+				System.exit(0);
+				return true;
+			} else {
+				return false;
+			}
 		}
-
+		return false;
 	}
 
 	/**
@@ -192,8 +196,9 @@ public class Torrent {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
+			writtenOnFile = true;
 			return true;
+
 		} else {
 			System.out.println("File not found!");
 			return false;
@@ -212,4 +217,7 @@ public class Torrent {
 		return metainfo;
 	}
 
+	public PieceManager getPieceManager() {
+		return pieceManager;
+	}
 }

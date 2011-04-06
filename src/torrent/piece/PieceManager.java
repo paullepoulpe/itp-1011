@@ -19,14 +19,19 @@ public class PieceManager {
 
 	public PieceManager(Torrent torrent) {
 		this.torrent = torrent;
+		this.allPieces = new LinkedList<Piece>();
+		this.PiecesOfInterest = new LinkedList<Piece>();
 		// on met les pieces dans la liste de pieces
 		for (int i = 0; i < torrent.getPieces().length; i++) {
 			this.allPieces.add(torrent.getPieces()[i]);
 		}
 		// On melange toutes les pieces
 		Collections.shuffle(this.allPieces);
-		this.PiecesOfInterest = (LinkedList<Piece>) this.allPieces.subList(0,
-				MAX_NUM_OF_PIECES - 1);
+		for (int i = 0; i < MAX_NUM_OF_PIECES && i < allPieces.size(); i++) {
+			PiecesOfInterest.add(allPieces.get(i));
+		}
+		allPieces.removeAll(PiecesOfInterest);
+
 	}
 
 	/**
@@ -35,19 +40,30 @@ public class PieceManager {
 	 * 
 	 * @return index de la piece qu'on doit demander (int)
 	 */
-	public int updatePriorities() {
+	public void updatePriorities() {
 		if (!torrent.isComplete()) {
 			// On enleve toutes les pieces quon vient de mettre dans la liste
 			// a telécharger
-			allPieces.removeAll(PiecesOfInterest);
+			for (int i = 0; i < PiecesOfInterest.size(); i++) {
+				if (PiecesOfInterest.get(i).isComplete()) {
+					PiecesOfInterest.remove(i);
+					if (!allPieces.isEmpty()) {
+						PiecesOfInterest.addLast(allPieces.getFirst());
+						allPieces.removeFirst();
+					}
+				}
+			}
 			// la on doit faire en sorte que la piece la moins demandee soit
 			// celle que nous on demande aux autres
-			return PiecesOfInterest.getFirst().getIndex();
+
 		}
-		return -1;
 	}
 
 	public void feedPiece(int pieceIndex, byte[] bloc, int begin) {
 		torrent.getPieces()[pieceIndex].feed(begin, bloc);
+	}
+
+	public int getPieceOfInterest() {
+		return PiecesOfInterest.getFirst().getIndex();
 	}
 }

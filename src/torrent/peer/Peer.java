@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import torrent.Torrent;
+import torrent.piece.PieceManager;
 
 public class Peer {
 	private PeerHandler peerHandler;
@@ -22,6 +23,7 @@ public class Peer {
 
 		this.id = "<?>";
 		this.peerHandler = new PeerHandler(this, torrent);
+		peerHandler.run();
 
 	}
 
