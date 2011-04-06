@@ -40,6 +40,7 @@ public class PeerHandler extends Thread {
 		this.peerPiecesIndex = new boolean[torrent.getPieces().length];
 		this.aTraiter = new LinkedList<Message>();
 		this.aEnvoyer = new LinkedList<Message>();
+		this.requetes = new LinkedList<Request>();
 		this.torrent = torrent;
 		this.amChocking = true;
 		this.amInterested = false;
@@ -72,12 +73,13 @@ public class PeerHandler extends Thread {
 				ourHS.send(output);
 				Handshake theirHS = new Handshake(input);
 				System.out.println("Handshake recu");
-				
+				peer.setId(theirHS.getPeerID());
+				System.out.println("ID du pair : " + this.peer.getId());
 				// test si le handshake est compatible
 				if (theirHS.isCompatible(ourHS)) {
 					System.out.println("Handshake compatible");
 					this.peer.setId(theirHS.getPeerID().toString());
-					System.out.println("ID du pair : " + this.peer.getId());
+
 					// ecrire un bitfield au client pour lui indiquer quelles
 					// pieces on a
 					BitField bitField = new BitField(torrent);

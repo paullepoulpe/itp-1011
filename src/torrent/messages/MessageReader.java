@@ -23,13 +23,16 @@ public class MessageReader extends Thread {
 
 	public Message readMessage() {
 		Message message = null;
-		int lengthMess;
+		int lengthMess = 0;
 		byte id;
 		try {
-			do {
-				lengthMess = input.readInt();
-			} while (lengthMess != 0);
-
+			boolean lu = false;
+			while (!lu) {
+				if (input.available() > 0) {
+					lengthMess = input.readInt();
+					lu = true;
+				}
+			}
 			if (lengthMess == 0) {
 				return null;
 			} else {
@@ -99,10 +102,13 @@ public class MessageReader extends Thread {
 
 	@Override
 	public void run() {
-		Message message = readMessage();
-		synchronized (peerHandler) {
-			peerHandler.addATraiter(message);
+		while (true) {
+			Message message = readMessage();
+			if (message != null) {
+				synchronized (peerHandler) {
+					peerHandler.addATraiter(message);
+				}
+			}
 		}
-
 	}
 }
