@@ -21,6 +21,7 @@ public class MessageHandler implements MessageVisitor {
 		// liste des pairs interesants de l emetteur. Le pair emetteur ne
 		// repondra plus a nos requetes
 		peerHandler.setChocking(true);
+		System.out.println("Recu un Choke");
 
 	}
 
@@ -33,6 +34,8 @@ public class MessageHandler implements MessageVisitor {
 		 * torrent.getPieces()[r.getIndex()].getBlock(r.getBegin()));
 		 * peerHandler.addAEnvoer(sendBlock);
 		 */
+		System.out.println("Recu un request pour piece : " + r.getIndex()
+				+ ", bloc : " + r.getBegin());
 
 	}
 
@@ -40,8 +43,11 @@ public class MessageHandler implements MessageVisitor {
 	public void visit(NotInterested n) {
 		// TODO On doit preparer un message choke pour le pair qui nous envoie
 		// cela, afin de eviter les requetes inutiles
+
 		peerHandler.setInterested(false);
 		peerHandler.addAEnvoer(new Choke());
+
+		System.out.println("Recu not Interested");
 
 	}
 
@@ -54,6 +60,8 @@ public class MessageHandler implements MessageVisitor {
 		// DONE
 		peerHandler.addPeerPiece(h.getPieceIndex());
 
+		System.out.println("Recu Have piece : " + h.getPieceIndex());
+
 	}
 
 	@Override
@@ -65,6 +73,8 @@ public class MessageHandler implements MessageVisitor {
 		peerHandler.setInterested(true);
 		peerHandler.addAEnvoer(new Unchoke());
 
+		System.out.println("Recu Interested");
+
 	}
 
 	@Override
@@ -72,6 +82,8 @@ public class MessageHandler implements MessageVisitor {
 		// TODO donne la liste des pieces que le pair emetteur possede.
 
 		peerHandler.setPeerPiecesIndex(b.getPosessedPieces());
+
+		System.out.println("Recu bitfield");
 	}
 
 	@Override
@@ -86,6 +98,8 @@ public class MessageHandler implements MessageVisitor {
 		if (torrent.isComplete()) {
 			torrent.writeToFile();
 		}
+		System.out.println("Recu bloc : " + s.getBlocIndex()
+				+ " dde la Piece :" + s.getPieceIndex());
 
 	}
 
@@ -98,6 +112,8 @@ public class MessageHandler implements MessageVisitor {
 		peerHandler.setChocking(false);
 		// int index = peerHandler.getPieceMgr().updatePriorities();
 		// peerHandler.addAEnvoer(new Request(index, begin, length));
+
+		System.out.println("Recu unchoke");
 	}
 
 }

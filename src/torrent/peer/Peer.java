@@ -23,7 +23,7 @@ public class Peer {
 
 		this.id = "<?>";
 		this.peerHandler = new PeerHandler(this, torrent);
-		peerHandler.run();
+		peerHandler.start();
 
 	}
 
