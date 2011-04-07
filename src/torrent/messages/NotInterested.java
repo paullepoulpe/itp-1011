@@ -13,6 +13,7 @@ public class NotInterested extends Message {
 		try {
 			output.write((int) 1);
 			output.writeByte(3);
+			System.out.println("Sent NotInterested");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

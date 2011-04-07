@@ -40,6 +40,7 @@ public class TrackerInfo extends Thread {
 			failed = true;
 			System.out.println("Connection failed (" + urlAnnounce + ") : "
 					+ e.getFailureReason());
+			this.interrupt();
 		}
 
 	}

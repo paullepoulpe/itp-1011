@@ -37,6 +37,7 @@ public class SendBlock extends Message {
 			output.write(pieceIndex);
 			output.write(blocIndex);
 			output.write(bloc);
+			System.out.println("Sent SendBlock");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

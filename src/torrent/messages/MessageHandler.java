@@ -113,7 +113,7 @@ public class MessageHandler implements MessageVisitor {
 		// int index = peerHandler.getPieceMgr().updatePriorities();
 		// peerHandler.addAEnvoer(new Request(index, begin, length));
 
-		System.out.println("Recu unchoke");
+		System.out.println("Recu unchoke :):):):):):):):):):):)");
 	}
 
 }

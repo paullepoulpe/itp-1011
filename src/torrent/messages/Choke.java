@@ -16,6 +16,7 @@ public class Choke extends Message {
 		try {
 			output.write((int) 1);
 			output.writeByte(0);
+			System.out.println("Sent Choke");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
