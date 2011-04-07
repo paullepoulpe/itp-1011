@@ -2,6 +2,8 @@ package torrent.messages;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+
 import torrent.Torrent;
 import torrent.piece.Piece;
 
@@ -52,22 +54,29 @@ public class BitField extends Message {
 	}
 
 	public void send(DataOutputStream output) {
-		if (!noPieces) {
+		if (true/* !noPieces */) {
 			try {
+				ArrayList<String> request = new ArrayList<String>();
 				output.write(1 + (int) Math.ceil(posessedPieces.length / 8.0));
+				request.add(1 + (int) Math.ceil(posessedPieces.length / 8.0)
+						+ "");
 				output.writeByte(5);
-				for (int i = 0; i < posessedPieces.length; i++) {
-					byte bit = 0;
+				request.add("" + 5);
+				for (int i = 0; i < Math.ceil(posessedPieces.length / 8.0); i++) {
+					byte bits = 0;
 					for (int j = 0; j < 8; j++) {
 						if ((i * 8) + j < posessedPieces.length) {
 							if (posessedPieces[(i * 8) + j]) {
-								bit |= 1;
+								bits |= 1;
 							}
 						}
-						bit <<= 1;
+						bits <<= 1;
 					}
-					output.writeByte(bit);
+					output.writeByte(bits);
+					request.add(bits + "");
 				}
+				output.flush();
+				System.out.println(request.toString());
 				System.out.println("Sent Bitfield");
 			} catch (IOException e) {
 				e.printStackTrace();
