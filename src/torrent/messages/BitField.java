@@ -52,7 +52,7 @@ public class BitField extends Message {
 	}
 
 	public void send(DataOutputStream output) {
-		if (/* !noPieces */true) {
+		if (!noPieces) {
 			try {
 				output.write(1 + (int) Math.ceil(posessedPieces.length / 8.0));
 				output.writeByte(5);

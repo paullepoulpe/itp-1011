@@ -42,15 +42,12 @@ public class TrackerInfo extends Thread {
 					+ e.getFailureReason());
 			this.interrupt();
 		}
-
 	}
 
 	public void announce() throws FailureReasonExeption {
 		System.out.println("\nRequete à " + urlAnnounce + "...");
 		HTTPGet query = new HTTPGet(urlAnnounce);
-		query
-				.add("info_hash", torrent.getMetainfo().getInfoHash()
-						.urlEncoded());
+		query.add("info_hash", torrent.getMetainfo().getInfoHash().urlEncoded());
 		query.add("peer_id", Torrent.PEER_ID);
 		query.add("port", torrent.getNumPort() + "");
 		query.add("uploaded", "0");

@@ -3,7 +3,11 @@ package torrent.piece;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
+import torrent.messages.Request;
 import torrent.peer.PeerHandler;
 
 public class Piece {
@@ -15,7 +19,7 @@ public class Piece {
 	private int nbBlocs;
 	private boolean isChecked = false;
 	static public int BLOCK_SIZE = 1 << 14;
-	private ArrayList<ArrayList<PeerHandler>> peerHandlers;
+	private ArrayList<HashMap<Request, PeerHandler>> peerHandlers;
 
 	/**
 	 * Constructeur
@@ -34,9 +38,10 @@ public class Piece {
 		this.data = new byte[sizeTab];
 		this.nbBlocs = (int) Math.ceil((double) sizeTab / (double) BLOCK_SIZE);
 		this.receipt = new boolean[nbBlocs];
-		this.peerHandlers = new ArrayList<ArrayList<PeerHandler>>();
+		this.peerHandlers = new ArrayList<HashMap<Request, PeerHandler>>(
+				nbBlocs);
 		for (int i = 0; i < nbBlocs; i++) {
-			peerHandlers.add(i, new ArrayList<PeerHandler>());
+			peerHandlers.add(i, new HashMap<Request, PeerHandler>());
 		}
 	}
 
@@ -107,9 +112,14 @@ public class Piece {
 			for (int i = 0; i < bloc.length; i++, begin++) {
 				this.data[begin] = bloc[i];
 			}
-			for (int i = 0; i < peerHandlers.get(begin).size(); i++) {
-				peerHandlers.get(begin).get(i).removeRequest(this.index, begin);
+
+			Iterator<Entry<Request, PeerHandler>> entries = peerHandlers
+					.get(begin / BLOCK_SIZE).entrySet().iterator();
+			while (entries.hasNext()) {
+				Entry<Request, PeerHandler> entry = entries.next();
+				entry.getValue().removeRequest(entry.getKey());
 			}
+
 			if (this.isComplete()) {
 				this.check();
 			}
@@ -200,16 +210,22 @@ public class Piece {
 		return bloc;
 	}
 
-	public int getBlockOfInterest(PeerHandler peerHandler) {
-		int index = 0;
+	public Request getBlockOfInterest(PeerHandler peerHandler) {
+		int blocIndex = 0;
 		int min = 0;
 		for (int i = 0; i < peerHandlers.size(); i++) {
 			if (min > peerHandlers.get(i).size()) {
-				index = i;
+				blocIndex = i;
 				min = peerHandlers.get(i).size();
 			}
 		}
-		peerHandlers.get(index).add(peerHandler);
-		return index;
+		int blocSize = BLOCK_SIZE;
+		if (blocIndex == nbBlocs - 1) {
+			blocSize = sizeTab - blocIndex * 8;
+		}
+		Request requete = new Request(this.index, blocIndex * BLOCK_SIZE,
+				blocSize);
+		peerHandlers.get(blocIndex).put(requete, peerHandler);
+		return requete;
 	}
 }

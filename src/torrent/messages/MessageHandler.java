@@ -2,6 +2,7 @@ package torrent.messages;
 
 import torrent.Torrent;
 import torrent.peer.PeerHandler;
+import torrent.piece.Piece;
 
 /*
  * 
@@ -20,6 +21,7 @@ public class MessageHandler implements MessageVisitor {
 		// TODO Quand on recoit un message Choke, on ne fait plus partie de la
 		// liste des pairs interesants de l emetteur. Le pair emetteur ne
 		// repondra plus a nos requetes
+
 		peerHandler.setChocking(true);
 		System.out.println("Recu un Choke");
 
@@ -91,15 +93,22 @@ public class MessageHandler implements MessageVisitor {
 		// TODO on recoit un bloc... il faut le mettre dans notre liste de
 		// blocs, mettre a jour tout! (liste de pieces interessantes
 		// (updatePriorities de PieceManager)
+		Piece entering = null;
+		synchronized (torrent) {
+			entering = torrent.getPieces()[s.getPieceIndex()];
+		}
 
-		peerHandler.getPieceMgr().feedPiece(s.getPieceIndex(), s.getBloc(),
-				s.getBlocIndex());
-		peerHandler.getPieceMgr().updatePriorities();
+		synchronized (entering) {
+			entering.feed(s.getBlocIndex(), s.getBloc());
+		}
+		synchronized (peerHandler) {
+			peerHandler.getPieceMgr().updatePriorities();
+		}
 		if (torrent.isComplete()) {
 			torrent.writeToFile();
 		}
-		System.out.println("Recu bloc : " + s.getBlocIndex()
-				+ " dde la Piece :" + s.getPieceIndex());
+		System.out.println("Recu bloc : " + s.getBlocIndex() + " de la Piece :"
+				+ s.getPieceIndex());
 
 	}
 
@@ -110,9 +119,6 @@ public class MessageHandler implements MessageVisitor {
 		// liste de pieces interessantes etc
 
 		peerHandler.setChocking(false);
-		// int index = peerHandler.getPieceMgr().updatePriorities();
-		// peerHandler.addAEnvoer(new Request(index, begin, length));
-
 		System.out.println("Recu unchoke :):):):):):):):):):):)");
 	}
 

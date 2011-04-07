@@ -3,8 +3,6 @@ package torrent.messages;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-import torrent.peer.PeerHandler;
-
 /**
  * Cette classe s'occupe de lire les messages recus par le pair et des les
  * mettres dans le bon format.
@@ -12,27 +10,24 @@ import torrent.peer.PeerHandler;
  * @author engels
  * 
  */
-public class MessageReader extends Thread {
+public class MessageReader {
 	private DataInputStream input;
-	private PeerHandler peerHandler;
 
-	public MessageReader(PeerHandler peerHandler, DataInputStream input) {
+	public MessageReader(DataInputStream input) {
 		this.input = input;
-		this.peerHandler = peerHandler;
 	}
 
+	/**
+	 * lit un message sur le stream et retourne null si c'etait un keep alive
+	 * 
+	 * @return
+	 */
 	public Message readMessage() {
 		Message message = null;
 		int lengthMess = 0;
 		byte id;
 		try {
-			boolean lu = false;
-			while (!lu) {
-				if (input.available() > 0) {
-					lengthMess = input.readInt();
-					lu = true;
-				}
-			}
+			lengthMess = input.readInt();
 			if (lengthMess == 0) {
 				return null;
 			} else {
@@ -98,17 +93,5 @@ public class MessageReader extends Thread {
 		}
 		return message;
 
-	}
-
-	@Override
-	public void run() {
-		while (true) {
-			Message message = readMessage();
-			if (message != null) {
-				synchronized (peerHandler) {
-					peerHandler.addATraiter(message);
-				}
-			}
-		}
 	}
 }

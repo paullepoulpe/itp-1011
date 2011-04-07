@@ -2,10 +2,7 @@ package torrent.peer;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Arrays;
-
 import torrent.Torrent;
-import torrent.piece.PieceManager;
 
 public class Peer {
 	private PeerHandler peerHandler;
