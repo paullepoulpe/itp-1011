@@ -82,6 +82,12 @@ public class PeerHandler extends Thread {
 					amMaybeInterested();
 					prepareRequest();
 					sendMessages();
+					try {
+						sleep(20);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
 				}
 				// preparer des requetes (max 10 normalement)
 				/*

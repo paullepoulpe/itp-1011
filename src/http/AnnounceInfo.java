@@ -52,7 +52,9 @@ public class AnnounceInfo {
 					this.trackerId = "none";
 				}
 				this.interval = dico.get("interval").getInt();
-				this.minInterval = dico.get("min interval").getInt();
+				if (dico.get("min interval") != null) {
+					this.minInterval = dico.get("min interval").getInt();
+				}
 				this.complete = dico.get("complete").getInt();
 				this.incomplete = dico.get("incomplete").getInt();
 				this.peers = dico.get("peers").getBytes();
