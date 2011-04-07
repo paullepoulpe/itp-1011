@@ -63,7 +63,20 @@ public class PieceManager {
 		torrent.getPieces()[pieceIndex].feed(begin, bloc);
 	}
 
-	public int getPieceOfInterest() {
-		return PiecesOfInterest.getFirst().getIndex();
+	public int getPieceOfInterest(boolean[] peerPieceIndex) {
+		int index = 0;
+		boolean trouve = false;
+		for (int i = 0; i < PiecesOfInterest.size() && !trouve; i++) {
+			index = PiecesOfInterest.get(i).getIndex();
+			if (peerPieceIndex[index]) {
+				trouve = true;
+			}
+		}
+		if (trouve) {
+			return index;
+		} else {
+			return -1;
+		}
+
 	}
 }

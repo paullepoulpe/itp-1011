@@ -45,3 +45,8 @@
 -Comme on avance pas beaucoup sur itp-05 on code des supplements, gestion du multifile pour la lecture du metainfo et requetes simultanées aux trackers!
 05.03.2011
 -On a demandé a un gentil assistant a propos du message visitor, ce qui nous permet de mieux comprendre ce qu'on doit faire pour itp-5, ca devrait aller plus vite maintenant.
+06.03.2011
+-Presque tout est codé pour itp-05 mais l'execution affiche une grande quantité d'erreur dans la console!
+07.03.2011
+-Les peers nous font des handshake, et nous envoie des have et des bitfield, mais on ne recoit pour le moment aucun unchoke!
+-On fait les test avec des torrent autres que celui du cours car les clients locaux veulent absolument nous envoyer des message avec un id=10.

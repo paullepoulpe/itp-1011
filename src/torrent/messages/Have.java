@@ -27,6 +27,7 @@ public class Have extends Message {
 			output.write((int) 5);
 			output.writeByte(4);
 			output.write((int) pieceIndex);
+			System.out.println("Sent Have");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

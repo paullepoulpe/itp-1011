@@ -21,6 +21,7 @@ public class KeepAlive extends Thread {
 				if ((time - lastsent) > 100000) {
 					synchronized (out) {
 						out.write(b);
+						System.out.println("Sent KeepAlive");
 					}
 					lastsent = System.currentTimeMillis();
 				}

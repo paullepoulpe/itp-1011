@@ -13,6 +13,7 @@ public class Interested extends Message {
 		try {
 			output.write((int) 1);
 			output.writeByte(2);
+			System.out.println("Sent Interested");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
