@@ -3,11 +3,7 @@ package torrent.peer;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 
 import torrent.Torrent;
@@ -27,7 +23,6 @@ public class PeerHandler extends Thread {
 	private DataOutputStream output;
 	private PieceManager pieceMgr;
 	private boolean[] peerPiecesIndex;
-	private LinkedList<Message> aTraiter;
 	private LinkedList<Message> aEnvoyer;
 	private LinkedList<Request> requetes;
 	private LinkedList<Request> requetesEnvoyee;
@@ -40,7 +35,6 @@ public class PeerHandler extends Thread {
 		this.peer = peer;
 		this.messageHandler = new MessageHandler(this, torrent);
 		this.peerPiecesIndex = new boolean[torrent.getPieces().length];
-		this.aTraiter = new LinkedList<Message>();
 		this.aEnvoyer = new LinkedList<Message>();
 		this.requetes = new LinkedList<Request>();
 		this.requetesEnvoyee = new LinkedList<Request>();
@@ -56,88 +50,39 @@ public class PeerHandler extends Thread {
 	public void run() {
 		try {
 			// initialisation des streams
-			boolean connect = false;
-			while (!connect) {
-				try {
-					socket = new Socket(peer.getIpAdress(), peer.getPort());
-					connect = true;
-				} catch (IOException e) {
-					connect = false;
-				}
-			}
+			initStreams();
+
 			System.out.println("Connection a " + peer.getIpAdress()
 					+ " reussie!");
-			input = new DataInputStream(socket.getInputStream());
-			output = new DataOutputStream(socket.getOutputStream());
 
 			// etablissement du Handshake
-			Handshake ourHS = new Handshake(peer, torrent);
-			ourHS.setReserved(new byte[] { (byte) 0, (byte) 0, (byte) 0,
-					(byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 16 });
-			ourHS.send(output);
-
-			Handshake theirHS = new Handshake(input);
+			boolean isCompatible = shakeHands();
 
 			// test si le handshake est compatible
-			if (theirHS.isCompatible(ourHS)) {
+			if (isCompatible) {
 
-				this.peer.setId(theirHS.getPeerID());
 				System.out.println("ID du pair : " + this.peer.getId());
 
 				// ecrire un bitfield au client pour lui indiquer quelles
 				// pieces on a
 				BitField bitField = new BitField(torrent);
+
 				synchronized (output) {
 					bitField.send(output);
 				}
 
+				this.messageReader = new MessageReader(input);
+
 				// demarrer le thread KeepAlive, qui envoie des messages
 				// KeepAlive toutes les 2 minutes
 				KeepAlive kA = new KeepAlive(output);
-				// kA.start();
-
-				this.messageReader = new MessageReader(this, input);
-				messageReader.start();
+				kA.start();
 
 				while (true) {
-					if (!aTraiter.isEmpty()) {
-						aTraiter.getFirst().accept(messageHandler);
-						aTraiter.removeFirst();
-					}
-					if (isChocking && !amInterested && !requetes.isEmpty()) {
-						synchronized (output) {
-							new Interested().send(output);
-							amInterested = true;
-						}
-
-					}
-					if (requetes.size() + requetesEnvoyee.size() <= 10
-							&& !hasNoPieces()) {
-
-						int index = pieceMgr
-								.getPieceOfInterest(peerPiecesIndex);
-						if (index != -1) {
-							int begin = torrent.getPieces()[index]
-									.getBlockOfInterest(this);
-							requetes.add(new Request(index, begin,
-									Piece.BLOCK_SIZE));
-						}
-
-					}
-					if (!aEnvoyer.isEmpty()) {
-						synchronized (output) {
-							aEnvoyer.getFirst().send(output);
-						}
-						aEnvoyer.removeFirst();
-					}
-					if (!isChocking && !requetes.isEmpty()) {
-						synchronized (output) {
-							requetes.getFirst().send(output);
-						}
-						requetesEnvoyee.addLast(requetes.getFirst());
-						requetes.removeFirst();
-					}
-
+					readMessages();
+					amMaybeInterested();
+					prepareRequest();
+					sendMessages();
 				}
 				// preparer des requetes (max 10 normalement)
 				/*
@@ -177,6 +122,11 @@ public class PeerHandler extends Thread {
 		this.isChocking = isChocking;
 	}
 
+	/**
+	 * ajoute une piece que le peer a
+	 * 
+	 * @param index
+	 */
 	public void addPeerPiece(int index) {
 		peerPiecesIndex[index] = true;
 	}
@@ -185,40 +135,170 @@ public class PeerHandler extends Thread {
 		return pieceMgr;
 	}
 
+	/**
+	 * initialise la liste des pieces que le peer a
+	 * 
+	 * @param peerPiecesIndex
+	 */
 	public void setPeerPiecesIndex(boolean[] peerPiecesIndex) {
 		for (int i = 0; i < this.peerPiecesIndex.length; i++) {
 			this.peerPiecesIndex[i] = peerPiecesIndex[i];
 		}
 	}
 
-	public void addATraiter(Message message) {
-		aTraiter.addLast(message);
-	}
-
+	/**
+	 * ajoute un message a envoyer
+	 * 
+	 * @param message
+	 */
 	public void addAEnvoer(Message message) {
 		aEnvoyer.addLast(message);
 	}
 
-	public void removeRequest(int index, int begin) {
+	/**
+	 * enleve une requete
+	 * 
+	 * @param index
+	 * @param begin
+	 */
+	public void removeRequest(Request requete) {
 		for (int i = 0; i < requetes.size(); i++) {
-			if ((requetes.get(i)).getBegin() == begin
-					&& requetes.get(i).getIndex() == index) {
+			if (requetes.get(i).equals(requete)) {
 				requetes.remove(i);
 			}
 		}
 		for (int i = 0; i < requetesEnvoyee.size(); i++) {
-			if ((requetesEnvoyee.get(i)).getBegin() == begin
-					&& requetesEnvoyee.get(i).getIndex() == index) {
+			if (requetes.get(i).equals(requete)) {
 				requetesEnvoyee.remove(i);
 			}
 		}
 	}
 
-	public boolean hasNoPieces() {
+	/**
+	 * verifie que le client a des pieces
+	 * 
+	 * @return
+	 */
+	private boolean hasNoPieces() {
 		boolean noPiece = true;
 		for (int i = 0; i < peerPiecesIndex.length; i++) {
 			noPiece = noPiece && !peerPiecesIndex[i];
 		}
 		return noPiece;
+	}
+
+	/**
+	 * initialise les streams
+	 */
+	private void initStreams() {
+
+		boolean connect = false;
+		while (!connect) {
+			if (socket == null) {
+
+				try {
+					socket = new Socket(peer.getIpAdress(), peer.getPort());
+					input = new DataInputStream(socket.getInputStream());
+					output = new DataOutputStream(socket.getOutputStream());
+					connect = true;
+				} catch (IOException e) {
+					connect = false;
+					socket = null;
+				}
+			} else {
+				try {
+					input = new DataInputStream(socket.getInputStream());
+					output = new DataOutputStream(socket.getOutputStream());
+					connect = true;
+				} catch (IOException e) {
+					connect = false;
+					socket = null;
+				}
+			}
+		}
+	}
+
+	/**
+	 * fais le handshake et teste s'il est correct
+	 * 
+	 * @return
+	 */
+	private boolean shakeHands() {
+		Handshake ourHS = new Handshake(peer, torrent);
+		ourHS.send(output);
+
+		Handshake theirHS = new Handshake(input);
+		this.peer.setId(theirHS.getPeerID());
+
+		return theirHS.isCompatible(ourHS);
+	}
+
+	/**
+	 * lis tous les messages entrants et les traites
+	 */
+	private void readMessages() {
+		try {
+			while (input.available() > 0) {
+
+				Message message = messageReader.readMessage();
+				if (message != null) {
+					message.accept(messageHandler);
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * prepare une reequete pour autant qu'il y en ai une a preparer oou qu'il y
+	 * ait moins de 10 requetes pendantes
+	 */
+	private void prepareRequest() {
+		if (requetes.size() + requetesEnvoyee.size() <= 10 && !hasNoPieces()) {
+			int index = -1;
+			synchronized (pieceMgr) {
+				index = pieceMgr.getPieceOfInterest(peerPiecesIndex);
+			}
+			if (index != -1) {
+				Piece wanted = torrent.getPieces()[index];
+				requetes.add(wanted.getBlockOfInterest(this));
+			}
+		}
+	}
+
+	/**
+	 * envoye un message de la queue de messages (s'il y en a ) et un
+	 * request(s'il y en a)
+	 */
+	private void sendMessages() {
+		if (!aEnvoyer.isEmpty()) {
+			synchronized (output) {
+				aEnvoyer.getFirst().send(output);
+			}
+			aEnvoyer.removeFirst();
+		}
+
+		if (!isChocking && !requetes.isEmpty()) {
+			synchronized (output) {
+				requetes.getFirst().send(output);
+			}
+			requetesEnvoyee.addLast(requetes.getFirst());
+			requetes.removeFirst();
+		}
+	}
+
+	/**
+	 * envoye un interested si le peer a des chose interessantes a donner et
+	 * qu'il nous choke
+	 */
+	private void amMaybeInterested() {
+		if (isChocking && !amInterested && !requetes.isEmpty()) {
+			synchronized (output) {
+				new Interested().send(output);
+				amInterested = true;
+			}
+
+		}
 	}
 }

@@ -36,14 +36,12 @@ public class PieceManager {
 
 	/**
 	 * Cette methode doit tout d abord tester si le torrent est complet. Si c
-	 * est pas le cas, on met
+	 * est pas le cas, on enleve les pieces completes des pieces a telecharger
 	 * 
-	 * @return index de la piece qu'on doit demander (int)
+	 * 
 	 */
 	public void updatePriorities() {
 		if (!torrent.isComplete()) {
-			// On enleve toutes les pieces quon vient de mettre dans la liste
-			// a telécharger
 			for (int i = 0; i < PiecesOfInterest.size(); i++) {
 				if (PiecesOfInterest.get(i).isComplete()) {
 					PiecesOfInterest.remove(i);
@@ -53,16 +51,16 @@ public class PieceManager {
 					}
 				}
 			}
-			// la on doit faire en sorte que la piece la moins demandee soit
-			// celle que nous on demande aux autres
-
 		}
 	}
 
-	public void feedPiece(int pieceIndex, byte[] bloc, int begin) {
-		torrent.getPieces()[pieceIndex].feed(begin, bloc);
-	}
-
+	/**
+	 * check si il y a une piece interessante dans les pieces que le peer a ,
+	 * sinon retourne l'index -1
+	 * 
+	 * @param peerPieceIndex
+	 * @return
+	 */
 	public int getPieceOfInterest(boolean[] peerPieceIndex) {
 		int index = 0;
 		boolean trouve = false;

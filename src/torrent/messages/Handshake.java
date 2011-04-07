@@ -3,13 +3,13 @@ package torrent.messages;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import torrent.Torrent;
 import torrent.peer.Peer;
 
 public class Handshake {
-	private Torrent torrent;
 	private byte pstrLength;
 	private byte[] infoHash, reserved, peerID;
 	private byte[] protocol;
@@ -17,10 +17,14 @@ public class Handshake {
 	public Handshake(Peer peer, Torrent torrent) {
 		protocol = "BitTorrent protocol".getBytes();
 		pstrLength = (byte) protocol.length;
-		this.torrent = torrent;
 		infoHash = torrent.getMetainfo().getInfoHash().binaryHash();
 		reserved = new byte[8];
-		peerID = peer.getId().getBytes();
+		try {
+			peerID = peer.getId().getBytes("ASCII");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	public Handshake(DataInputStream input) {
@@ -79,23 +83,7 @@ public class Handshake {
 		}
 	}
 
-	public byte getPstrLength() {
-		return pstrLength;
-	}
-
 	public byte[] getPeerID() {
 		return peerID;
-	}
-
-	public byte[] getProtocol() {
-		return protocol;
-	}
-
-	public byte[] getInfoHash() {
-		return infoHash;
-	}
-
-	public byte[] getReserved() {
-		return reserved;
 	}
 }
