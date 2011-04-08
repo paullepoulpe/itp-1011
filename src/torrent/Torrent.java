@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import torrent.peer.Peer;
+import torrent.peer.PeerAccepter;
 import torrent.peer.PeerIDGenerator;
 import torrent.piece.*;
 import torrent.tracker.TrackerInfo;
@@ -29,7 +30,8 @@ public class Torrent {
 		this.peerList = new ArrayList<Peer>();
 		System.out.println(this.metainfo);
 		this.pieces = new Piece[(int) (Math.ceil(((double) this.metainfo
-				.getSize()) / ((double) this.metainfo.getPieceLength())))];
+				.getSize())
+				/ ((double) this.metainfo.getPieceLength())))];
 		for (int i = 0; i < this.pieces.length; i++) {
 			byte[] pieceHash = new byte[20];
 			for (int j = 0; j < pieceHash.length; j++) {
@@ -60,6 +62,7 @@ public class Torrent {
 			trackers.add(new TrackerInfo(trackersUrl.get(i), this));
 			trackers.get(i).start();
 		}
+		new PeerAccepter(this.numPort, this);
 
 	}
 

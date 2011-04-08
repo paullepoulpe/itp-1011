@@ -14,7 +14,7 @@ public class Choke extends Message {
 	@Override
 	public void send(DataOutputStream output) {
 		try {
-			output.write((int) 1);
+			output.writeInt(1);
 			output.writeByte(0);
 			System.out.println("Sent Choke");
 		} catch (IOException e) {

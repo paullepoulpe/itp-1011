@@ -33,11 +33,11 @@ public class Request extends Message {
 	@Override
 	public void send(DataOutputStream output) {
 		try {
-			output.write(13);
+			output.writeInt(13);
 			output.writeByte(6);
-			output.write(index);
-			output.write(begin);
-			output.write(length);
+			output.writeInt(index);
+			output.writeInt(begin);
+			output.writeInt(length);
 			System.out.println("Sent Request");
 		} catch (IOException e) {
 			e.printStackTrace();
