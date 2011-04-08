@@ -24,9 +24,9 @@ public class Have extends Message {
 	@Override
 	public void send(DataOutputStream output) {
 		try {
-			output.write((int) 5);
+			output.writeInt(5);
 			output.writeByte(4);
-			output.write((int) pieceIndex);
+			output.writeInt(pieceIndex);
 			System.out.println("Sent Have");
 		} catch (IOException e) {
 			e.printStackTrace();

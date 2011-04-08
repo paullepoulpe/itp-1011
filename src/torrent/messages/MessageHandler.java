@@ -62,7 +62,7 @@ public class MessageHandler implements MessageVisitor {
 		// DONE
 		peerHandler.addPeerPiece(h.getPieceIndex());
 
-		System.out.println("Recu Have piece : " + h.getPieceIndex());
+		// System.out.println("Recu Have piece : " + h.getPieceIndex());
 
 	}
 

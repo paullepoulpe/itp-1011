@@ -1,6 +1,7 @@
 package torrent.peer;
 
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.UnknownHostException;
 import torrent.Torrent;
 
@@ -23,6 +24,11 @@ public class Peer {
 		this.peerHandler = new PeerHandler(this, torrent);
 		peerHandler.start();
 
+	}
+
+	public Peer(Socket socket, Torrent torrent) {
+		this.peerHandler = new PeerHandler(socket, torrent);
+		peerHandler.run();
 	}
 
 	public String toString() {
@@ -60,5 +66,14 @@ public class Peer {
 
 	public void runPeerHandler() {
 		peerHandler.start();
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+
+	}
+
+	public void setInet(InetAddress inetAddress) {
+		this.ipAdress = inetAddress;
 	}
 }

@@ -47,6 +47,22 @@ public class PeerHandler extends Thread {
 
 	}
 
+	public PeerHandler(Socket socket, Torrent torrent) {
+		this.socket = socket;
+		this.messageHandler = new MessageHandler(this, torrent);
+		this.peerPiecesIndex = new boolean[torrent.getPieces().length];
+		this.aEnvoyer = new LinkedList<Message>();
+		this.requetes = new LinkedList<Request>();
+		this.requetesEnvoyee = new LinkedList<Request>();
+		this.torrent = torrent;
+		this.amChocking = true;
+		this.amInterested = false;
+		this.isChocking = true;
+		this.isInterested = false;
+		this.pieceMgr = torrent.getPieceManager();
+
+	}
+
 	public void run() {
 		try {
 			// initialisation des streams
@@ -102,6 +118,8 @@ public class PeerHandler extends Thread {
 				input.close();
 				output.close();
 				socket.close();
+				System.out.println("Peer deconnecté");
+				this.interrupt();
 				// il faut arreter lexecution du thread
 			}
 
@@ -214,6 +232,8 @@ public class PeerHandler extends Thread {
 				try {
 					input = new DataInputStream(socket.getInputStream());
 					output = new DataOutputStream(socket.getOutputStream());
+					this.peer.setPort(socket.getPort());
+					this.peer.setInet(socket.getInetAddress());
 					connect = true;
 				} catch (IOException e) {
 					connect = false;
@@ -240,6 +260,7 @@ public class PeerHandler extends Thread {
 	private boolean shakeHands() {
 		Handshake ourHS = new Handshake(peer, torrent);
 		ourHS.send(output);
+		System.out.println("sent Handshake");
 
 		Handshake theirHS = new Handshake(input);
 		this.peer.setId(theirHS.getPeerID());

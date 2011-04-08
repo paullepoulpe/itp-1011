@@ -11,8 +11,7 @@ import torrent.Torrent;
 
 public class TorrentTest {
 	public static void main(String[] args) {
-		Torrent myTorrent = new Torrent(new File("data/unixsoft2.torrent"));
+		Torrent myTorrent = new Torrent(new File("data/eminem.torrent"));
 		myTorrent.massAnnounce();
-
 	}
 }

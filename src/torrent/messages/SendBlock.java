@@ -32,10 +32,10 @@ public class SendBlock extends Message {
 	@Override
 	public void send(DataOutputStream output) {
 		try {
-			output.write(9 + bloc.length);
+			output.writeInt(9 + bloc.length);
 			output.writeByte(7);
-			output.write(pieceIndex);
-			output.write(blocIndex);
+			output.writeInt(pieceIndex);
+			output.writeInt(blocIndex);
 			output.write(bloc);
 			System.out.println("Sent SendBlock");
 		} catch (IOException e) {
