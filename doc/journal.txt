@@ -50,3 +50,7 @@
 07.03.2011
 -Les peers nous font des handshake, et nous envoie des have et des bitfield, mais on ne recoit pour le moment aucun unchoke!
 -On fait les test avec des torrent autres que celui du cours car les clients locaux veulent absolument nous envoyer des message avec un id=10.
+09.03.2011
+-En faisant une classe de test pour les messages, on s'est rendu compte que dans les handshake on envoyait l'id du peer au lieu du notre, d'ou l'absence de unchoke!
+-On telecharge nos premiers blocs ! HOURRA!!!!
+-Le MessageTest tourne sans problème, les classes messages ont toutes l'air de bien fonctionner.
