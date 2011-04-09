@@ -2,6 +2,7 @@ package torrent.messages;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class SendBlock extends Message {
 	private int pieceIndex, blocIndex;
@@ -42,5 +43,11 @@ public class SendBlock extends Message {
 			e.printStackTrace();
 		}
 
+	}
+
+	public boolean equals(SendBlock otherSendBlock) {
+		return otherSendBlock.pieceIndex == this.pieceIndex
+				&& otherSendBlock.blocIndex == this.blocIndex
+				&& Arrays.equals(otherSendBlock.bloc, this.bloc);
 	}
 }

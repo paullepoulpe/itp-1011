@@ -258,7 +258,7 @@ public class PeerHandler extends Thread {
 	 * @return
 	 */
 	private boolean shakeHands() {
-		Handshake ourHS = new Handshake(peer, torrent);
+		Handshake ourHS = new Handshake(torrent);
 		ourHS.send(output);
 		System.out.println("sent Handshake");
 

@@ -3,6 +3,7 @@ package torrent.messages;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import torrent.Torrent;
 import torrent.piece.Piece;
@@ -86,5 +87,9 @@ public class BitField extends Message {
 			System.out.println("Sent noBitfield");
 		}
 
+	}
+
+	public boolean equals(BitField otherBitField) {
+		return Arrays.equals(this.posessedPieces, otherBitField.posessedPieces);
 	}
 }

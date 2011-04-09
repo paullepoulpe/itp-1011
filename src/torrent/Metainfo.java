@@ -209,4 +209,12 @@ public class Metainfo {
 		return pieceLength;
 	}
 
+	public String getComment() {
+		return comment;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
 }
