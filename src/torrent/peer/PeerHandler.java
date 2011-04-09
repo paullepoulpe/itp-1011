@@ -190,6 +190,7 @@ public class PeerHandler extends Thread {
 	public void removeRequest(Request requete) {
 		for (int i = 0; i < requetes.size(); i++) {
 			if (requetes.get(i).equals(requete)) {
+				System.out.println("Removed");
 				requetes.remove(i);
 			}
 		}

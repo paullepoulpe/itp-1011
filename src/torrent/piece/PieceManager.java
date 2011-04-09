@@ -14,7 +14,7 @@ import torrent.Torrent;
  */
 public class PieceManager {
 	private LinkedList<Piece> PiecesOfInterest, allPieces;
-	final static int MAX_NUM_OF_PIECES = 100;
+	final static int MAX_NUM_OF_PIECES = 3;
 	private Torrent torrent;
 
 	public PieceManager(Torrent torrent) {
