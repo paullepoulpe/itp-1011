@@ -19,7 +19,7 @@ public class TorrentTest extends Thread {
 		while (true) {
 			myTorrent.massAnnounce();
 			try {
-				sleep(300000);
+				sleep(180000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
