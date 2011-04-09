@@ -92,7 +92,7 @@ public class PeerHandler extends Thread {
 				// demarrer le thread KeepAlive, qui envoie des messages
 				// KeepAlive toutes les 2 minutes
 				KeepAlive kA = new KeepAlive(output);
-				// kA.start();
+				kA.start();
 				while (true) {
 					readMessages();
 					amMaybeInterested();

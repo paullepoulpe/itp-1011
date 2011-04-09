@@ -55,7 +55,7 @@ public class BitField extends Message {
 	}
 
 	public void send(DataOutputStream output) {
-		if (true/* !noPieces */) {
+		if (!noPieces) {
 			try {
 				ArrayList<String> request = new ArrayList<String>();
 				output.writeInt(1 + (int) Math
@@ -91,5 +91,9 @@ public class BitField extends Message {
 
 	public boolean equals(BitField otherBitField) {
 		return Arrays.equals(this.posessedPieces, otherBitField.posessedPieces);
+	}
+
+	public boolean hasNoPieces() {
+		return noPieces;
 	}
 }

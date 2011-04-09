@@ -79,9 +79,15 @@ public class MessageTest {
 				"data/LePetitPrince.torrent")));
 		envoi.send(myPipe.getOutput());
 
-		Message recu = new MessageReader(myPipe.getInput()).readMessage();
-		assertEquals(envoi.getClass(), recu.getClass());
-		assertTrue(envoi.equals((BitField) recu));
+		try {
+			Message recu = new MessageReader(myPipe.getInput()).readMessage();
+			assertEquals(envoi.getClass(), recu.getClass());
+			assertTrue(envoi.equals((BitField) recu));
+			assertFalse(envoi.hasNoPieces());
+		} catch (Exception e) {
+			assertTrue(envoi.hasNoPieces());
+		}
+
 	}
 
 	@Test
