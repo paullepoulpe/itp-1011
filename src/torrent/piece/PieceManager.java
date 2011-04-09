@@ -63,14 +63,16 @@ public class PieceManager {
 	 */
 	public int getPieceOfInterest(boolean[] peerPieceIndex) {
 		int index = 0;
-		boolean trouve = false;
-		for (int i = 0; i < PiecesOfInterest.size() && !trouve; i++) {
-			index = PiecesOfInterest.get(i).getIndex();
-			if (peerPieceIndex[index]) {
-				trouve = true;
+		int minDemandes = Integer.MAX_VALUE;
+		for (int i = 0; i < PiecesOfInterest.size(); i++) {
+			if (PiecesOfInterest.get(i).getNbDemandes() < minDemandes
+					&& peerPieceIndex[index]) {
+				index = PiecesOfInterest.get(i).getIndex();
+				minDemandes = PiecesOfInterest.get(i).getNbDemandes();
 			}
+
 		}
-		if (trouve) {
+		if (minDemandes < Integer.MAX_VALUE) {
 			return index;
 		} else {
 			return -1;

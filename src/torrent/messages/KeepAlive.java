@@ -21,16 +21,15 @@ public class KeepAlive extends Thread {
 				if ((time - lastsent) > 100000) {
 					synchronized (out) {
 						out.write(b);
-						System.out.println("Sent KeepAlive");
 					}
 					lastsent = System.currentTimeMillis();
 				}
 				yield();
 				sleep(1000);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				this.interrupt();
 			} catch (IOException e) {
-				e.printStackTrace();
+				this.interrupt();
 			}
 		}
 

@@ -57,13 +57,9 @@ public class BitField extends Message {
 	public void send(DataOutputStream output) {
 		if (!noPieces) {
 			try {
-				ArrayList<String> request = new ArrayList<String>();
 				output.writeInt(1 + (int) Math
 						.ceil(posessedPieces.length / 8.0));
-				request.add(1 + (int) Math.ceil(posessedPieces.length / 8.0)
-						+ "");
-				output.writeByte(5);
-				request.add("" + 5);
+
 				for (int i = 0; i < Math.ceil(posessedPieces.length / 8.0); i++) {
 					byte bits = 0;
 					for (int j = 0; j < 8; j++) {
@@ -75,16 +71,12 @@ public class BitField extends Message {
 						bits <<= 1;
 					}
 					output.writeByte(bits);
-					request.add(bits + "");
 				}
 				output.flush();
-				// System.out.println(request.toString());
-				System.out.println("Sent Bitfield");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else {
-			System.out.println("Sent noBitfield");
 		}
 
 	}
