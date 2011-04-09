@@ -9,9 +9,21 @@ import java.io.File;
 
 import torrent.Torrent;
 
-public class TorrentTest {
+public class TorrentTest extends Thread {
 	public static void main(String[] args) {
-		Torrent myTorrent = new Torrent(new File("data/eminem.torrent"));
-		myTorrent.massAnnounce();
+		new TorrentTest().start();
+	}
+
+	public void run() {
+		Torrent myTorrent = new Torrent(new File("data/G6.torrent"));
+		while (true) {
+			myTorrent.massAnnounce();
+			try {
+				sleep(300000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
 	}
 }

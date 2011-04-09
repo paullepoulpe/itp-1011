@@ -107,7 +107,8 @@ public class MessageHandler implements MessageVisitor {
 		if (torrent.isComplete()) {
 			torrent.writeToFile();
 		}
-		System.out.println("Recu bloc : " + s.getBlocIndex() + " de la Piece :"
+		System.out.println("Recu bloc : "
+				+ (s.getBlocIndex() / Piece.BLOCK_SIZE) + " de la Piece :"
 				+ s.getPieceIndex());
 
 	}

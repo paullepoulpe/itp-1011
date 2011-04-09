@@ -191,7 +191,7 @@ public class PeerHandler extends Thread {
 			}
 		}
 		for (int i = 0; i < requetesEnvoyee.size(); i++) {
-			if (requetes.get(i).equals(requete)) {
+			if (requetesEnvoyee.get(i).equals(requete)) {
 				requetesEnvoyee.remove(i);
 			}
 		}
@@ -260,7 +260,6 @@ public class PeerHandler extends Thread {
 	private boolean shakeHands() {
 		Handshake ourHS = new Handshake(torrent);
 		ourHS.send(output);
-		System.out.println("sent Handshake");
 
 		Handshake theirHS = new Handshake(input);
 		this.peer.setId(theirHS.getPeerID());

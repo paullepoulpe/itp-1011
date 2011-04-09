@@ -36,7 +36,6 @@ public class Request extends Message {
 			output.writeInt(index);
 			output.writeInt(begin);
 			output.writeInt(length);
-			System.out.println("Sent Request");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
