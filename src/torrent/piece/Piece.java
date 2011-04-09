@@ -108,18 +108,21 @@ public class Piece {
 
 			}
 
-			receipt[begin / BLOCK_SIZE] = true;
-			for (int i = 0; i < bloc.length; i++, begin++) {
-				this.data[begin] = bloc[i];
-			}
-
 			ArrayList<PeerHandler> pendingRequests = peerHandlers.get(begin
 					/ BLOCK_SIZE);
+
 			for (int i = 0; i < pendingRequests.size(); i++) {
 				pendingRequests.get(i).removeRequest(
 						new Request(index, begin, bloc.length));
 			}
+			
 			pendingRequests.removeAll(pendingRequests);
+
+			receipt[begin / BLOCK_SIZE] = true;
+
+			for (int i = 0; i < bloc.length; i++, begin++) {
+				this.data[begin] = bloc[i];
+			}
 
 			if (this.isComplete()) {
 				this.check();
@@ -227,6 +230,7 @@ public class Piece {
 		Request requete = new Request(this.index, blocIndex * BLOCK_SIZE,
 				blocSize);
 		peerHandlers.get(blocIndex).add(peerHandler);
+
 		return requete;
 	}
 

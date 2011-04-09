@@ -124,7 +124,8 @@ public class PeerHandler extends Thread {
 			}
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Peer deconnecté");
+			this.interrupt();
 		}
 
 	}
@@ -289,6 +290,8 @@ public class PeerHandler extends Thread {
 	 * ait moins de 10 requetes pendantes
 	 */
 	private void prepareRequest() {
+		// System.out.println(requetes.size() + requetesEnvoyee.size()
+		// + " requetes");
 		if (requetes.size() + requetesEnvoyee.size() <= 10 && !hasNoPieces()) {
 			int index = -1;
 			synchronized (pieceMgr) {
