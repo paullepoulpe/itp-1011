@@ -7,20 +7,19 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import torrent.Torrent;
-import torrent.peer.Peer;
 
 public class Handshake {
 	private byte pstrLength;
 	private byte[] infoHash, reserved, peerID;
 	private byte[] protocol;
 
-	public Handshake(Peer peer, Torrent torrent) {
+	public Handshake(Torrent torrent) {
 		protocol = "BitTorrent protocol".getBytes();
 		pstrLength = (byte) protocol.length;
 		infoHash = torrent.getMetainfo().getInfoHash().binaryHash();
 		reserved = new byte[8];
 		try {
-			peerID = peer.getId().getBytes("ASCII");
+			peerID = Torrent.PEER_ID.getBytes("ASCII");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
@@ -85,5 +84,13 @@ public class Handshake {
 
 	public byte[] getPeerID() {
 		return peerID;
+	}
+
+	public boolean equals(Handshake otherHandshake) {
+		return this.pstrLength == otherHandshake.pstrLength
+				&& Arrays.equals(this.infoHash, otherHandshake.infoHash)
+				&& Arrays.equals(this.reserved, otherHandshake.reserved)
+				&& Arrays.equals(this.peerID, otherHandshake.peerID)
+				&& Arrays.equals(this.protocol, otherHandshake.protocol);
 	}
 }

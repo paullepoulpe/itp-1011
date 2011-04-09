@@ -33,4 +33,8 @@ public class Have extends Message {
 		}
 
 	}
+
+	public boolean equals(Have otherHave) {
+		return this.pieceIndex == otherHave.pieceIndex;
+	}
 }

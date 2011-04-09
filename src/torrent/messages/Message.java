@@ -11,4 +11,5 @@ public abstract class Message {
 	abstract public void accept(MessageVisitor v);
 
 	abstract public void send(DataOutputStream output);
+
 }

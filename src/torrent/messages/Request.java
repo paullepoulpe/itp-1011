@@ -3,8 +3,6 @@ package torrent.messages;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import com.sun.org.apache.xpath.internal.operations.Equals;
-
 public class Request extends Message {
 	private int index, begin, length;
 
@@ -47,6 +45,7 @@ public class Request extends Message {
 
 	public boolean equals(Request otherRequest) {
 		return otherRequest.begin == this.begin
-				&& otherRequest.index == this.index;
+				&& otherRequest.index == this.index
+				&& otherRequest.length == this.length;
 	}
 }
