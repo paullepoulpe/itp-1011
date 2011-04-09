@@ -16,14 +16,14 @@ public class TorrentTest extends Thread {
 
 	public void run() {
 		Torrent myTorrent = new Torrent(new File("data/G6.torrent"));
-		while (true) {
+//		while (true) {
 			myTorrent.massAnnounce();
-			try {
-				sleep(180000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		// try {
+		// sleep(180000);
+		// } catch (InterruptedException e) {
+		// e.printStackTrace();
+		// }
+		// }
 
 	}
 }

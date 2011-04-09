@@ -30,6 +30,7 @@ public class PeerHandler extends Thread {
 	private boolean amInterested;
 	private boolean isChocking;
 	private boolean isInterested;
+	private long lastTimeFlush;
 
 	public PeerHandler(Peer peer, Torrent torrent) {
 		this.peer = peer;
@@ -93,6 +94,7 @@ public class PeerHandler extends Thread {
 				// KeepAlive toutes les 2 minutes
 				KeepAlive kA = new KeepAlive(output);
 				kA.start();
+				lastTimeFlush = System.currentTimeMillis();
 				while (true) {
 					readMessages();
 					amMaybeInterested();
@@ -290,8 +292,6 @@ public class PeerHandler extends Thread {
 	 * ait moins de 10 requetes pendantes
 	 */
 	private void prepareRequest() {
-		// System.out.println(requetes.size() + requetesEnvoyee.size()
-		// + " requetes");
 		if (requetes.size() + requetesEnvoyee.size() <= 10 && !hasNoPieces()) {
 			int index = -1;
 			synchronized (pieceMgr) {
@@ -301,6 +301,15 @@ public class PeerHandler extends Thread {
 				Piece wanted = torrent.getPieces()[index];
 				requetes.add(wanted.getBlockOfInterest(this));
 			}
+		} else if (requetesEnvoyee.size() == 11) {
+			long thisTime = System.currentTimeMillis();
+			if ((thisTime - lastTimeFlush) > 10000) {
+				System.out.println(requetesEnvoyee.size());
+				System.out.println("Fluuuuuuuuuuuuuuuuuuuuuush");
+				requetesEnvoyee.removeAll(requetesEnvoyee);
+				System.out.println(requetesEnvoyee.size());
+			}
+			lastTimeFlush = thisTime;
 		}
 	}
 
