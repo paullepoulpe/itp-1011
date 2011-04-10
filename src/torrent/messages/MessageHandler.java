@@ -104,9 +104,6 @@ public class MessageHandler implements MessageVisitor {
 		synchronized (peerHandler) {
 			peerHandler.getPieceMgr().updatePriorities();
 		}
-		if (torrent.isComplete()) {
-			torrent.writeToFile();
-		}
 		System.out.println("Recu bloc : "
 				+ (s.getBlocIndex() / Piece.BLOCK_SIZE) + " de la Piece :"
 				+ s.getPieceIndex());
