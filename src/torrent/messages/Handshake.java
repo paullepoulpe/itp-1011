@@ -86,6 +86,10 @@ public class Handshake {
 		return peerID;
 	}
 
+	public byte[] getReserved() {
+		return reserved;
+	}
+
 	public boolean equals(Handshake otherHandshake) {
 		return this.pstrLength == otherHandshake.pstrLength
 				&& Arrays.equals(this.infoHash, otherHandshake.infoHash)
