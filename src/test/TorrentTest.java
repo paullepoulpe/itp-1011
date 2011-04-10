@@ -15,15 +15,15 @@ public class TorrentTest extends Thread {
 	}
 
 	public void run() {
-		Torrent myTorrent = new Torrent(new File("data/BEP.torrent"));
-		while (true) {
+		Torrent myTorrent = new Torrent(new File("data/mariacarree.torrent"));
+		// while (true) {
 			myTorrent.massAnnounce();
-			try {
-				sleep(300000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+//			try {
+//				sleep(300000);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//		}
 
 	}
 }

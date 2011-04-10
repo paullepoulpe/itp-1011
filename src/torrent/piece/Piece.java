@@ -46,7 +46,7 @@ public class Piece {
 	 * @return Tableau de bytes representant les donnees
 	 */
 	public byte[] getData() {
-		if (this.check()) {
+		if (isChecked) {
 			return data;
 		} else {
 			return null;
@@ -105,8 +105,11 @@ public class Piece {
 
 			for (int i = 0; i < peerHandlers.get(begin / BLOCK_SIZE).size(); i++) {
 				synchronized (peerHandlers.get(begin / BLOCK_SIZE).get(i)) {
-					peerHandlers.get(begin / BLOCK_SIZE).get(i).removeRequest(
-							new Request(index, begin, bloc.length));
+					peerHandlers
+							.get(begin / BLOCK_SIZE)
+							.get(i)
+							.removeRequest(
+									new Request(index, begin, bloc.length));
 				}
 
 			}
