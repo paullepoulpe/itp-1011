@@ -65,8 +65,8 @@ public class Torrent {
 
 	}
 
-	public int getDownloadedCompleteness() {
-		int downloadedCompleteness = 0;
+	public double getDownloadedCompleteness() {
+		double downloadedCompleteness = 0;
 		for (int i = 0; i < this.pieces.length; i++) {
 			downloadedCompleteness += this.pieces[i].getDownloadCompleteness();
 		}
