@@ -22,7 +22,7 @@ public class MessageReader {
 	 * 
 	 * @return
 	 */
-	public Message readMessage() {
+	public Message readMessage() throws IOException {
 		Message message = null;
 		int lengthMess = 0;
 		byte id;
@@ -99,7 +99,7 @@ public class MessageReader {
 
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw e;
 		}
 		return message;
 

@@ -2,7 +2,6 @@ package torrent.messages;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import torrent.Torrent;
@@ -54,7 +53,7 @@ public class BitField extends Message {
 		v.visit(this);
 	}
 
-	public void send(DataOutputStream output) {
+	public void send(DataOutputStream output) throws IOException {
 		if (!noPieces) {
 			try {
 				output.writeInt(1 + (int) Math
@@ -74,7 +73,7 @@ public class BitField extends Message {
 				}
 				output.flush();
 			} catch (IOException e) {
-				e.printStackTrace();
+				throw e;
 			}
 		} else {
 		}

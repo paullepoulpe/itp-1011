@@ -3,11 +3,6 @@ package torrent.piece;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
-
-import sun.security.util.PendingException;
 import torrent.messages.Request;
 import torrent.peer.PeerHandler;
 
@@ -115,7 +110,7 @@ public class Piece {
 				pendingRequests.get(i).removeRequest(
 						new Request(index, begin, bloc.length));
 			}
-			
+
 			pendingRequests.removeAll(pendingRequests);
 
 			receipt[begin / BLOCK_SIZE] = true;
@@ -169,6 +164,8 @@ public class Piece {
 				}
 			}
 			this.isChecked = true;
+			System.out.println("Piece " + index
+					+ " recue completement !!!!!!!!!!!");
 			return true;
 		}
 		this.reset();
@@ -225,7 +222,7 @@ public class Piece {
 		}
 		int blocSize = BLOCK_SIZE;
 		if (blocIndex == nbBlocs - 1) {
-			blocSize = sizeTab - blocIndex * 8;
+			blocSize = sizeTab - (blocIndex * BLOCK_SIZE);
 		}
 		Request requete = new Request(this.index, blocIndex * BLOCK_SIZE,
 				blocSize);

@@ -29,7 +29,7 @@ public class Request extends Message {
 	}
 
 	@Override
-	public void send(DataOutputStream output) {
+	public void send(DataOutputStream output) throws IOException {
 		try {
 			output.writeInt(13);
 			output.writeByte(6);
@@ -37,7 +37,7 @@ public class Request extends Message {
 			output.writeInt(begin);
 			output.writeInt(length);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw e;
 		}
 
 	}

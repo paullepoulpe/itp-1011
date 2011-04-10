@@ -55,7 +55,7 @@ public class TrackerInfo extends Thread {
 		query.add("left", torrent.getMetainfo().getSize() + "");
 		query.add("compact", "1");
 		query.add("event", "started");
-		query.add("numwant", "50");
+		query.add("numwant", "80");
 		try {
 			this.info = new AnnounceInfo(query.get());
 		} catch (FailureReasonExeption e) {
