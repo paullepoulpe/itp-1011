@@ -101,14 +101,15 @@ public class Torrent {
 
 	public boolean writeToFile() {
 		if (isComplete() && !writtenOnFile) {
-			File file = new File(System.getProperty("user.home"), "Downloads"
-					+ File.separator + this.numPort + "_suffix_"
-					+ metainfo.getFileName());
 
-			if (this.isComplete()) {
-				DataOutputStream lecteur = null;
+			if (!this.metainfo.isMultifile()) {
+				File file = new File(System.getProperty("user.home"),
+						"Downloads" + File.separator + this.numPort
+								+ "_suffix_" + metainfo.getFileName());
+
+				DataOutputStream ecrivain = null;
 				try {
-					lecteur = new DataOutputStream(new FileOutputStream(file));
+					ecrivain = new DataOutputStream(new FileOutputStream(file));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -116,7 +117,7 @@ public class Torrent {
 					if (pieces[i].getData() == null) {
 						try {
 							for (int j = 0; j < pieces[i].getSizeTab(); i++) {
-								lecteur.write(0);
+								ecrivain.write(0);
 							}
 
 						} catch (IOException e) {
@@ -124,7 +125,7 @@ public class Torrent {
 						}
 					} else {
 						try {
-							lecteur.write(pieces[i].getData());
+							ecrivain.write(pieces[i].getData());
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
@@ -132,17 +133,85 @@ public class Torrent {
 
 				}
 				try {
-					lecteur.close();
+					ecrivain.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				writtenOnFile = true;
 				System.out.println("Fichier ecrit dans "
-						+ System.getProperty("user.home") + "Downloads");
+						+ System.getProperty("user.home") + File.separator
+						+ "Downloads");
 				System.exit(0);
 				return true;
+
 			} else {
-				return false;
+				DataOutputStream ecrivain = null;
+				ArrayList<String[]> filesPath = metainfo.getFilesPath();
+				int[] filesSize = metainfo.getFilesLength();
+				int lastStopPiece = 0;
+				int lastStopBegin = 0;
+				for (int i = 0; i < filesPath.size(); i++) {
+					int currentStopPiece = 0;
+					int currentStopBegin = 0;
+					String path = metainfo.getFileName();
+					for (int j = 0; j < filesPath.get(i).length; j++) {
+						path = path + File.separator + filesPath.get(i)[j];
+					}
+					File file = new File(System.getProperty("user.home"),
+							"Downloads" + File.separator + path);
+					try {
+						ecrivain = new DataOutputStream(new FileOutputStream(
+								file));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					int currentFileSize = 0;
+					for (int j = lastStopPiece; j < pieces.length
+							&& currentFileSize < filesSize[i]; j++) {
+
+						byte[] currentData = pieces[j].getData();
+
+						if (j == lastStopPiece) {
+
+							for (int k = lastStopBegin; k < pieces[j]
+									.getSizeTab()
+									&& currentFileSize < filesSize[i]; k++, currentFileSize++) {
+								try {
+									ecrivain.writeByte(currentData[k]);
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+								currentStopBegin = k;
+							}
+
+						} else {
+
+							for (int k = 0; k < pieces[j].getSizeTab()
+									&& currentFileSize < filesSize[i]; k++, currentFileSize++) {
+								try {
+									ecrivain.writeByte(currentData[k]);
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+								currentStopBegin = k;
+							}
+						}
+						currentStopPiece = j;
+
+					}
+					lastStopBegin = currentStopBegin;
+					lastStopPiece = currentStopPiece;
+					try {
+						ecrivain.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				writtenOnFile = true;
+				System.out.println("Fichiers ecrit dans "
+						+ System.getProperty("user.home") + File.separator
+						+ "Downloads");
+				System.exit(0);
 			}
 		}
 		return false;

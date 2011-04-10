@@ -217,4 +217,12 @@ public class Metainfo {
 		return createdBy;
 	}
 
+	public int[] getFilesLength() {
+		return filesLength;
+	}
+
+	public ArrayList<String[]> getFilesPath() {
+		return FilesPath;
+	}
+
 }
