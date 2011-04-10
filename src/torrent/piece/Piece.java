@@ -66,7 +66,7 @@ public class Piece {
 				received++;
 			}
 		}
-		return ((double)received * 100) / nbBlocs;
+		return ((double) received * 100) / nbBlocs;
 	}
 
 	/**
@@ -103,18 +103,18 @@ public class Piece {
 
 			}
 
-			ArrayList<PeerHandler> pendingRequests = peerHandlers.get(begin
-					/ BLOCK_SIZE);
-
-			for (int i = 0; i < pendingRequests.size(); i++) {
-				synchronized (pendingRequests.get(i)) {
-					pendingRequests.get(i).removeRequest(
-							new Request(index, begin, bloc.length));
+			for (int i = 0; i < peerHandlers.get(begin / BLOCK_SIZE).size(); i++) {
+				synchronized (peerHandlers.get(begin / BLOCK_SIZE).get(i)) {
+					peerHandlers
+							.get(begin / BLOCK_SIZE)
+							.get(i)
+							.removeRequest(
+									new Request(index, begin, bloc.length));
 				}
 
 			}
 
-			pendingRequests.removeAll(pendingRequests);
+			peerHandlers.get(begin / BLOCK_SIZE).clear();
 
 			receipt[begin / BLOCK_SIZE] = true;
 

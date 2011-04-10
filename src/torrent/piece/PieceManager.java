@@ -51,10 +51,14 @@ public class PieceManager {
 					}
 				}
 			}
+			System.out.println((int) Math.round(torrent
+					.getDownloadedCompleteness() * 100)
+					/ 100.0
+					+ " %....................");
+		} else {
+			torrent.writeToFile();
 		}
-		System.out
-				.println((int) Math.round(torrent.getDownloadedCompleteness() * 100)
-						/ 100.0 + " %....................");
+
 	}
 
 	/**

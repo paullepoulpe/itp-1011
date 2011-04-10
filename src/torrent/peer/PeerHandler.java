@@ -31,7 +31,7 @@ public class PeerHandler extends Thread {
 	private boolean isChocking;
 	private boolean isInterested;
 	private long lastTimeFlush;
-	private static int requestRestrictions = 20;
+	private static int requestRestrictions = 12;
 
 	public PeerHandler(Peer peer, Torrent torrent) {
 		this.peer = peer;
@@ -280,7 +280,7 @@ public class PeerHandler extends Thread {
 
 			Message message = messageReader.readMessage();
 			if (message != null) {
-				synchronized (torrent) {
+				synchronized (messageHandler) {
 					message.accept(messageHandler);
 				}
 			}
@@ -306,7 +306,7 @@ public class PeerHandler extends Thread {
 		} else if (requetesEnvoyee.size() == requestRestrictions) {
 			long thisTime = System.currentTimeMillis();
 			if ((thisTime - lastTimeFlush) > 10000) {
-				requetesEnvoyee.removeAll(requetesEnvoyee);
+				requetesEnvoyee.clear();
 			}
 			lastTimeFlush = thisTime;
 		}

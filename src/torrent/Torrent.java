@@ -109,6 +109,7 @@ public class Torrent {
 
 				DataOutputStream ecrivain = null;
 				try {
+					file.createNewFile();
 					ecrivain = new DataOutputStream(new FileOutputStream(file));
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -153,13 +154,20 @@ public class Torrent {
 				for (int i = 0; i < filesPath.size(); i++) {
 					int currentStopPiece = 0;
 					int currentStopBegin = 0;
-					String path = metainfo.getFileName();
+
+					String path = System.getProperty("user.home")
+							+ File.separator + "Downloads" + File.separator
+							+ metainfo.getFileName();
+
 					for (int j = 0; j < filesPath.get(i).length; j++) {
 						path = path + File.separator + filesPath.get(i)[j];
 					}
-					File file = new File(System.getProperty("user.home"),
-							"Downloads" + File.separator + path);
+
+					File file = new File(path);
+					file.mkdirs();
+
 					try {
+						file.createNewFile();
 						ecrivain = new DataOutputStream(new FileOutputStream(
 								file));
 					} catch (IOException e) {
