@@ -59,14 +59,14 @@ public class Piece {
 	 * 
 	 * @return Un entier qui correspond au pourcentage de completion
 	 */
-	public int getDownloadCompleteness() {
+	public double getDownloadCompleteness() {
 		int received = 0;
 		for (int i = 0; i < nbBlocs; i++) {
 			if (receipt[i]) {
 				received++;
 			}
 		}
-		return (received * 100) / nbBlocs;
+		return ((double)received * 100) / nbBlocs;
 	}
 
 	/**

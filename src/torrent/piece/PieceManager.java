@@ -52,8 +52,9 @@ public class PieceManager {
 				}
 			}
 		}
-		System.out.println(torrent.getDownloadedCompleteness()
-				+ " %....................");
+		System.out
+				.println((int) Math.round(torrent.getDownloadedCompleteness() * 100)
+						/ 100.0 + " %....................");
 	}
 
 	/**
