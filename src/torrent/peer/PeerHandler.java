@@ -106,7 +106,6 @@ public class PeerHandler extends Thread {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-
 				}
 				// preparer des requetes (max 10 normalement)
 				/*
@@ -302,7 +301,11 @@ public class PeerHandler extends Thread {
 			if (index != -1) {
 				Piece wanted = torrent.getPieces()[index];
 				requetes.add(wanted.getBlockOfInterest(this));
+			} else if (!isChocking && amInterested) {
+				aEnvoyer.add(new NotInterested());
+				amInterested = false;
 			}
+
 		} else if (requetesEnvoyee.size() == requestRestrictions) {
 			long thisTime = System.currentTimeMillis();
 			if ((thisTime - lastTimeFlush) > 10000) {
@@ -338,10 +341,17 @@ public class PeerHandler extends Thread {
 	 * qu'il nous choke
 	 */
 	private void amMaybeInterested() throws IOException {
-		if (isChocking && !amInterested && !requetes.isEmpty()) {
-			synchronized (output) {
-				new Interested().send(output);
-				amInterested = true;
+		if (isChocking && !amInterested) {
+			boolean interested;
+			synchronized (pieceMgr) {
+				interested = pieceMgr.getPieceOfInterest(peerPiecesIndex) != -1;
+			}
+			if (interested) {
+				synchronized (output) {
+					new Interested().send(output);
+					amInterested = true;
+				}
+
 			}
 
 		}

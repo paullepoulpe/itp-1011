@@ -23,6 +23,7 @@ public class Torrent {
 	private PieceManager pieceManager;
 	public static String PEER_ID = PeerIDGenerator.generateID();
 	private boolean writtenOnFile;
+	private boolean isComplete;
 
 	public Torrent(File metainfo, int numPort) {
 		this.metainfo = new Metainfo(metainfo);
@@ -30,7 +31,8 @@ public class Torrent {
 		this.peerList = new ArrayList<Peer>();
 		System.out.println(this.metainfo);
 		this.pieces = new Piece[(int) (Math.ceil(((double) this.metainfo
-				.getSize()) / ((double) this.metainfo.getPieceLength())))];
+				.getSize())
+				/ ((double) this.metainfo.getPieceLength())))];
 		for (int i = 0; i < this.pieces.length; i++) {
 			byte[] pieceHash = new byte[20];
 			for (int j = 0; j < pieceHash.length; j++) {
@@ -86,6 +88,7 @@ public class Torrent {
 		for (int i = 0; i < this.pieces.length; i++) {
 			complet = complet && this.pieces[i].isComplete();
 		}
+		this.isComplete = complet;
 		return complet;
 	}
 
@@ -100,7 +103,7 @@ public class Torrent {
 	}
 
 	public boolean writeToFile() {
-		if (isComplete() && !writtenOnFile) {
+		if (isComplete && !writtenOnFile) {
 
 			if (!this.metainfo.isMultifile()) {
 				File file = new File(System.getProperty("user.home"),
@@ -159,12 +162,12 @@ public class Torrent {
 							+ File.separator + "Downloads" + File.separator
 							+ metainfo.getFileName();
 
-					for (int j = 0; j < filesPath.get(i).length; j++) {
+					for (int j = 0; j < filesPath.get(i).length - 1; j++) {
 						path = path + File.separator + filesPath.get(i)[j];
 					}
-
-					File file = new File(path);
-					file.mkdirs();
+					new File(path).mkdirs();
+					File file = new File(path + File.separator
+							+ filesPath.get(i)[filesPath.get(i).length - 1]);
 
 					try {
 						file.createNewFile();

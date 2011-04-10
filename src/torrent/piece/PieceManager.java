@@ -53,10 +53,12 @@ public class PieceManager {
 			}
 			System.out.println((int) Math.round(torrent
 					.getDownloadedCompleteness() * 100)
-					/ 100.0
-					+ " %....................");
+					/ 100.0 + " %....................");
 		} else {
-			torrent.writeToFile();
+			synchronized (System.out) {
+				torrent.writeToFile();
+			}
+
 		}
 
 	}
