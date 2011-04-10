@@ -14,7 +14,7 @@ import torrent.Torrent;
  */
 public class PieceManager {
 	private LinkedList<Piece> PiecesOfInterest, allPieces;
-	final static int MAX_NUM_OF_PIECES = 3;
+	final static int MAX_NUM_OF_PIECES = 50;
 	private Torrent torrent;
 
 	public PieceManager(Torrent torrent) {
@@ -52,6 +52,8 @@ public class PieceManager {
 				}
 			}
 		}
+		System.out.println(torrent.getDownloadedCompleteness()
+				+ " %....................");
 	}
 
 	/**

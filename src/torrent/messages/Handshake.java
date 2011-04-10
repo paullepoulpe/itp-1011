@@ -70,7 +70,7 @@ public class Handshake {
 		/* && Arrays.equals(this.reserved, otherHanshake.reserved) */;
 	}
 
-	public void send(DataOutputStream output) {
+	public void send(DataOutputStream output) throws IOException {
 		try {
 			output.writeByte(pstrLength);
 			output.write(protocol);
@@ -78,7 +78,7 @@ public class Handshake {
 			output.write(infoHash);
 			output.write(peerID);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw e;
 		}
 	}
 

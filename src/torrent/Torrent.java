@@ -30,8 +30,7 @@ public class Torrent {
 		this.peerList = new ArrayList<Peer>();
 		System.out.println(this.metainfo);
 		this.pieces = new Piece[(int) (Math.ceil(((double) this.metainfo
-				.getSize())
-				/ ((double) this.metainfo.getPieceLength())))];
+				.getSize()) / ((double) this.metainfo.getPieceLength())))];
 		for (int i = 0; i < this.pieces.length; i++) {
 			byte[] pieceHash = new byte[20];
 			for (int j = 0; j < pieceHash.length; j++) {
@@ -69,8 +68,7 @@ public class Torrent {
 	public int getDownloadedCompleteness() {
 		int downloadedCompleteness = 0;
 		for (int i = 0; i < this.pieces.length; i++) {
-			downloadedCompleteness += downloadedCompleteness
-					+ this.pieces[i].getDownloadCompleteness();
+			downloadedCompleteness += this.pieces[i].getDownloadCompleteness();
 		}
 		return downloadedCompleteness / this.pieces.length;
 	}

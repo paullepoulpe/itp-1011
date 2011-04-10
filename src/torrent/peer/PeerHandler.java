@@ -31,6 +31,7 @@ public class PeerHandler extends Thread {
 	private boolean isChocking;
 	private boolean isInterested;
 	private long lastTimeFlush;
+	private static int requestRestrictions = 15;
 
 	public PeerHandler(Peer peer, Torrent torrent) {
 		this.peer = peer;
@@ -190,7 +191,6 @@ public class PeerHandler extends Thread {
 	public void removeRequest(Request requete) {
 		for (int i = 0; i < requetes.size(); i++) {
 			if (requetes.get(i).equals(requete)) {
-				System.out.println("Removed");
 				requetes.remove(i);
 			}
 		}
@@ -261,7 +261,7 @@ public class PeerHandler extends Thread {
 	 * 
 	 * @return
 	 */
-	private boolean shakeHands() {
+	private boolean shakeHands() throws IOException {
 		Handshake ourHS = new Handshake(torrent);
 		ourHS.send(output);
 
@@ -274,18 +274,16 @@ public class PeerHandler extends Thread {
 	/**
 	 * lis tous les messages entrants et les traites
 	 */
-	private void readMessages() {
-		try {
-			while (input.available() > 0) {
+	private void readMessages() throws IOException {
 
-				Message message = messageReader.readMessage();
-				if (message != null) {
-					message.accept(messageHandler);
-				}
+		while (input.available() > 0) {
+
+			Message message = messageReader.readMessage();
+			if (message != null) {
+				message.accept(messageHandler);
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
+
 	}
 
 	/**
@@ -293,7 +291,8 @@ public class PeerHandler extends Thread {
 	 * ait moins de 10 requetes pendantes
 	 */
 	private void prepareRequest() {
-		if (requetes.size() + requetesEnvoyee.size() <= 10 && !hasNoPieces()) {
+		if (requetes.size() + requetesEnvoyee.size() < requestRestrictions
+				&& !hasNoPieces()) {
 			int index = -1;
 			synchronized (pieceMgr) {
 				index = pieceMgr.getPieceOfInterest(peerPiecesIndex);
@@ -302,13 +301,10 @@ public class PeerHandler extends Thread {
 				Piece wanted = torrent.getPieces()[index];
 				requetes.add(wanted.getBlockOfInterest(this));
 			}
-		} else if (requetesEnvoyee.size() == 11) {
+		} else if (requetesEnvoyee.size() == requestRestrictions) {
 			long thisTime = System.currentTimeMillis();
 			if ((thisTime - lastTimeFlush) > 10000) {
-				System.out.println(requetesEnvoyee.size());
-				System.out.println("Fluuuuuuuuuuuuuuuuuuuuuush");
 				requetesEnvoyee.removeAll(requetesEnvoyee);
-				System.out.println(requetesEnvoyee.size());
 			}
 			lastTimeFlush = thisTime;
 		}
@@ -318,7 +314,7 @@ public class PeerHandler extends Thread {
 	 * envoye un message de la queue de messages (s'il y en a ) et un
 	 * request(s'il y en a)
 	 */
-	private void sendMessages() {
+	private void sendMessages() throws IOException {
 		if (!aEnvoyer.isEmpty()) {
 			synchronized (output) {
 				aEnvoyer.getFirst().send(output);
@@ -339,7 +335,7 @@ public class PeerHandler extends Thread {
 	 * envoye un interested si le peer a des chose interessantes a donner et
 	 * qu'il nous choke
 	 */
-	private void amMaybeInterested() {
+	private void amMaybeInterested() throws IOException {
 		if (isChocking && !amInterested && !requetes.isEmpty()) {
 			synchronized (output) {
 				new Interested().send(output);

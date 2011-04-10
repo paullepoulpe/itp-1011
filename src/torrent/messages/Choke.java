@@ -12,13 +12,13 @@ public class Choke extends Message {
 	}
 
 	@Override
-	public void send(DataOutputStream output) {
+	public void send(DataOutputStream output) throws IOException {
 		try {
 			output.writeInt(1);
 			output.writeByte(0);
 			System.out.println("Sent Choke");
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw e;
 		}
 	}
 }
