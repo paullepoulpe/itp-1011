@@ -280,7 +280,9 @@ public class PeerHandler extends Thread {
 
 			Message message = messageReader.readMessage();
 			if (message != null) {
-				message.accept(messageHandler);
+				synchronized (torrent) {
+					message.accept(messageHandler);
+				}
 			}
 		}
 

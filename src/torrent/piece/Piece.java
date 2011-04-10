@@ -107,8 +107,11 @@ public class Piece {
 					/ BLOCK_SIZE);
 
 			for (int i = 0; i < pendingRequests.size(); i++) {
-				pendingRequests.get(i).removeRequest(
-						new Request(index, begin, bloc.length));
+				synchronized (pendingRequests.get(i)) {
+					pendingRequests.get(i).removeRequest(
+							new Request(index, begin, bloc.length));
+				}
+
 			}
 
 			pendingRequests.removeAll(pendingRequests);
