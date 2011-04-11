@@ -14,7 +14,7 @@ import torrent.Torrent;
  */
 public class PieceManager {
 	private LinkedList<Piece> PiecesOfInterest, allPieces;
-	final static int MAX_NUM_OF_PIECES = 80;
+	final static int MAX_NUM_OF_PIECES = 100;
 	private Torrent torrent;
 
 	public PieceManager(Torrent torrent) {
@@ -43,7 +43,7 @@ public class PieceManager {
 	public void updatePriorities() {
 		if (!torrent.isComplete()) {
 			for (int i = 0; i < PiecesOfInterest.size(); i++) {
-				if (PiecesOfInterest.get(i).isComplete()) {
+				if (PiecesOfInterest.get(i).isChecked()) {
 					PiecesOfInterest.remove(i);
 					if (!allPieces.isEmpty()) {
 						PiecesOfInterest.addLast(allPieces.getFirst());
@@ -54,9 +54,9 @@ public class PieceManager {
 			System.out.println((int) Math.round(torrent
 					.getDownloadedCompleteness() * 100)
 					/ 100.0 + " %....................");
-			System.gc();
 		} else {
 			synchronized (System.out) {
+				System.gc();
 				torrent.writeToFile();
 			}
 

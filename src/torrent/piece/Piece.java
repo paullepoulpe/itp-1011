@@ -105,11 +105,8 @@ public class Piece {
 
 			for (int i = 0; i < peerHandlers.get(begin / BLOCK_SIZE).size(); i++) {
 				synchronized (peerHandlers.get(begin / BLOCK_SIZE).get(i)) {
-					peerHandlers
-							.get(begin / BLOCK_SIZE)
-							.get(i)
-							.removeRequest(
-									new Request(index, begin, bloc.length));
+					peerHandlers.get(begin / BLOCK_SIZE).get(i).removeRequest(
+							new Request(index, begin, bloc.length));
 				}
 
 			}
@@ -137,13 +134,14 @@ public class Piece {
 	public boolean isComplete() {
 		if (isChecked) {
 			return true;
-		}
-		for (int i = 0; i < nbBlocs; i++) {
-			if (!this.receipt[i]) {
-				return false;
+		} else {
+			for (int i = 0; i < nbBlocs; i++) {
+				if (!this.receipt[i]) {
+					return false;
+				}
 			}
+			return true;
 		}
-		return true;
 	}
 
 	/**
@@ -152,7 +150,8 @@ public class Piece {
 	 * 
 	 * @return True si la piece est correcte, false sinon.
 	 */
-	public boolean check() {
+	private boolean check() {
+
 		if (this.isComplete()) {
 			MessageDigest shaDigest = null;
 			try {
@@ -173,9 +172,11 @@ public class Piece {
 			System.out.println("Piece " + index
 					+ " recue completement !!!!!!!!!!!");
 			return true;
+		} else {
+			this.reset();
+			return false;
 		}
-		this.reset();
-		return false;
+
 	}
 
 	/**
@@ -243,5 +244,9 @@ public class Piece {
 			nbDemandes += peerHandlers.get(i).size();
 		}
 		return nbDemandes;
+	}
+
+	public boolean isChecked() {
+		return isChecked;
 	}
 }
