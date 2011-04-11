@@ -29,7 +29,6 @@ public class PieceTest {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@Test
 	public void testCheckCorrectData() {
 		byte[] data = new byte[Piece.BLOCK_SIZE * 4];
@@ -40,33 +39,32 @@ public class PieceTest {
 		Piece piece = new Piece(2, data.length, hash);
 
 		assertNull(piece.getData());
-		assertEquals(0, (int) piece.getDownloadCompleteness());
+		assertEquals(0, piece.getDownloadCompleteness());
 
 		piece.feed(Piece.BLOCK_SIZE * 0, Arrays.copyOfRange(data,
 				Piece.BLOCK_SIZE * 0, Piece.BLOCK_SIZE * 1));
-		assertEquals(25, (int) piece.getDownloadCompleteness());
+		assertEquals(25, piece.getDownloadCompleteness());
 
 		piece.feed(Piece.BLOCK_SIZE * 3, Arrays.copyOfRange(data,
 				Piece.BLOCK_SIZE * 3, Piece.BLOCK_SIZE * 4));
-		assertEquals(50, (int) piece.getDownloadCompleteness());
+		assertEquals(50, piece.getDownloadCompleteness());
 
 		piece.feed(Piece.BLOCK_SIZE * 1, Arrays.copyOfRange(data,
 				Piece.BLOCK_SIZE * 1, Piece.BLOCK_SIZE * 2));
-		assertEquals(75, (int) piece.getDownloadCompleteness());
+		assertEquals(75, piece.getDownloadCompleteness());
 
 		piece.feed(Piece.BLOCK_SIZE * 0, Arrays.copyOfRange(data,
 				Piece.BLOCK_SIZE * 0, Piece.BLOCK_SIZE * 1));
-		assertEquals(75, (int) piece.getDownloadCompleteness()); // Duplicate
-		// receive
+		assertEquals(75, piece.getDownloadCompleteness()); // Duplicate receive
 		// should not
 		// increment counter
 
 		piece.feed(Piece.BLOCK_SIZE * 2, Arrays.copyOfRange(data,
 				Piece.BLOCK_SIZE * 2, Piece.BLOCK_SIZE * 3));
-		assertEquals(100, (int) piece.getDownloadCompleteness());
+		assertEquals(100, piece.getDownloadCompleteness());
 
 		assertTrue(piece.isComplete());
-		assertTrue(piece.isChecked());
+		assertTrue(piece.check());
 		assertArrayEquals(data, piece.getData());
 	}
 
@@ -80,14 +78,14 @@ public class PieceTest {
 		piece.feed(0, block);
 
 		// the check is done automatically when the piece is 'completed'
-		assertEquals(0, (int) piece.getDownloadCompleteness());
+		assertEquals(0, piece.getDownloadCompleteness());
 		assertTrue(!piece.isComplete());
 
 		piece.feed(0, data);
-		assertEquals(true, piece.isChecked());
+		assertEquals(true, piece.check());
 
 		piece.feed(0, block);
-		assertEquals(true, piece.isChecked());
+		assertEquals(true, piece.check());
 		// if we give an already checked piece some wrong data, it must not be
 		// checked
 	}

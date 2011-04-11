@@ -57,3 +57,4 @@
 -Petits problemes vers la fin du telechargement, il semblerait que les blocs synchronized soient places aux mauvais endroits
 10.03.2011
 -Premiers fichiers telecharges, gestion du multifile pour l'ecriture sur le disque codee, reste a la tester correctement. 
+-L'ecriture multifile fonctionne bien, au début un peu lente, mais une fois que tous les write(byte) ont étés remplacés par des write(byte[]) ca fonctionne nickel!
