@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import torrent.peer.Peer;
 import torrent.peer.PeerAccepter;
@@ -86,7 +87,7 @@ public class Torrent {
 	public boolean isComplete() {
 		boolean complet = true;
 		for (int i = 0; i < this.pieces.length; i++) {
-			complet = complet && this.pieces[i].isComplete();
+			complet = complet && this.pieces[i].isChecked();
 		}
 		this.isComplete = complet;
 		return complet;
@@ -155,6 +156,7 @@ public class Torrent {
 				int lastStopPiece = 0;
 				int lastStopBegin = 0;
 				for (int i = 0; i < filesPath.size(); i++) {
+					System.out.println("Fichier " + (i + 1) + " : ");
 					int currentStopPiece = 0;
 					int currentStopBegin = 0;
 
@@ -176,38 +178,69 @@ public class Torrent {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					int currentFileSize = 0;
+					int currentFileSize = filesSize[i];
+					int written = 0;
 					for (int j = lastStopPiece; j < pieces.length
-							&& currentFileSize < filesSize[i]; j++) {
+							&& written < currentFileSize; j++) {
+						System.out.println("Piece " + (j) + " ok!");
 
 						byte[] currentData = pieces[j].getData();
 
 						if (j == lastStopPiece) {
-
-							for (int k = lastStopBegin; k < pieces[j]
-									.getSizeTab()
-									&& currentFileSize < filesSize[i]; k++, currentFileSize++) {
+							if (written + currentData.length - lastStopBegin <= currentFileSize) {
+								byte[] partData = Arrays.copyOfRange(
+										currentData, lastStopBegin,
+										currentData.length);
 								try {
-									ecrivain.writeByte(currentData[k]);
+									ecrivain.write(partData);
+									written += partData.length;
 								} catch (IOException e) {
 									e.printStackTrace();
 								}
-								currentStopBegin = k;
+							} else {
+								for (int k = lastStopBegin; k < currentData.length
+										&& written < currentFileSize; k++) {
+									try {
+										ecrivain.write(currentData[k]);
+										written++;
+									} catch (IOException e) {
+										e.printStackTrace();
+									}
+									currentStopBegin = k + 1;
+								}
 							}
 
 						} else {
-
-							for (int k = 0; k < pieces[j].getSizeTab()
-									&& currentFileSize < filesSize[i]; k++, currentFileSize++) {
+							if (written + currentData.length <= currentFileSize) {
 								try {
-									ecrivain.writeByte(currentData[k]);
+									ecrivain.write(currentData);
+									written += currentData.length;
 								} catch (IOException e) {
 									e.printStackTrace();
 								}
-								currentStopBegin = k;
+							} else {
+								byte[] partData = Arrays.copyOf(currentData,
+										currentFileSize - written);
+								try {
+									ecrivain.write(partData);
+									written += partData.length;
+									currentStopBegin = partData.length;
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
 							}
 						}
+
+						try {
+							ecrivain.flush();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+
 						currentStopPiece = j;
+						if (currentStopBegin >= currentData.length) {
+							currentStopBegin = 0;
+						}
 
 					}
 					lastStopBegin = currentStopBegin;
