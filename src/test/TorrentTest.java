@@ -15,6 +15,7 @@ public class TorrentTest extends Thread {
 	}
 
 	public void run() {
+		
 		Torrent myTorrent = new Torrent(new File("data/LePetitPrince.torrent"));
 		while (true) {
 			myTorrent.massAnnounce();
@@ -24,6 +25,7 @@ public class TorrentTest extends Thread {
 				e.printStackTrace();
 			}
 		}
+		
 
 	}
 }
