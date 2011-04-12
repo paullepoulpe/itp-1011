@@ -7,7 +7,7 @@ import java.io.IOException;
  * Cette classe s'occupe de lire les messages recus par le pair et des les
  * mettres dans le bon format.
  * 
- * @author engels
+ * @author Damien Engels & Maarten Sap
  * 
  */
 public class MessageReader {
@@ -18,9 +18,9 @@ public class MessageReader {
 	}
 
 	/**
-	 * lit un message sur le stream et retourne null si c'etait un keep alive
+	 * lit un message sur le stream
 	 * 
-	 * @return
+	 * @return null si c'est un keep alive, Message correspondant sinon
 	 */
 	public Message readMessage() throws IOException {
 		Message message = null;

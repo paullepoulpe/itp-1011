@@ -38,7 +38,8 @@ public class PieceManager {
 	 * Cette methode doit tout d abord tester si le torrent est complet. Si c
 	 * est pas le cas, on enleve les pieces completes des pieces a telecharger
 	 * 
-	 * 
+	 * Cette methode est appelee dans la classe MessageHandler lors d'un
+	 * vist(SendBlock s).
 	 */
 	public void updatePriorities() {
 		if (!torrent.isComplete()) {

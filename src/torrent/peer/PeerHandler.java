@@ -10,8 +10,10 @@ import torrent.Torrent;
 import torrent.messages.*;
 import torrent.piece.*;
 
-/*
- * Un PeerHandler par pair
+/**
+ * Cette classe s occupe de tout ce qui concerne le traffic avec un pair
+ * particulier (il y a un PeerHandler par Peer) elle envoie et recoit des
+ * messages.
  */
 public class PeerHandler extends Thread {
 	private Socket socket;
@@ -28,7 +30,7 @@ public class PeerHandler extends Thread {
 	private LinkedList<Request> requetesEnvoyee;
 	private boolean amChocking;
 	private boolean amInterested;
-	private boolean isChocking;
+	private boolean isChocking; // est ce que le pair nous etrangle ?
 	private boolean isInterested;
 	private long lastTimeFlush;
 	private static int requestRestrictions = 15;
@@ -108,13 +110,6 @@ public class PeerHandler extends Thread {
 					}
 				}
 				// preparer des requetes (max 10 normalement)
-				/*
-				 * 1 demander au PieceMng quelle piece on doi requeter (si yen a
-				 * pas, arreter) 2 envoyer un interested si le pair est en etat
-				 * de Choking (seulement si on avait pas deja envoye de
-				 * Interested) 3 une fois quon est plus etrangle, on envoie une
-				 * requete dans la queue des messages
-				 */
 
 			} else {
 				input.close();
@@ -152,6 +147,7 @@ public class PeerHandler extends Thread {
 	 * ajoute une piece que le peer a
 	 * 
 	 * @param index
+	 *            (int)
 	 */
 	public void addPeerPiece(int index) {
 		peerPiecesIndex[index] = true;
@@ -256,9 +252,10 @@ public class PeerHandler extends Thread {
 	}
 
 	/**
-	 * fais le handshake et teste s'il est correct
+	 * Cette methode s'occupe de faire le handshake avec le pair. Elle envoie d
+	 * abord notre handshake, puis et teste s'il est correct
 	 * 
-	 * @return
+	 * @return true si le handshake a marche, false sinon
 	 */
 	private boolean shakeHands() throws IOException {
 		Handshake ourHS = new Handshake(torrent);
@@ -271,7 +268,7 @@ public class PeerHandler extends Thread {
 	}
 
 	/**
-	 * lis tous les messages entrants et les traites
+	 * lis tous les messages entrants et les traite
 	 */
 	private void readMessages() throws IOException {
 
@@ -280,6 +277,7 @@ public class PeerHandler extends Thread {
 			Message message = messageReader.readMessage();
 			if (message != null) {
 				synchronized (messageHandler) {
+					// accept: on traite le message
 					message.accept(messageHandler);
 				}
 			}

@@ -3,6 +3,12 @@ package torrent.messages;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * ce message est un Thread qui - une fois demarre - envoie un tableau de 4
+ * bytes nuls pour garder la connexion au pair active.
+ * 
+ * @author Damien Engels & Maarten Sap
+ */
 public class KeepAlive extends Thread {
 	long lastsent;
 	OutputStream out;
