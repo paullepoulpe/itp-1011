@@ -120,13 +120,13 @@ public class PeerHandler extends Thread {
 				input.close();
 				output.close();
 				socket.close();
-				System.out.println("Peer deconnecté");
+				System.out.println("Peer deconnecte");
 				this.interrupt();
 				// il faut arreter lexecution du thread
 			}
 
 		} catch (IOException e) {
-			System.out.println("Peer deconnecté");
+			System.out.println("Peer deconnecte");
 			this.interrupt();
 		}
 
@@ -288,7 +288,7 @@ public class PeerHandler extends Thread {
 	}
 
 	/**
-	 * prepare une reequete pour autant qu'il y en ai une a preparer oou qu'il y
+	 * prepare une requete pour autant qu'il y en ait une a preparer ou qu'il y
 	 * ait moins de 10 requetes pendantes
 	 */
 	private void prepareRequest() {

@@ -53,7 +53,8 @@ public class PieceManager {
 			}
 			System.out.println((int) Math.round(torrent
 					.getDownloadedCompleteness() * 100)
-					/ 100.0 + " %....................");
+					/ 100.0
+					+ " %....................");
 		} else {
 			synchronized (System.out) {
 				System.gc();
@@ -80,7 +81,6 @@ public class PieceManager {
 				index = PiecesOfInterest.get(i).getIndex();
 				minDemandes = PiecesOfInterest.get(i).getNbDemandes();
 			}
-
 		}
 		if (minDemandes < Integer.MAX_VALUE) {
 			return index;
