@@ -31,7 +31,7 @@ public class PeerHandler extends Thread {
 	private boolean isChocking;
 	private boolean isInterested;
 	private long lastTimeFlush;
-	private static int requestRestrictions = 25;
+	private static int requestRestrictions = 15;
 
 	public PeerHandler(Peer peer, Torrent torrent) {
 		this.peer = peer;

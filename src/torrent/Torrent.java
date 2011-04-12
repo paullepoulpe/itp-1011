@@ -151,6 +151,7 @@ public class Torrent {
 
 			} else {
 				DataOutputStream ecrivain = null;
+				FileOutputStream fileStream = null;
 				ArrayList<String[]> filesPath = metainfo.getFilesPath();
 				int[] filesSize = metainfo.getFilesLength();
 				int lastStopPiece = 0;
@@ -173,8 +174,8 @@ public class Torrent {
 
 					try {
 						file.createNewFile();
-						ecrivain = new DataOutputStream(new FileOutputStream(
-								file));
+						fileStream = new FileOutputStream(file);
+						ecrivain = new DataOutputStream(fileStream);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -246,6 +247,7 @@ public class Torrent {
 					lastStopBegin = currentStopBegin;
 					lastStopPiece = currentStopPiece;
 					try {
+						fileStream.close();
 						ecrivain.close();
 					} catch (IOException e) {
 						e.printStackTrace();
