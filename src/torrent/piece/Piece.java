@@ -105,8 +105,11 @@ public class Piece {
 
 			for (int i = 0; i < peerHandlers.get(begin / BLOCK_SIZE).size(); i++) {
 				synchronized (peerHandlers.get(begin / BLOCK_SIZE).get(i)) {
-					peerHandlers.get(begin / BLOCK_SIZE).get(i).removeRequest(
-							new Request(index, begin, bloc.length));
+					peerHandlers
+							.get(begin / BLOCK_SIZE)
+							.get(i)
+							.removeRequest(
+									new Request(index, begin, bloc.length));
 				}
 
 			}
@@ -146,7 +149,9 @@ public class Piece {
 
 	/**
 	 * Teste si la Piece est correcte apres avoir teste si elle est complete Si
-	 * la piece n'est pas correcte elle est remise a zero!
+	 * la piece n'est pas correcte elle est remise a zero! Elle change en meme
+	 * temps la valeur de boolean isChecked, qui devient prend la valeur de
+	 * retour de cette methode.
 	 * 
 	 * @return True si la piece est correcte, false sinon.
 	 */
@@ -217,7 +222,11 @@ public class Piece {
 		}
 		return bloc;
 	}
-
+	/**
+	 * Prepare le Request a envoyer au pair.
+	 * @param peerHandler
+	 * @return
+	 */
 	public Request getBlockOfInterest(PeerHandler peerHandler) {
 		int blocIndex = 0;
 		int min = Integer.MAX_VALUE;

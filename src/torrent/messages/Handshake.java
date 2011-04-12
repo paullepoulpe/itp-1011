@@ -60,6 +60,13 @@ public class Handshake {
 
 	}
 
+	/**
+	 * On teste si le Handshake recu est compatible avec le protocole qu on
+	 * utilise en comparant le protocole et le hash.
+	 * 
+	 * @param otherHanshake
+	 * @return true si le HS est compatible, false sinon.
+	 */
 	public boolean isCompatible(Handshake otherHanshake) {
 		/*
 		 * System.out.println(Arrays.toString(this.reserved) +
