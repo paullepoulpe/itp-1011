@@ -8,7 +8,7 @@ import bencoding.BEValue;
 import bencoding.InvalidBEncodingException;
 
 /**
- * Cette classe est un conteneur, qui decode la réponse d'une requete httpget et
+ * Cette classe est un conteneur, qui decode la reponse d'une requete httpget et
  * la met sous forme lisible
  * 
  * @author Damien Engels et Maarten Sap

@@ -31,7 +31,7 @@ public class HTTPGet {
 
 	/**
 	 * Initialise l'adresse a laquelle il faut faire l'annonce a l'aide
-	 * d'urlAnnounce et la liste de paramètres à l'aide de query!
+	 * d'urlAnnounce et la liste de parametres a l'aide de query!
 	 * 
 	 * @param urlAnnounce
 	 *            Une string representant l'url a laquelle faire l'annonce

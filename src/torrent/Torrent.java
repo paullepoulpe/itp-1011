@@ -267,8 +267,8 @@ public class Torrent {
 	 * Cette methode permet d'initialiser les pieces d'un torrent depuis un
 	 * fichier. Elle regarde dans le dossier Downloads/ si un fichier contient
 	 * le nom du fichier contenu dans metainfo, il le lit et essaye
-	 * d'initialiser les pièces avec. La piece s'occupe de verifier qu'elle soit
-	 * correcte. Si le fichier n'est pas trouve cette metode retourne false
+	 * d'initialiser les pieces avec. La piece s'occupe de verifier qu'elle soit
+	 * correcte. Si le fichier n'est pas trouve cette methode retourne false
 	 * 
 	 * @return true si le fichier a ete trouve, false sinon
 	 */
