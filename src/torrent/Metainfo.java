@@ -1,15 +1,17 @@
 package torrent;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Map;
+
+import torrent.tracker.TorrentHash;
 import bencoding.BDecoder;
 import bencoding.BEValue;
 import bencoding.InvalidBEncodingException;
-import torrent.tracker.*;
 
 /**
  * Cette classe permet de décoder le fichier "*.torrent" et de faciliter l'accès
