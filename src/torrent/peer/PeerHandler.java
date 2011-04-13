@@ -109,15 +109,12 @@ public class PeerHandler extends Thread {
 						e.printStackTrace();
 					}
 				}
-				// preparer des requetes (max 10 normalement)
-
 			} else {
 				input.close();
 				output.close();
 				socket.close();
 				System.out.println("Peer deconnecte");
 				this.interrupt();
-				// il faut arreter lexecution du thread
 			}
 
 		} catch (IOException e) {
@@ -161,6 +158,8 @@ public class PeerHandler extends Thread {
 	 * initialise la liste des pieces que le peer a
 	 * 
 	 * @param peerPiecesIndex
+	 *            tableau de booleans pour indiquer quelles pieces le pair
+	 *            possede (boolean[])
 	 */
 	public void setPeerPiecesIndex(boolean[] peerPiecesIndex) {
 		for (int i = 0; i < this.peerPiecesIndex.length; i++) {
@@ -178,28 +177,24 @@ public class PeerHandler extends Thread {
 	}
 
 	/**
-	 * enleve une requete
+	 * enleve un requete de la queue de messages
 	 * 
-	 * @param index
-	 * @param begin
+	 * @param requete
+	 *            Request a enlever de la liste
 	 */
 	public void removeRequest(Request requete) {
-		for (int i = 0; i < requetes.size(); i++) {
-			if (requetes.get(i).equals(requete)) {
-				requetes.remove(i);
-			}
+		while (requetes.contains(requete)) {
+			requetes.remove(requete);
 		}
-		for (int i = 0; i < requetesEnvoyee.size(); i++) {
-			if (requetesEnvoyee.get(i).equals(requete)) {
-				requetesEnvoyee.remove(i);
-			}
+		while (requetesEnvoyee.contains(requete)) {
+			requetesEnvoyee.remove(requete);
 		}
 	}
 
 	/**
 	 * verifie que le client a des pieces
 	 * 
-	 * @return
+	 * @return true si oui, false sinon
 	 */
 	private boolean hasNoPieces() {
 		boolean noPiece = true;
@@ -217,7 +212,6 @@ public class PeerHandler extends Thread {
 		boolean connect = false;
 		while (!connect) {
 			if (socket == null) {
-
 				try {
 					socket = new Socket(peer.getIpAdress(), peer.getPort());
 					input = new DataInputStream(socket.getInputStream());
@@ -253,7 +247,7 @@ public class PeerHandler extends Thread {
 
 	/**
 	 * Cette methode s'occupe de faire le handshake avec le pair. Elle envoie d
-	 * abord notre handshake, puis et teste s'il est correct
+	 * abord notre handshake, puis et teste si la reponse est correcte
 	 * 
 	 * @return true si le handshake a marche, false sinon
 	 */
@@ -271,9 +265,7 @@ public class PeerHandler extends Thread {
 	 * lis tous les messages entrants et les traite
 	 */
 	private void readMessages() throws IOException {
-
 		while (input.available() > 0) {
-
 			Message message = messageReader.readMessage();
 			if (message != null) {
 				synchronized (messageHandler) {
@@ -314,7 +306,7 @@ public class PeerHandler extends Thread {
 	}
 
 	/**
-	 * envoye un message de la queue de messages (s'il y en a ) et un
+	 * envoye un message de la queue de messages (s'il y en a) et un
 	 * request(s'il y en a)
 	 */
 	private void sendMessages() throws IOException {

@@ -3,7 +3,7 @@ package torrent.messages;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-/*
+/**
  * Ce message est constitue d'un entier qui correspond a l index de la piece qu on possede.
  */
 public class Have extends Message {

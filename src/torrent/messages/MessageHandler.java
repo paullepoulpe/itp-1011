@@ -4,7 +4,11 @@ import torrent.Torrent;
 import torrent.peer.PeerHandler;
 import torrent.piece.Piece;
 
-/*
+/**
+ * cette classe s occupe de traiter les messages quon recoit, en faisant le
+ * necessaire suivant ce quon recoit.
+ * 
+ * @author DAMIEN,MAARTEN
  * 
  */
 public class MessageHandler implements MessageVisitor {
@@ -91,11 +95,9 @@ public class MessageHandler implements MessageVisitor {
 	@Override
 	public void visit(SendBlock s) {
 		/*
-		 * On recoit un bloc.
-		 * D abord on extrait la piece auquel appartient le bloc
-		 * Puis on feed le bloc a la piece
-		 * Ensuite on s assure que le PieceManager se rende 
-		 * compte qu une piece a ete recue
+		 * On recoit un bloc. D abord on extrait la piece auquel appartient le
+		 * bloc Puis on feed le bloc a la piece Ensuite on s assure que le
+		 * PieceManager se rende compte qu une piece a ete recue
 		 */
 		Piece entering = null;
 		synchronized (torrent) {

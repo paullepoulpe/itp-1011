@@ -5,7 +5,7 @@ import java.io.IOException;
 
 /**
  * Cette classe s'occupe de lire les messages recus par le pair et des les
- * mettres dans le bon format.
+ * mettre dans le bon format.
  * 
  * @author Damien Engels & Maarten Sap
  * 

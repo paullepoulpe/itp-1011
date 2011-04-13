@@ -2,7 +2,11 @@ package torrent.messages;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-
+/**
+ * Cette classe est un message de requete de blocs.
+ * @author Damien, Maarten
+ *
+ */
 public class Request extends Message {
 	private int index, begin, length;
 

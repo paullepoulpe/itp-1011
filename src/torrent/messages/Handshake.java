@@ -8,11 +8,24 @@ import java.util.Arrays;
 
 import torrent.Torrent;
 
+/**
+ * Cette classe correspond a un message handshake, cest a dire le premier
+ * message quon envoie a un pair pour initialiser la connexion.
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class Handshake {
 	private byte pstrLength;
 	private byte[] infoHash, reserved, peerID;
 	private byte[] protocol;
 
+	/**
+	 * Constructeur pour creer notre handshake.
+	 * 
+	 * @param torrent
+	 *            contient toutes les informations necessaires.
+	 */
 	public Handshake(Torrent torrent) {
 		protocol = "BitTorrent protocol".getBytes();
 		pstrLength = (byte) protocol.length;
@@ -26,6 +39,12 @@ public class Handshake {
 
 	}
 
+	/**
+	 * Constructeur pour recuperer un HandShake a partir d'un DataInputStream.
+	 * 
+	 * @param input
+	 *            le Stream qui "contient" le handShake.
+	 */
 	public Handshake(DataInputStream input) {
 		try {
 			boolean lu = false;
@@ -51,6 +70,15 @@ public class Handshake {
 
 	}
 
+	/**
+	 * Methode pour definir les bytes reserves a des information complementaires
+	 * sur le protocole d echange
+	 * 
+	 * @param seq
+	 *            le tableau de byte qui contient les informations necessaires
+	 * @throws IllegalArgumentException
+	 *             si la longueur n'est pas compatible
+	 */
 	public void setReserved(byte[] seq) throws IllegalArgumentException {
 		if (seq.length != 8) {
 			throw new IllegalArgumentException();
@@ -96,7 +124,11 @@ public class Handshake {
 	public byte[] getReserved() {
 		return reserved;
 	}
-
+/**
+ * Verifie si deux handShake sont egaux
+ * @param otherHandshake est compare a this
+ * @return si les HandShakes sont egaux
+ */
 	public boolean equals(Handshake otherHandshake) {
 		return this.pstrLength == otherHandshake.pstrLength
 				&& Arrays.equals(this.infoHash, otherHandshake.infoHash)
