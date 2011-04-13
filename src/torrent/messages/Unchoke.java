@@ -3,6 +3,13 @@ package torrent.messages;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+/**
+ * Quand on recoit cela (non seulement on est tres content) cela veut dire que
+ * un pair est d'accord pour partager ses blocs avec nous.
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class Unchoke extends Message {
 	public Unchoke() {
 	}

@@ -6,6 +6,14 @@ import java.util.ArrayList;
 import torrent.messages.Request;
 import torrent.peer.PeerHandler;
 
+/**
+ * Cette classe est (obviously) la classe contnenant une piece d'un torrent.
+ * Elle implemente diverses methodes qui traitent du nombre de demandes sur un
+ * bloc, d'une alimentation des donnees, etc.
+ * 
+ * @author Damien Engels, Maarten Sap
+ * 
+ */
 public class Piece {
 	private byte[] data;
 	private boolean[] receipt;
@@ -198,9 +206,15 @@ public class Piece {
 		return sizeTab;
 	}
 
+	/**
+	 * Cette methode permet de mettre les donnees data dans notre piece
+	 * 
+	 * @param data
+	 *            : le tableau de bytes contenant nos donnees
+	 */
 	public void setData(byte[] data) {
 		if (data.length != this.data.length) {
-			System.out.println("problème de taille pour data");
+			System.out.println("probleme de taille pour data");
 		} else {
 			this.data = data;
 			for (int i = 0; i < this.receipt.length; i++) {
@@ -215,6 +229,12 @@ public class Piece {
 		return index;
 	}
 
+	/**
+	 * 
+	 * @param begin
+	 *            : l'indice du bloc voulu
+	 * @return le bloc qu'on veut sous forme de byte[]
+	 */
 	public byte[] getBlock(int begin) {
 		byte[] bloc = new byte[BLOCK_SIZE];
 		for (int i = 0; i < bloc.length; i++) {
@@ -230,8 +250,9 @@ public class Piece {
 	 * moins, et on demande celui-la dans la Request.
 	 * 
 	 * @param peerHandler
-	 *            : on l'ajoute a la liste de PeerHandlers qui demandent ce bloc.
-	 * @return la requete a ajouter a la queue.
+	 *            : on l'ajoute a la liste de PeerHandlers qui demandent ce
+	 *            bloc.
+	 * @return la requete a ajouter a la queue (Request)
 	 */
 	public Request getBlockOfInterest(PeerHandler peerHandler) {
 		int blocIndex = 0;
@@ -253,6 +274,10 @@ public class Piece {
 		return requete;
 	}
 
+	/**
+	 * 
+	 * @return le nombre de demandes sur la piece
+	 */
 	public int getNbDemandes() {
 		int nbDemandes = 0;
 		for (int i = 0; i < peerHandlers.size(); i++) {

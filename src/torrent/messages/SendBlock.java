@@ -4,6 +4,13 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+/**
+ * Cette classe est la classe la plus importante du projet, car c'est en fait le
+ * message contenant les donnees d'un bloc!
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class SendBlock extends Message {
 	private int pieceIndex, blocIndex;
 	private byte[] bloc;

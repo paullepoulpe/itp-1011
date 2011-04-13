@@ -8,8 +8,8 @@ import torrent.Torrent;
 import torrent.piece.Piece;
 
 /**
- * Ce message correspond a un tableau de bits de taille egale au nombre de pieces du torrent.
- * Les bits a 1 sont ceux que le pair possede.
+ * Ce message correspond a un tableau de bits de taille egale au nombre de
+ * pieces du torrent. Les bits a 1 sont ceux que le pair possede.
  */
 public class BitField extends Message {
 	private boolean[] posessedPieces;
@@ -61,10 +61,9 @@ public class BitField extends Message {
 				for (int i = 0; i < Math.ceil(posessedPieces.length / 8.0); i++) {
 					byte bits = 0;
 					for (int j = 0; j < 8; j++) {
-						if ((i * 8) + j < posessedPieces.length) {
-							if (posessedPieces[(i * 8) + j]) {
-								bits |= 1;
-							}
+						if (((i * 8) + j < posessedPieces.length)
+								&& (posessedPieces[(i * 8) + j])) {
+							bits |= 1;
 						}
 						bits <<= 1;
 					}
