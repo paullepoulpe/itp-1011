@@ -222,10 +222,16 @@ public class Piece {
 		}
 		return bloc;
 	}
+
 	/**
-	 * Prepare le Request a envoyer au pair.
+	 * Prepare le Request a envoyer au pair. On regarde parmi la liste de
+	 * peerHandlers par bloc (d'ou la liste de liste de peerHandlers) combien il
+	 * y a de requetes courantes sur ce bloc. On cherche le bloc qui en a le
+	 * moins, et on demande celui-la dans la Request.
+	 * 
 	 * @param peerHandler
-	 * @return
+	 *            : on l'ajoute a la liste de PeerHandlers qui demandent ce bloc.
+	 * @return la requete a ajouter a la queue.
 	 */
 	public Request getBlockOfInterest(PeerHandler peerHandler) {
 		int blocIndex = 0;
