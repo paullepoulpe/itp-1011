@@ -25,7 +25,8 @@ public class PeerAccepter extends Thread {
 	/**
 	 * Cette methode cree un nouveau pair depuis les informations recues dans le
 	 * constucteur. On ajoute le peer a la liste des peers du torrent concerne,
-	 * puis on
+	 * puis on demarre le PeerHandler correspondant. Finalement, on arrete
+	 * l'instance presente de l'ecouteur de connexions entrantes.
 	 */
 	public void run() {
 		ServerSocket s = null;
