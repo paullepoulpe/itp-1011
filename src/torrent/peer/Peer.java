@@ -5,12 +5,31 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import torrent.Torrent;
 
+/**
+ * Cette classe represente un pair. Elle implemente les methodes necessaires
+ * pour changer ses attributs ainsi que pour activer son PeerHandler.
+ * 
+ * @author Damien Engels, Maarten Sap
+ * 
+ */
 public class Peer {
 	private PeerHandler peerHandler;
 	private InetAddress ipAdress;
 	private int port;
 	private String id;
 
+	/**
+	 * Constructeur. On demarrer (start) le processus PeerHandler, car c'est
+	 * cette classe qui s'occupe de tout ce qui est traffic de donnees.
+	 * 
+	 * @param data
+	 *            tableau de 6 bytes contenant l'adresse IP et le port du pair
+	 *            auquel on souhaiterait se connecter.
+	 * @param torrent
+	 *            on passe le torrent en argument pour pouvoir construire un
+	 *            PeerHandler. C'est lui qui se chargera de tout une fois qu'il
+	 *            est demarre.
+	 */
 	public Peer(byte[] data, Torrent torrent) {
 		byte[] ip = { data[0], data[1], data[2], data[3] };
 		try {
@@ -26,6 +45,17 @@ public class Peer {
 
 	}
 
+	/**
+	 * Second constructeur, utile pour construire un paiir a partir d'un Socket
+	 * et d'un torrent. Cette methode ne fait que creer un PeerHandler avec ses
+	 * deux arguments puis de demarrer ce dernier.
+	 * 
+	 * @param socket
+	 *            afin de pouvoir se connecter au pair, on a besoin d'un socket.
+	 * @param torrent
+	 *            contient les informations necessaires au telechargement au
+	 *            niveau pieces et block.
+	 */
 	public Peer(Socket socket, Torrent torrent) {
 		this.peerHandler = new PeerHandler(socket, torrent);
 		peerHandler.run();

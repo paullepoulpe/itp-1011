@@ -6,6 +6,13 @@ import java.net.Socket;
 
 import torrent.Torrent;
 
+/**
+ * Cette classe sert a traiter les connexions entrantes. Elle est censee tourner
+ * en tant que thread a part entiere.
+ * 
+ * @author Damien Engels, Maarten Sap
+ * 
+ */
 public class PeerAccepter extends Thread {
 	private int port;
 	private Torrent torrent;
@@ -15,11 +22,15 @@ public class PeerAccepter extends Thread {
 		this.torrent = torrent;
 	}
 
+	/**
+	 * Cette methode cree un nouveau pair depuis les informations recues dans le
+	 * constucteur. On ajoute le peer a la liste des peers du torrent concerne,
+	 * puis on
+	 */
 	public void run() {
 		ServerSocket s = null;
 		try {
 			s = new ServerSocket(port);
-
 			System.out.println(s.getLocalPort());
 			Socket socket = s.accept();
 			System.out.println("Connexion entrante");
