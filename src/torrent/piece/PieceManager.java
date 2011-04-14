@@ -9,8 +9,7 @@ import torrent.Torrent;
  * Cette classe s'occupe de la gestion des pieces. Elle selectionne lesquelles
  * doivent etre demandees aux peers.
  * 
- * @author msap, engels
- * 
+ * @author Damien Engels, Maarten Sap 
  */
 public class PieceManager {
 	private LinkedList<Piece> PiecesOfInterest, allPieces;

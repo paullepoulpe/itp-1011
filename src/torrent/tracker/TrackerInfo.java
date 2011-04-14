@@ -11,7 +11,7 @@ import torrent.peer.*;
  * Cette classe contient les informations relative a un certain tracker, il y a
  * autant d'objets TrackerInfo que de trackers
  * 
- * @author Damien Engels et Maarten Sap
+ * @author Damien Engels, Maarten Sap
  * 
  */
 public class TrackerInfo extends Thread {
@@ -43,7 +43,10 @@ public class TrackerInfo extends Thread {
 			this.interrupt();
 		}
 	}
-
+/**
+ * Cette methode initie la requete HTTPGet puis l'envoie. Esuite, on initie les pairs
+ * @throws FailureReasonExeption
+ */
 	public void announce() throws FailureReasonExeption {
 		System.out.println("\nRequete a  " + urlAnnounce + "...");
 		HTTPGet query = new HTTPGet(urlAnnounce);
