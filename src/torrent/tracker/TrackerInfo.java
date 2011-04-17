@@ -43,10 +43,14 @@ public class TrackerInfo extends Thread {
 			this.interrupt();
 		}
 	}
-/**
- * Cette methode initie la requete HTTPGet puis l'envoie. Esuite, on initie les pairs
- * @throws FailureReasonExeption
- */
+
+	/**
+	 * Cette methode initie la requete HTTPGet puis l'envoie. Esuite, on initie
+	 * les pairs.
+	 * 
+	 * @throws FailureReasonExeption
+	 *             si la reponse du tracker contient une failure reason
+	 */
 	public void announce() throws FailureReasonExeption {
 		System.out.println("\nRequete a  " + urlAnnounce + "...");
 		HTTPGet query = new HTTPGet(urlAnnounce);
