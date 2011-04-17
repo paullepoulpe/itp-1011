@@ -1,0 +1,17 @@
+CONCEPTION:
+Comme nous avons suivi la conception reccomandee, nous avons pense qu'il n'y avait pas besoin de schema UML.
+Voici comment les classes interagissent ensemble pour l'instant:
+Dans la methode main de notre classe src/test/TorrentTest.java, on cree un Torrent a partir du fichier *.torrent.
+
+Dans le constructeur de Torrent, une classe MetaInfo.java sert de decodeur du fichier *.torrent, et c'est cette classe qui initialise les attributs du Torrent dont les informations sont dans le fichier metainfo (liste de trackers, tableau de pieces, etc...)
+
+La classe Torrent.java contient une methode massAnnounce() qui cree un objet TrackerInfo (extends Thread, src/torrent/tracker/TrackerInfo.java) et le lance (start). Par ailleurs, cette meme methode demarre un PeerAccepter, pour accepter les connexions entrantes.
+
+A present, un processus TrackerInfo par tracker present dans *.torrent est lance. Cette classe, via run(), creer un objet HTTPGet (src/http/HTTPGet.java) et y ajoute succesivement les parametres necessaires, puis l'envoie au tracker. On recupere la reponse en construisant un objet AnnounceInfo (src/http/AnnounceInfo.java) qui s'occupe de decoder celle-ci, notamment la liste des pairs. A partir de cette liste, la methode initPeers() de TrackerInfo ajoute tous les pairs a la liste des pairs du Torrent.
+
+Nous nous trouvons maintenant dans la classe Peer (src/torrent/peer/Peer.java). Le contructeur demarre un processus PeerHandler (src/torrent/peer/PeerHandler.java), car c'est cette classe qui s'occupe de tout le traffic de donnees avec le pair. Il y a un PeerHandler par Peer.
+
+Le PeerHandler fait la connexion avec le pair, en faisant le HandShake (src/torrent/messages/HandShake.java), puis creant un objet MessageReader (src/torrent/messages/MessageReader.java) qui s'occupe de mettre les reponses dans le bon type de message (classes heritant de src/torrent/messages/Message.java). Un Thread KeepAlive (src/torrent/messages/KeepAlive.java) est demarre afin de garder la connexion ouverte.
+Ensuite, jusqu'a la fin du telechargement, une boucle s'occupe de successivement lire les messages recus (src/torrent/messages/MessageHandler.java), preparer et envoyer des Request (src/torrent/messages/Request.java) et d'autres messages.
+
+Si le message recu est de type SendBlock (src/torrent/messages/SendBlock.java), le MessageHandler ajoute le bloc entrant a la piece auquel il appartient, puis s'assure que le PieceManager (src/torrent/piece/PieceManager.java) mette a jour sa liste de Piece a demander (a travers sa methode updatePriorities()). PieceManager s'occupe entre autres aussi de fournir au PeerHandler les Piece a demander. Si le Torrent est entierement telecharge, c'est aussi cette methode updatePriorities qui lance l'ecriture sur le disque par la methode writeToFile de la classe Torrent.java.

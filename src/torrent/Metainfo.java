@@ -14,15 +14,15 @@ import bencoding.BEValue;
 import bencoding.InvalidBEncodingException;
 
 /**
- * Cette classe permet de décoder le fichier "*.torrent" et de faciliter l'accès
- * aux donnés encodées dedans. Il sert de conteneur.
+ * Cette classe permet de decoder le fichier "*.torrent" et de faciliter l'acces
+ * aux donnees encodees dedans. Il sert de conteneur.
  * 
  * 
  * @author Damien Engels et Maarten Sap
  * 
  */
 public class Metainfo {
-	private TorrentHash infoHash; // hash du fichier Métainfo
+	private TorrentHash infoHash; // hash du fichier Metainfo
 	private String createdBy;
 	private String comment;
 	private Date creationDate;
@@ -36,7 +36,7 @@ public class Metainfo {
 	private int[] filesLength;
 
 	/**
-	 * Ce constructeur initialise tous les paramètres en les extrayants du
+	 * Ce constructeur initialise tous les parametres en les extrayants du
 	 * fichier file;
 	 * 
 	 * @param file
@@ -122,10 +122,10 @@ public class Metainfo {
 
 	/**
 	 * Mets touts le nom de tous les trackers bout a bout dans une seule chaine
-	 * de caractère
+	 * de caractere
 	 * 
 	 * @return Une String qui comporte le nom de chaque tracker bout a bout,
-	 *         séparés par des retours a la ligne
+	 *         separes par des retours a la ligne
 	 */
 	private String printTrackerList() {
 		String trackers = "";
