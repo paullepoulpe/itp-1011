@@ -61,6 +61,11 @@
 13.04.2011
 -Le telechargement marche assez bien sur les ordis du CO, mais si on teste le programme sur un laptop, le telechargement n'aboutit jamais (et cela fait exploser la memoire)
 -La Javadoc est en cours de realisation, malheureusement il y a pas mal de classes et methodes a commenter... au boulot ;)
+14.04.2011
+-On a recu un mail du service informatique de l'epfl nous disant qu'il y avait des pics d'activite reseau en provenance de notre compte, un certain executable java ayant plus de 600 connexions ouvertes avec des personnes partout dans le monde (lol).
 16.04.2011
 -Comme on est tellement sous le charme de notre propre creation, on veut tout de suite avoir une interface graphique. On a donc deja discute du layout de notre fenetre pricipale.
 -On a meme essaye de faire un test GUI (a voir dans src/test/GuiAlphaTest.java) c'est encore tres moche, ne correspond pas encore du tout a ce qu'on veut, mais c'esrt un debut !
+17.04.2011
+-Le rendu intermediaire approche, notre code est encore très brouillon,(désolé pour les assistant qui vont devoir lire tout ca, mais comme il y a aussi l'examen intermediaire de DS on a pas vraiment eu le temps de le retravailler correctement!
+-On a essaye de commenter au mieux toutes les parties du code pour que la lecture ne soit pas (trop) fatigante!
