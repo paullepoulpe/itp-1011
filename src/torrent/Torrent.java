@@ -331,6 +331,14 @@ public class Torrent {
 	public Metainfo getMetainfo() {
 		return metainfo;
 	}
+	
+	public ArrayList<TrackerInfo> getTrackers() {
+		return trackers;
+	}
+	
+	public ArrayList<Peer> getPeerList() {
+		return peerList;
+	}
 
 	public PieceManager getPieceManager() {
 		return pieceManager;

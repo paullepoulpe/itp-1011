@@ -61,3 +61,6 @@
 13.04.2011
 -Le telechargement marche assez bien sur les ordis du CO, mais si on teste le programme sur un laptop, le telechargement n'aboutit jamais (et cela fait exploser la memoire)
 -La Javadoc est en cours de realisation, malheureusement il y a pas mal de classes et methodes a commenter... au boulot ;)
+16.04.2011
+-Comme on est tellement sous le charme de notre propre creation, on veut tout de suite avoir une interface graphique. On a donc deja discute du layout de notre fenetre pricipale.
+-On a meme essaye de faire un test GUI (a voir dans src/test/GuiAlphaTest.java) c'est encore tres moche, ne correspond pas encore du tout a ce qu'on veut, mais c'esrt un debut !

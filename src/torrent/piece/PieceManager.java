@@ -38,7 +38,7 @@ public class PieceManager {
 	 * est pas le cas, on enleve les pieces completes des pieces a telecharger
 	 * 
 	 * Cette methode est appelee dans la classe MessageHandler lors d'un
-	 * vist(SendBlock s).
+	 * visit(SendBlock s).
 	 */
 	public void updatePriorities() {
 		if (!torrent.isComplete()) {
