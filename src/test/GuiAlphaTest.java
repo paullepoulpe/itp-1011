@@ -44,7 +44,7 @@ class GuiAlpha extends JFrame implements Runnable, ActionListener {
 	public GuiAlpha() {
 		setPreferredSize(new Dimension(1280, 720));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		myTorrent = new Torrent(new File("data/G6.torrent"));
+		myTorrent = new Torrent(new File("data/mariacarree.torrent"));
 		this.setTitle("Torrent : " + myTorrent.getMetainfo().getFileName());
 		setLayout(new BorderLayout());
 

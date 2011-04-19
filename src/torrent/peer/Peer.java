@@ -89,9 +89,13 @@ public class Peer {
 		return id;
 	}
 
-	public boolean equals(Peer peer2) {
-		return (this.ipAdress.equals(peer2.ipAdress))
-				&& (this.port == peer2.port);
+	public boolean equals(Object peer) {
+		if (peer instanceof Peer) {
+			return (this.ipAdress.equals(((Peer) peer).ipAdress))
+					&& (this.port == ((Peer) peer).port);
+		}
+		return false;
+
 	}
 
 	public void runPeerHandler() {

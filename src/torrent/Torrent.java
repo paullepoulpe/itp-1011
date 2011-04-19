@@ -1,22 +1,15 @@
 package torrent;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import torrent.peer.Peer;
-import torrent.peer.PeerAccepter;
-import torrent.peer.PeerIDGenerator;
+import torrent.peer.*;
 import torrent.piece.*;
 import torrent.tracker.TrackerInfo;
 
 public class Torrent {
-	private ArrayList<Peer> peerList;
+	private ArrayList<Peer> peerList; // TODO peerhandlers?
 	private Piece[] pieces;
 	private ArrayList<TrackerInfo> trackers;
 	private Metainfo metainfo;
@@ -27,40 +20,41 @@ public class Torrent {
 	private boolean isComplete;
 	private int[][] fileDelimiters;
 
-	public Torrent(File metainfo, int numPort) {
-		this.metainfo = new Metainfo(metainfo);
+	/**
+	 * comstructeur avec numero de port
+	 * 
+	 * @param metainfoFile
+	 *            le fichier .torrent
+	 * 
+	 * @param numPort
+	 *            le port sur lequel on accepte les connections
+	 */
+	public Torrent(File metainfoFile, int numPort) {
+		this.metainfo = new Metainfo(metainfoFile);
 		this.numPort = numPort;
 		this.peerList = new ArrayList<Peer>();
-		System.out.println(this.metainfo);
-		this.pieces = new Piece[(int) (Math.ceil(((double) this.metainfo
-				.getSize())
-				/ ((double) this.metainfo.getPieceLength())))];
-		for (int i = 0; i < this.pieces.length; i++) {
-			byte[] pieceHash = new byte[20];
-			for (int j = 0; j < pieceHash.length; j++) {
-				pieceHash[j] = this.metainfo.getPiecesHash()[(20 * i) + j];
-			}
-			if (i == pieces.length - 1) {
-				int length = this.metainfo.getSize()
-						- ((pieces.length - 1) * this.metainfo.getPieceLength());
-				pieces[i] = new Piece(i, length, pieceHash);
-			} else {
-				pieces[i] = new Piece(i, this.metainfo.getPieceLength(),
-						pieceHash);
-			}
-
-		}
+		this.initPieces();
 		this.pieceManager = new PieceManager(this);
-		this.fileDelimiters = new int[this.metainfo.getFilesLength().length][4];
-		// forme : (debut (inclus) [Piece][Indice];fin (inclus)[Piece][Indice])
-		computeDelimiters();
+		this.computeDelimiters();
+
+		System.out.println(this.metainfo);
 	}
 
+	/**
+	 * constructeur sans numero de port, appele l'autre constructeur avec un
+	 * numero de port aleatoire entre 6881 et 36881
+	 * 
+	 * @param metainfo
+	 *            le fichier .torrent
+	 */
 	public Torrent(File metainfo) {
 		this(metainfo, 6881 + (int) (Math.random() * 30001));
 
 	}
 
+	/**
+	 * fais les premieres requetes aux trackers et demarre le @PeerAccepter
+	 */
 	public void massAnnounce() {
 		ArrayList<String> trackersUrl = metainfo.getTrackerList();
 		this.trackers = new ArrayList<TrackerInfo>();
@@ -72,6 +66,11 @@ public class Torrent {
 
 	}
 
+	/**
+	 * retourne la completion du telechargement
+	 * 
+	 * @return le pourcentage d'avancement du telechargement (un double)
+	 */
 	public double getDownloadedCompleteness() {
 		double downloadedCompleteness = 0;
 		for (int i = 0; i < this.pieces.length; i++) {
@@ -80,23 +79,45 @@ public class Torrent {
 		return downloadedCompleteness / this.pieces.length;
 	}
 
+	/**
+	 * verifie si on a au moins une piece!
+	 * 
+	 * @return true si on a aucune piece de complete
+	 */
 	public boolean isEmpty() {
 		boolean vide = true;
-		for (int i = 0; i < this.pieces.length; i++) {
+		for (int i = 0; i < this.pieces.length && vide; i++) {
 			vide = vide && !this.pieces[i].isComplete();
 		}
 		return vide;
 	}
 
+	/**
+	 * teste si le torrent est complet ou non
+	 * 
+	 * @return true si toutes les pieces sont completes et verfifiees
+	 */
 	public boolean isComplete() {
-		boolean complet = true;
-		for (int i = 0; i < this.pieces.length; i++) {
-			complet = complet && this.pieces[i].isChecked();
+		if (isComplete) {
+			return true;
+		} else {
+			boolean complet = true;
+			for (int i = 0; i < this.pieces.length && complet; i++) {
+				complet = complet && this.pieces[i].isChecked();
+			}
+			this.isComplete = complet;
+			return complet;
 		}
-		this.isComplete = complet;
-		return complet;
+
 	}
 
+	/**
+	 * Permet d'ajouter un peer au torrent
+	 * 
+	 * @param peer
+	 *            le peer qu'on veut ajouter
+	 * @return false si on l'as deja
+	 */
 	public boolean addPeer(Peer peer) {
 		if (peerList.contains(peer)) {
 			return false;
@@ -107,170 +128,6 @@ public class Torrent {
 		}
 	}
 
-	public boolean writeToFile2() {
-		if (isComplete && !writtenOnFile) {
-
-			if (!this.metainfo.isMultifile()) {
-				File file = new File(System.getProperty("user.home"),
-						"Downloads" + File.separator + this.numPort
-								+ "_suffix_" + metainfo.getFileName());
-
-				DataOutputStream ecrivain = null;
-				try {
-					file.createNewFile();
-					ecrivain = new DataOutputStream(new FileOutputStream(file));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				for (int i = 0; i < pieces.length; i++) {
-					if (pieces[i].getData() == null) {
-						try {
-							for (int j = 0; j < pieces[i].getSizeTab(); i++) {
-								ecrivain.write(0);
-							}
-
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					} else {
-						try {
-							ecrivain.write(pieces[i].getData());
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-
-				}
-				try {
-					ecrivain.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				writtenOnFile = true;
-				System.out.println("Fichier ecrit dans "
-						+ System.getProperty("user.home") + File.separator
-						+ "Downloads");
-				System.exit(0);
-				return true;
-
-			} else {
-				DataOutputStream ecrivain = null;
-				FileOutputStream fileStream = null;
-				ArrayList<String[]> filesPath = metainfo.getFilesPath();
-				int[] filesSize = metainfo.getFilesLength();
-				int lastStopPiece = 0;
-				int lastStopBegin = 0;
-				for (int i = 0; i < filesPath.size(); i++) {
-					System.out.println("Fichier " + (i + 1) + " : ");
-					System.out.println("Debut : ( " + fileDelimiters[i][0]
-							+ "; " + fileDelimiters[i][1] + " )" + "  Fin : ( "
-							+ fileDelimiters[i][2] + "; "
-							+ fileDelimiters[i][3] + " )");
-					int currentStopPiece = 0;
-					int currentStopBegin = 0;
-
-					String path = System.getProperty("user.home")
-							+ File.separator + "Downloads" + File.separator
-							+ metainfo.getFileName();
-
-					for (int j = 0; j < filesPath.get(i).length - 1; j++) {
-						path = path + File.separator + filesPath.get(i)[j];
-					}
-					new File(path).mkdirs();
-					File file = new File(path + File.separator
-							+ filesPath.get(i)[filesPath.get(i).length - 1]);
-
-					try {
-						file.createNewFile();
-						fileStream = new FileOutputStream(file);
-						ecrivain = new DataOutputStream(fileStream);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					int currentFileSize = filesSize[i];
-					int written = 0;
-					for (int j = lastStopPiece; j < pieces.length
-							&& written < currentFileSize; j++) {
-						System.out.println("Piece " + (j) + " ok!");
-
-						byte[] currentData = pieces[j].getData();
-
-						if (j == lastStopPiece) {
-							if (written + currentData.length - lastStopBegin <= currentFileSize) {
-								byte[] partData = Arrays.copyOfRange(
-										currentData, lastStopBegin,
-										currentData.length);
-								try {
-									ecrivain.write(partData);
-									written += partData.length;
-								} catch (IOException e) {
-									e.printStackTrace();
-								}
-							} else {
-								for (int k = lastStopBegin; k < currentData.length
-										&& written < currentFileSize; k++) {
-									try {
-										ecrivain.write(currentData[k]);
-										written++;
-									} catch (IOException e) {
-										e.printStackTrace();
-									}
-									currentStopBegin = k + 1;
-								}
-							}
-
-						} else {
-							if (written + currentData.length <= currentFileSize) {
-								try {
-									ecrivain.write(currentData);
-									written += currentData.length;
-								} catch (IOException e) {
-									e.printStackTrace();
-								}
-							} else {
-								byte[] partData = Arrays.copyOf(currentData,
-										currentFileSize - written);
-								try {
-									ecrivain.write(partData);
-									written += partData.length;
-									currentStopBegin = partData.length;
-								} catch (IOException e) {
-									e.printStackTrace();
-								}
-							}
-						}
-
-						try {
-							ecrivain.flush();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-
-						currentStopPiece = j;
-						if (currentStopBegin >= currentData.length) {
-							currentStopBegin = 0;
-						}
-
-					}
-					lastStopBegin = currentStopBegin;
-					lastStopPiece = currentStopPiece;
-					try {
-						fileStream.close();
-						ecrivain.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				writtenOnFile = true;
-				System.out.println("Fichiers ecrit dans "
-						+ System.getProperty("user.home") + File.separator
-						+ "Downloads");
-				System.exit(0);
-			}
-		}
-		return false;
-	}
-
 	/**
 	 * Cette methode permet d'initialiser les pieces d'un torrent depuis un
 	 * fichier. Elle regarde dans le dossier Downloads/ si un fichier contient
@@ -278,9 +135,11 @@ public class Torrent {
 	 * d'initialiser les pieces avec. La piece s'occupe de verifier qu'elle soit
 	 * correcte. Si le fichier n'est pas trouve cette methode retourne false
 	 * 
+	 * 
 	 * @return true si le fichier a ete trouve, false sinon
 	 */
 	public boolean readFromFile() {
+		// TODO gerer le multifile!
 		File folder = new File(System.getProperty("user.home"), "Downloads"
 				+ File.separator);
 		String[] liste = folder.list();
@@ -335,13 +194,18 @@ public class Torrent {
 	private void computeDelimiters() {
 		int[] filesLength = metainfo.getFilesLength();
 		if (metainfo.isMultifile()) {
+			this.fileDelimiters = new int[this.metainfo.getFilesLength().length][4];
+			// forme : (debut (inclus) [Piece][Indice];fin
+			// (inclus)[Piece][Indice])
+
 			fileDelimiters[0][0] = 0;
 			fileDelimiters[0][1] = 0;
 			for (int i = 0; i < filesLength.length - 1; i++) {
 
 				fileDelimiters[i][3] = (fileDelimiters[i][0] + filesLength[i] - 1)
 						% pieces[0].getSizeTab();
-				fileDelimiters[i][2] = (fileDelimiters[i][0] + filesLength[i] - fileDelimiters[i][3])
+				fileDelimiters[i][2] = fileDelimiters[i][0]
+						+ (fileDelimiters[i][0] + filesLength[i] - fileDelimiters[i][3])
 						/ pieces[0].getSizeTab();
 
 				fileDelimiters[i + 1][1] = (fileDelimiters[i][3] + 1)
@@ -356,6 +220,9 @@ public class Torrent {
 			fileDelimiters[filesLength.length - 1][3] = pieces[pieces.length - 1]
 					.getSizeTab() - 1;
 		} else {
+
+			this.fileDelimiters = new int[1][4];
+
 			fileDelimiters[0][0] = 0;
 			fileDelimiters[0][1] = 0;
 			fileDelimiters[0][0] = pieces.length - 1;
@@ -365,7 +232,13 @@ public class Torrent {
 
 	}
 
+	/**
+	 * ecris les fichiers sur le disque grace au delimiteurss
+	 * 
+	 * @return true si tout a été ecris correctement
+	 */
 	public boolean writeToFile() {
+		// TODO choisir le fichier de destination
 		if (isComplete && !writtenOnFile) {
 			FileOutputStream fileStream = null;
 			ArrayList<String[]> filesPath = metainfo.getFilesPath();
@@ -393,7 +266,7 @@ public class Torrent {
 					e.printStackTrace();
 					return false;
 				}
-				
+
 				for (int j = fileDelimiters[i][0]; j <= fileDelimiters[i][2]; j++) {
 
 					System.out.println("Piece " + (j) + " ok!");
@@ -434,6 +307,30 @@ public class Torrent {
 			System.exit(0);
 		}
 		return false;
+	}
+
+	/**
+	 * initialise le tableau des pieces a la bonne taille, et initialise chaque
+	 * piece avec son index et sa somme de controle
+	 */
+	private void initPieces() {
+		this.pieces = new Piece[(int) (Math.ceil(((double) this.metainfo
+				.getSize())
+				/ ((double) this.metainfo.getPieceLength())))];
+
+		for (int i = 0; i < this.pieces.length; i++) {
+			byte[] pieceHash = Arrays.copyOfRange(
+					this.metainfo.getPiecesHash(), 20 * i, 20 * (i + 1));
+			if (i == pieces.length - 1) {
+				int length = this.metainfo.getSize()
+						- ((pieces.length - 1) * this.metainfo.getPieceLength());
+				pieces[i] = new Piece(i, length, pieceHash);
+			} else {
+				pieces[i] = new Piece(i, this.metainfo.getPieceLength(),
+						pieceHash);
+			}
+		}
+
 	}
 
 	public int getNumPort() {
