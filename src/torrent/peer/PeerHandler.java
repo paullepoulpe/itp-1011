@@ -34,6 +34,9 @@ public class PeerHandler extends Thread {
 	private boolean isInterested;
 	private long lastTimeFlush;
 	private static int requestRestrictions = 25;
+	private double notation; // note du pair, entre 0 et 10 (non compris),
+
+	// initialisé a 5;
 
 	public PeerHandler(Peer peer, Torrent torrent) {
 		this.peer = peer;
@@ -48,6 +51,7 @@ public class PeerHandler extends Thread {
 		this.isChocking = true;
 		this.isInterested = false;
 		this.pieceMgr = torrent.getPieceManager();
+		this.notation = 5.0;
 
 	}
 
@@ -104,6 +108,10 @@ public class PeerHandler extends Thread {
 					prepareRequest();
 					sendMessages();
 					try {
+						if (notation < 2.5) {
+							this.interrupt();
+						}
+						yield();
 						sleep(20);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
@@ -299,6 +307,8 @@ public class PeerHandler extends Thread {
 		} else if (requetesEnvoyee.size() == requestRestrictions) {
 			long thisTime = System.currentTimeMillis();
 			if ((thisTime - lastTimeFlush) > 10000) {
+				notation /= 1.2;
+				System.err.println("Notation : " + notation);
 				requetesEnvoyee.clear();
 			}
 			lastTimeFlush = thisTime;
