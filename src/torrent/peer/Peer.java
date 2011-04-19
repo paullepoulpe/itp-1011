@@ -62,7 +62,7 @@ public class Peer {
 	}
 
 	public String toString() {
-		return "IpAdress : " + ipAdress + "\n" + "Port : " + port + "\n";
+		return "IpAdress : " + ipAdress + "\t" + "Port : " + port;
 	}
 
 	public void setId(String id) {
