@@ -25,6 +25,7 @@ public class Torrent {
 	public static String PEER_ID = PeerIDGenerator.generateID();
 	private boolean writtenOnFile;
 	private boolean isComplete;
+	private int[][] fileDelimiters;
 
 	public Torrent(File metainfo, int numPort) {
 		this.metainfo = new Metainfo(metainfo);
@@ -50,6 +51,9 @@ public class Torrent {
 
 		}
 		this.pieceManager = new PieceManager(this);
+		this.fileDelimiters = new int[this.metainfo.getFilesLength().length][4];
+		// forme : (debut (inclus) [Piece][Indice];fin (inclus)[Piece][Indice])
+		computeDelimiters();
 	}
 
 	public Torrent(File metainfo) {
@@ -103,7 +107,7 @@ public class Torrent {
 		}
 	}
 
-	public boolean writeToFile() {
+	public boolean writeToFile2() {
 		if (isComplete && !writtenOnFile) {
 
 			if (!this.metainfo.isMultifile()) {
@@ -158,6 +162,10 @@ public class Torrent {
 				int lastStopBegin = 0;
 				for (int i = 0; i < filesPath.size(); i++) {
 					System.out.println("Fichier " + (i + 1) + " : ");
+					System.out.println("Debut : ( " + fileDelimiters[i][0]
+							+ "; " + fileDelimiters[i][1] + " )" + "  Fin : ( "
+							+ fileDelimiters[i][2] + "; "
+							+ fileDelimiters[i][3] + " )");
 					int currentStopPiece = 0;
 					int currentStopBegin = 0;
 
@@ -320,6 +328,114 @@ public class Torrent {
 		}
 	}
 
+	/**
+	 * calcule les limites des fichiers, debut(quelle piece et ou) et fin
+	 * (quelle piece et ou) le debut et la fin sont compris dans le fichier!
+	 */
+	private void computeDelimiters() {
+		int[] filesLength = metainfo.getFilesLength();
+		if (metainfo.isMultifile()) {
+			fileDelimiters[0][0] = 0;
+			fileDelimiters[0][1] = 0;
+			for (int i = 0; i < filesLength.length - 1; i++) {
+
+				fileDelimiters[i][3] = (fileDelimiters[i][0] + filesLength[i] - 1)
+						% pieces[0].getSizeTab();
+				fileDelimiters[i][2] = (fileDelimiters[i][0] + filesLength[i] - fileDelimiters[i][3])
+						/ pieces[0].getSizeTab();
+
+				fileDelimiters[i + 1][1] = (fileDelimiters[i][3] + 1)
+						% pieces[0].getSizeTab();
+				fileDelimiters[i + 1][0] = fileDelimiters[i][2];
+				if (fileDelimiters[i + 1][1] == 0) {
+					fileDelimiters[i + 1][0]++;
+				}
+
+			}
+			fileDelimiters[filesLength.length - 1][2] = pieces.length - 1;
+			fileDelimiters[filesLength.length - 1][3] = pieces[pieces.length - 1]
+					.getSizeTab() - 1;
+		} else {
+			fileDelimiters[0][0] = 0;
+			fileDelimiters[0][1] = 0;
+			fileDelimiters[0][0] = pieces.length - 1;
+			fileDelimiters[0][1] = pieces[pieces.length - 1].getSizeTab() - 1;
+
+		}
+
+	}
+
+	public boolean writeToFile() {
+		if (isComplete && !writtenOnFile) {
+			FileOutputStream fileStream = null;
+			ArrayList<String[]> filesPath = metainfo.getFilesPath();
+			for (int i = 0; i < filesPath.size(); i++) {
+				System.out.println("Fichier " + (i + 1) + " : ");
+				System.out.println("Debut : ( " + fileDelimiters[i][0] + "; "
+						+ fileDelimiters[i][1] + " )" + "  Fin : ( "
+						+ fileDelimiters[i][2] + "; " + fileDelimiters[i][3]
+						+ " )");
+
+				String path = System.getProperty("user.home") + File.separator
+						+ "Downloads" + File.separator + metainfo.getFileName();
+
+				for (int j = 0; j < filesPath.get(i).length - 1; j++) {
+					path = path + File.separator + filesPath.get(i)[j];
+				}
+				new File(path).mkdirs();
+				File file = new File(path + File.separator
+						+ filesPath.get(i)[filesPath.get(i).length - 1]);
+
+				try {
+					file.createNewFile();
+					fileStream = new FileOutputStream(file);
+				} catch (IOException e) {
+					e.printStackTrace();
+					return false;
+				}
+				
+				for (int j = fileDelimiters[i][0]; j <= fileDelimiters[i][2]; j++) {
+
+					System.out.println("Piece " + (j) + " ok!");
+
+					byte[] currentData = pieces[j].getData();
+
+					if (j == fileDelimiters[i][0]) {
+						currentData = Arrays.copyOfRange(currentData,
+								fileDelimiters[i][1], currentData.length);
+					}
+					if (j == fileDelimiters[i][2]) {
+						currentData = Arrays.copyOfRange(currentData, 0,
+								fileDelimiters[i][1] + 1);
+					}
+
+					try {
+						fileStream.write(currentData);
+
+					} catch (IOException e) {
+						e.printStackTrace();
+						return false;
+					}
+				}
+
+				try {
+					fileStream.flush();
+					fileStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+					return false;
+				}
+
+			}
+			writtenOnFile = true;
+			System.out.println("Fichiers ecrit dans "
+					+ System.getProperty("user.home") + File.separator
+					+ "Downloads");
+			System.exit(0);
+		}
+		return false;
+	}
+
 	public int getNumPort() {
 		return numPort;
 	}
@@ -331,11 +447,11 @@ public class Torrent {
 	public Metainfo getMetainfo() {
 		return metainfo;
 	}
-	
+
 	public ArrayList<TrackerInfo> getTrackers() {
 		return trackers;
 	}
-	
+
 	public ArrayList<Peer> getPeerList() {
 		return peerList;
 	}

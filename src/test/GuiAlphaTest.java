@@ -72,7 +72,8 @@ class GuiAlpha extends JFrame implements Runnable, ActionListener {
 		JScrollPane bob = new JScrollPane(peers);
 		bob.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		JScrollPane jane = new JScrollPane(info);
-		jane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		jane
+				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		tabTracker.add(bob);
 		percent = new JLabel("Download completeness: 0.0 % ");
 		peers.setVisibleRowCount(30);
