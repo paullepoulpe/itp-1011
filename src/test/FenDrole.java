@@ -2,7 +2,10 @@ package test;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Toolkit;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
@@ -20,16 +23,20 @@ public class FenDrole extends JFrame {
 
 	@Override
 	public void paint(Graphics g) {
+		BufferedImage image = new BufferedImage(this.getWidth(), this
+				.getHeight(), BufferedImage.TYPE_INT_BGR);
+		Graphics2D g2 = image.createGraphics();
+		super.paint(g2);
+		g2.setTransform(AffineTransform.getScaleInstance(
+				this.getWidth() / 256.0, this.getHeight() / 256.0));
 		for (int i = 0; i < 256; i++) {
 			for (int j = 0; j < 256; j++) {
-				g.setColor(new Color((j << 16) + (i << 8)));
-				g.drawRect((int) Math.round((i / 256.0) * this.getWidth()),
-						(int) Math.round((j / 256.0) * this.getHeight()),
-						(int) Math.ceil((5 / 256.0) * this.getWidth()),
-						(int) Math.ceil((5 / 256.0) * this.getWidth()));
+				g2.setColor(new Color((j << 16) + (i << 8)));
+				g2.drawRect(i, j, 1, 1);
 
 			}
 		}
+		g.drawImage(image, 0, 0, null);
 
 		// for (int i = 0; i < (1 << 24); i++) {
 		// g.setColor(new Color(i));
