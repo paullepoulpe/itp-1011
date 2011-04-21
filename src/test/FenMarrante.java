@@ -10,13 +10,17 @@ import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import javax.swing.JFrame;
 
-public class FenMarrante extends JFrame implements Runnable, MouseListener {
+public class FenMarrante extends JFrame implements Runnable, MouseListener,
+		MouseMotionListener {
 	LinkedList<Fourmi> fourmis;
+	int posX;
+	int posY;
 
 	public static void main(String[] args) {
 		new Thread(new FenMarrante()).start();
@@ -29,6 +33,7 @@ public class FenMarrante extends JFrame implements Runnable, MouseListener {
 		this.setVisible(true);
 		this.fourmis = new LinkedList<Fourmi>();
 		this.addMouseListener(this);
+		this.addMouseMotionListener(this);
 	}
 
 	@Override
@@ -43,9 +48,10 @@ public class FenMarrante extends JFrame implements Runnable, MouseListener {
 					Fourmi f = i.next();
 					g.setColor(f.getCouleur());
 					g.drawRect(f.getX(), f.getY(), 1, 1);
-					f.changePosition();
+					f.changePosition(posX, posY);
 				}
 			}
+			Thread.yield();
 
 		}
 
@@ -92,6 +98,19 @@ public class FenMarrante extends JFrame implements Runnable, MouseListener {
 			i.next().setD(this.getSize());
 		}
 	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		posX = e.getX();
+		posY = e.getY();
+
+	}
 }
 
 class Fourmi extends Thread {
@@ -107,10 +126,23 @@ class Fourmi extends Thread {
 		this.d = d;
 	}
 
-	public void changePosition() {
-		x = (x + (int) (Math.random() * 3) - 1 + d.width) % d.width;
-		y = (y + (int) (Math.random() * 3) - 1 + d.height) % d.height;
-		this.couleur = new Color((couleur.getRGB() + 1) % (1 << 24));
+	public void changePosition(int posX, int posY) {
+		int coteX = 1;
+		int coteY = 1;
+		if (Math.abs(posX - x) >= d.width / 2) {
+			coteX = -1;
+		}
+		if (Math.abs(posY - y) >= d.height / 2) {
+			coteY = -1;
+		}
+
+		int corrX = (int) (Math.random() * (Math.random() * 1.15 * coteX * Math
+				.signum(posX - x)));
+		int corrY = (int) (Math.random() * (Math.random() * 1.15 * coteY * Math
+				.signum(posY - y)));
+		x = (x + (int) (Math.random() * 3) - 1 + corrX + d.width) % d.width;
+		y = (y + (int) (Math.random() * 3) - 1 + corrY + d.height) % d.height;
+		this.couleur = new Color((couleur.getRGB() + 7) % (1 << 24));
 	}
 
 	public int getX() {
