@@ -30,8 +30,7 @@ public class FenCercles extends JFrame implements MouseListener,
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		Cercle c = cercles.getLast();
-		c.setRayon((int) Math.round(Math.sqrt(Math
-				.pow(e.getX() - c.getX(), 2.0)
+		c.setRayon((int) Math.round(Math.sqrt(Math.pow(e.getX() - c.getX(), 2.0)
 				+ Math.pow(e.getY() - c.getY(), 2.0))));
 		repaint();
 
@@ -65,7 +64,7 @@ public class FenCercles extends JFrame implements MouseListener,
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		Cercle c = new Cercle(e.getX(), e.getY(), 0);
+		Cercle c = new Cercle(e.getX(), e.getY(), 0, this.getSize());
 		c.start();
 		cercles.addLast(c);
 
@@ -78,21 +77,23 @@ public class FenCercles extends JFrame implements MouseListener,
 
 	@Override
 	public void paint(Graphics g) {
-		BufferedImage image = new BufferedImage(this.getWidth(), this
-				.getHeight(), BufferedImage.TYPE_INT_BGR);
+		BufferedImage image = new BufferedImage(this.getWidth(),
+				this.getHeight(), BufferedImage.TYPE_INT_BGR);
 		Graphics2D g2 = image.createGraphics();
 		super.paint(g2);
 		ListIterator<Cercle> iter = cercles.listIterator();
 		while (iter.hasNext()) {
 			Cercle i = iter.next();
+			i.setD(this.getSize());
 			g2.setColor(Color.RED);
 			g2.drawRect(i.getX(), i.getY(), 1, 1);
 			g2.setColor(Color.BLACK);
-			g2.drawOval(i.getX() - i.getRayon(), i.getY() - i.getRayon(), i
-					.getRayon() * 2, i.getRayon() * 2);
+			g2.drawOval(i.getX() - i.getRayon(), i.getY() - i.getRayon(),
+					i.getRayon() * 2, i.getRayon() * 2);
 			g2.setColor(i.getColor());
-			g2.fillArc(i.getX() - i.getRayon(), i.getY() - i.getRayon(), i
-					.getRayon() * 2, i.getRayon() * 2, 0, i.getAngle());
+			g2.fillArc(i.getX() - i.getRayon(), i.getY() - i.getRayon(),
+					i.getRayon() * 2, i.getRayon() * 2, i.getAngleDepart(),
+					i.getAngle());
 		}
 
 		g.drawImage(image, 0, 0, null);
@@ -130,14 +131,19 @@ public class FenCercles extends JFrame implements MouseListener,
 class Cercle extends Thread {
 	private int x;
 	private int y;
+	private Dimension d;
 	private int rayon;
 	private int angle;
+	private int angleDepart;
+	private int deplaceX;
+	private int deplaceY;
 	private Color color;
 	private boolean sens;
+
 	private int sleepingTimeNanos;
 	private int sleepingTimeMilis;
 
-	public Cercle(int x, int y, int rayon) {
+	public Cercle(int x, int y, int rayon, Dimension d) {
 		this.x = x;
 		this.y = y;
 		this.rayon = rayon;
@@ -145,6 +151,10 @@ class Cercle extends Thread {
 		this.color = new Color((int) (Math.random() * (1 << 24)));
 		this.sleepingTimeNanos = 999999;
 		sleepingTimeMilis = 30;
+		angleDepart = 0;
+		deplaceX = (int) (Math.random() * 10) - 5;
+		deplaceY = (int) (Math.random() * 10) - 5;
+		this.d = d;
 
 	}
 
@@ -159,6 +169,9 @@ class Cercle extends Thread {
 			} else {
 				angle--;
 			}
+			x = (x + deplaceX + d.width) % d.width;
+			y = (y + deplaceY + d.height) % d.height;
+			angleDepart = (angleDepart + 2) % 360;
 			if (angle % 360 == 0) {
 				sens = !sens;
 				color = new Color((int) (Math.random() * (1 << 24)));
@@ -191,6 +204,14 @@ class Cercle extends Thread {
 
 	public int getAngle() {
 		return angle;
+	}
+
+	public void setD(Dimension d) {
+		this.d = d;
+	}
+
+	public int getAngleDepart() {
+		return angleDepart;
 	}
 
 	public Color getColor() {

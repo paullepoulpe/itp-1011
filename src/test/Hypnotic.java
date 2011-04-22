@@ -35,18 +35,42 @@ public class Hypnotic extends JFrame implements Runnable {
 		g2.translate(this.getWidth() / 2, this.getHeight() / 2);
 		g2.rotate(rotation);
 		g2.setColor(Color.BLACK);
-		for (int i = 0; i < 5000; i++) {
-			int x = (int) (i / Math.log(i) * 0.5 * Math.cos(i / 100.0));
-			int y = (int) (i / Math.log(i) * 0.5 * Math.sin(i / 100.0));
-			g2.fillOval(x, y, 2, 2);
+		for (double i = 0; i < 10000; i = i + 1) {
+			int x = (int) Math.round(i / Math.log(i) * 0.5
+					* Math.cos(i / 100.0));
+			int y = (int) Math.round(i / Math.log(i) * 0.5
+					* Math.sin(i / 100.0));
+			g2.fillRect(x, y, 1, 1);
 		}
 		g2.rotate(rotation * 2);
 		g2.setColor(Color.BLUE);
-		for (int i = 0; i < 5000; i++) {
-			int x = (int) (i / Math.log(i) * 0.5 * Math.cos(i / 100.0));
-			int y = (int) (i / Math.log(i) * 0.5 * Math.sin(i / 100.0));
-			g2.fillOval(x, y, 2, 2);
+		for (int i = 0; i < 10000; i++) {
+			int x = (int) Math.round(i / Math.log(i) * 0.5
+					* Math.cos(i / 100.0));
+			int y = (int) Math.round(i / Math.log(i) * 0.5
+					* Math.sin(i / 100.0));
+			g2.fillRect(x, y, 1, 1);
 		}
+		g2.rotate(rotation * 3);
+		g2.setColor(Color.RED);
+		for (int i = 0; i < 10000; i++) {
+			int x = (int) Math.round(i / Math.log(i) * 0.5
+					* Math.cos(i / 100.0));
+			int y = (int) Math.round(i / Math.log(i) * 0.5
+					* Math.sin(i / 100.0));
+			g2.fillRect(x, y, 1, 1);
+		}
+		g2.rotate(rotation * 4);
+		g2.setColor(Color.CYAN);
+		for (int i = 0; i < 10000; i++) {
+			int x = (int) Math.round(i / Math.log(i) * 0.5
+					* Math.cos(i / 100.0));
+			int y = (int) Math.round(i / Math.log(i) * 0.5
+					* Math.sin(i / 100.0));
+			g2.fillRect(x, y, 1, 1);
+		}
+		g.drawImage(image, 0, 0, null);
+
 		g.drawImage(image, 0, 0, null);
 
 	}
