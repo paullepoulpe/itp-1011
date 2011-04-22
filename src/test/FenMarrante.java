@@ -38,7 +38,7 @@ public class FenMarrante extends JFrame implements Runnable, MouseListener,
 
 	@Override
 	public void run() {
-
+		repaint();
 		Graphics g = this.getGraphics();
 
 		while (true) {
@@ -52,6 +52,12 @@ public class FenMarrante extends JFrame implements Runnable, MouseListener,
 				}
 			}
 			Thread.yield();
+			try {
+				Thread.sleep(0, 1);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 		}
 
@@ -136,9 +142,9 @@ class Fourmi extends Thread {
 			coteY = -1;
 		}
 
-		int corrX = (int) (Math.random() * (Math.random() * 1.15 * coteX * Math
+		int corrX = (int) (Math.random() * (Math.random() * 1.5 * coteX * Math
 				.signum(posX - x)));
-		int corrY = (int) (Math.random() * (Math.random() * 1.15 * coteY * Math
+		int corrY = (int) (Math.random() * (Math.random() * 1.5 * coteY * Math
 				.signum(posY - y)));
 		x = (x + (int) (Math.random() * 3) - 1 + corrX + d.width) % d.width;
 		y = (y + (int) (Math.random() * 3) - 1 + corrY + d.height) % d.height;
