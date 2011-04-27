@@ -2,27 +2,27 @@ package crypto.RSA;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 
 /**
  * Cette classe represente le canal securise a travers lequel le pair pourra
  * nous envoyer sa cle symetrique.
  * 
- * @author MAARTEN
+ * @author Damien, Maarten
  * 
  */
 public class RSAInputStream extends InputStream {
-	public RSAInputStream() {
-		// TODO Auto-generated constructor stub
+	private InputStream in;
+	private KeyPair keyPair;
+	public RSAInputStream(BigInteger key, InputStream in) {
 	}
 
 	@Override
 	public int read() throws IOException {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 	@Override
 	public int read(byte[] arg0) throws IOException {
-		// TODO Auto-generated method stub
 		return super.read(arg0);
 	}
 
