@@ -23,4 +23,8 @@ public interface MessageVisitor {
 	public void visit(SendBlock s);
 
 	public void visit(Unchoke u);
+	
+	public void visit(SendRSAKey s);
+	
+	public void visit(SendSymmetricKey s);
 }

@@ -93,6 +93,12 @@ public class MessageReader {
 					input.skipBytes(lengthMess - 1);
 					break;
 
+				case sendRSAkey:
+					break;
+
+				case sendSymmetricKey:
+					break;
+
 				default:
 					break;
 				}

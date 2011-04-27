@@ -126,4 +126,24 @@ public class MessageHandler implements MessageVisitor {
 		System.out.println("Recu unchoke :):):):):):):):):):):)");
 	}
 
+	@Override
+	public void visit(SendRSAKey s) {
+		/*
+		 * si on recoit ca on doit verifier que le message est bien de type
+		 * SendRSAKey, sinon faire echouer le Handshake... Si cest correct , il
+		 * faut faire baculer les Stream du peer vers des RSAStream avec la cle.
+		 * ensuite on doit immediatement lire un message de type
+		 * SendSymmetricKey.
+		 */
+		System.out.println("Recu une cle RSA publique ;)");
+	}
+
+	@Override
+	public void visit(SendSymmetricKey s) {
+		/*
+		 * Si on recoit ca, il faut faire basculer les Streams associes au Peer
+		 * vers des SymmetricStreams avec la cle adequate
+		 */
+		System.out.println("Recue cle symmetrique");
+	}
 }
