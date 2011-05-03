@@ -1,7 +1,6 @@
 package crypto.RSA;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.math.BigInteger;
 
 /**
@@ -14,16 +13,15 @@ import java.math.BigInteger;
 public class RSAInputStream extends InputStream {
 	private InputStream in;
 	private KeyPair keyPair;
+
 	public RSAInputStream(BigInteger key, InputStream in) {
+		this.in=in;
+		
 	}
 
 	@Override
 	public int read() throws IOException {
 		return 0;
-	}
-	@Override
-	public int read(byte[] arg0) throws IOException {
-		return super.read(arg0);
 	}
 
 }
