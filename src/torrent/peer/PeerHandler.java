@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import torrent.Torrent;
 import torrent.messages.*;
 import torrent.piece.*;
+import settings.*;
 
 /**
  * Cette classe s occupe de tout ce qui concerne le traffic avec un pair
@@ -33,6 +34,7 @@ public class PeerHandler extends Thread {
 	private boolean isChocking; // est ce que le pair nous etrangle ?
 	private boolean isInterested;
 	private long lastTimeFlush;
+	private PeerSettings settings;
 	private static int requestRestrictions = 25;
 	private double notation; // note du pair, entre 0 et 10 (non compris),
 
@@ -265,8 +267,15 @@ public class PeerHandler extends Thread {
 
 		Handshake theirHS = new Handshake(input);
 		this.peer.setId(theirHS.getPeerID());
-
+		if (theirHS.isEncryptionSupported()) {
+			return shakeEncryptedHands(theirHS) && theirHS.isCompatible(ourHS);
+		}
 		return theirHS.isCompatible(ourHS);
+	}
+
+	private boolean shakeEncryptedHands(Handshake h) throws IOException{
+		SendRSAKey ourRSA = new SendRSAKey();
+		ourRSA.send(output);
 	}
 
 	/**
