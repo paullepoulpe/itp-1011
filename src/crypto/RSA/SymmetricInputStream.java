@@ -16,6 +16,7 @@ public class SymmetricInputStream extends InputStream {
 	private InputStream in;
 
 	public SymmetricInputStream(BigInteger key, InputStream in) {
+		
 	}
 
 	@Override

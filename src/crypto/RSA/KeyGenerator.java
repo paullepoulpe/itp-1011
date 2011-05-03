@@ -1,6 +1,7 @@
 package crypto.RSA;
 
 import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.Random;
 
 public class KeyGenerator {
@@ -35,5 +36,20 @@ public class KeyGenerator {
 		} while (!phi.gcd(eKey).equals(BigInteger.valueOf(1)));
 		BigInteger dKey = eKey.modInverse(phi);
 		return new KeyPair(mod, eKey, dKey, kLength);
+	}
+
+	/**
+	 * Cette methode genere aleatoirement une cle symmetrique de longueur
+	 * specifiee en argument
+	 * 
+	 * @param length
+	 *            la longueur de la cle
+	 * @return Une cle sous forme de byte[] de longueur length
+	 */
+	public static byte[] generateSymmetricKey(int length) {
+		SecureRandom rd = new SecureRandom();
+		byte[] key = new byte[length];
+		rd.nextBytes(key);
+		return key;
 	}
 }

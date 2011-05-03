@@ -1,29 +1,11 @@
 package test;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Menu;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.*;
 
 import com.sun.corba.se.spi.orbutil.fsm.Action;
 
@@ -44,7 +26,7 @@ class GuiAlpha extends JFrame implements Runnable, ActionListener {
 	public GuiAlpha() {
 		setPreferredSize(new Dimension(1280, 720));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		myTorrent = new Torrent(new File("data/mariacarree.torrent"));
+		myTorrent = new Torrent(new File("data/G6.torrent"));
 		this.setTitle("Torrent : " + myTorrent.getMetainfo().getFileName());
 		setLayout(new BorderLayout());
 
