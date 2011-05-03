@@ -31,6 +31,7 @@ public class Handshake {
 		pstrLength = (byte) protocol.length;
 		infoHash = torrent.getMetainfo().getInfoHash().binaryHash();
 		reserved = new byte[8];
+		reserved[7] = (1<<4);
 		try {
 			peerID = Torrent.PEER_ID.getBytes("ASCII");
 		} catch (UnsupportedEncodingException e) {
@@ -105,6 +106,18 @@ public class Handshake {
 		/* && Arrays.equals(this.reserved, otherHanshake.reserved) */;
 	}
 
+	/**
+	 * Cette methode determine si le pair supporte l'encryption.
+	 * 
+	 * @return True si l'encryption est supportee, false sinon.
+	 */
+	public boolean isEncryptionSupported() {
+		if ((0x10 & this.reserved[7]) == 0x10) {
+			return true;
+		}
+		return false;
+	}
+
 	public void send(DataOutputStream output) throws IOException {
 		try {
 			output.writeByte(pstrLength);
@@ -124,11 +137,14 @@ public class Handshake {
 	public byte[] getReserved() {
 		return reserved;
 	}
-/**
- * Verifie si deux handShake sont egaux
- * @param otherHandshake est compare a this
- * @return si les HandShakes sont egaux
- */
+
+	/**
+	 * Verifie si deux handShake sont egaux
+	 * 
+	 * @param otherHandshake
+	 *            est compare a this
+	 * @return si les HandShakes sont egaux
+	 */
 	public boolean equals(Handshake otherHandshake) {
 		return this.pstrLength == otherHandshake.pstrLength
 				&& Arrays.equals(this.infoHash, otherHandshake.infoHash)
