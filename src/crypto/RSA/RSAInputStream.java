@@ -14,7 +14,7 @@ public class RSAInputStream extends InputStream {
 	private InputStream in;
 	private KeyPair keyPair;
 
-	public RSAInputStream(BigInteger key, InputStream in) {
+	public RSAInputStream(InputStream in) {
 		this.in=in;
 		
 	}
