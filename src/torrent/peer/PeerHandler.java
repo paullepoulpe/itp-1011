@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.LinkedList;
 
+import crypto.RSA.RSAOutputStream;
+
 import torrent.Torrent;
 import torrent.messages.*;
 import torrent.piece.*;
@@ -38,7 +40,7 @@ public class PeerHandler extends Thread {
 	private static int requestRestrictions = 25;
 	private double notation; // note du pair, entre 0 et 10 (non compris),
 
-	// initialisé a 5;
+	// initialise a 5;
 
 	public PeerHandler(Peer peer, Torrent torrent) {
 		this.peer = peer;
@@ -276,6 +278,8 @@ public class PeerHandler extends Thread {
 	private boolean shakeEncryptedHands(Handshake h) throws IOException{
 		SendRSAKey ourRSA = new SendRSAKey();
 		ourRSA.send(output);
+		SendRSAKey theirRSA = new SendRSAKey(input);
+		output = new RSAOutputStream(key, out);
 	}
 
 	/**
