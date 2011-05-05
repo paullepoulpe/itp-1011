@@ -42,25 +42,13 @@ public class Peer {
 
 		this.id = "<?>";
 		notation = 5;
-		// this.peerHandler = new PeerHandler(this, torrent);
-		// peerHandler.start();
 
 	}
 
-	/**
-	 * Second constructeur, utile pour construire un paiir a partir d'un Socket
-	 * et d'un torrent. Cette methode ne fait que creer un PeerHandler avec ses
-	 * deux arguments puis de demarrer ce dernier.
-	 * 
-	 * @param socket
-	 *            afin de pouvoir se connecter au pair, on a besoin d'un socket.
-	 * @param torrent
-	 *            contient les informations necessaires au telechargement au
-	 *            niveau pieces et block.
-	 */
-	public Peer(Socket socket, Torrent torrent) {
-		this.peerHandler = new PeerHandler(socket, torrent);
-		peerHandler.run();
+	public Peer(InetAddress ipAdress, int port, PeerHandler peerHandler) {
+		this.ipAdress = ipAdress;
+		this.port = port;
+		this.peerHandler = peerHandler;
 	}
 
 	public String toString() {
