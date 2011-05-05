@@ -265,7 +265,7 @@ public class PeerHandler extends Thread {
 		return theirHS.isCompatible(ourHS);
 	}
 
-	private boolean shakeEncryptedHands(Handshake h) throws IOException{
+	private boolean shakeEncryptedHands(Handshake h) throws IOException {
 		SendRSAKey ourRSA = new SendRSAKey();
 		ourRSA.send(output);
 		SendRSAKey theirRSA = new SendRSAKey(input);
@@ -361,10 +361,22 @@ public class PeerHandler extends Thread {
 	}
 
 	public double getNotation() {
-		return notation;
+		return peer.getNotation();
 	}
 
 	public void finish() {
 		this.finish = true;
+	}
+
+	public Peer getPeer() {
+		return peer;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof PeerHandler) {
+			return ((PeerHandler) obj).getPeer().equals(peer);
+		}
+		return false;
 	}
 }

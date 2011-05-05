@@ -17,6 +17,7 @@ public class Peer {
 	private InetAddress ipAdress;
 	private int port;
 	private String id;
+	private double notation;
 
 	/**
 	 * Constructeur. On demarrer (start) le processus PeerHandler, car c'est
@@ -40,6 +41,7 @@ public class Peer {
 		port = (int) (((data[4] << 8) + data[5]) & 0xffff);
 
 		this.id = "<?>";
+		notation = 5;
 		this.peerHandler = new PeerHandler(this, torrent);
 		peerHandler.start();
 
@@ -109,5 +111,9 @@ public class Peer {
 
 	public void setInet(InetAddress inetAddress) {
 		this.ipAdress = inetAddress;
+	}
+
+	public double getNotation() {
+		return notation;
 	}
 }
