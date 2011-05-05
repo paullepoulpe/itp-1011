@@ -42,8 +42,8 @@ public class Peer {
 
 		this.id = "<?>";
 		notation = 5;
-		this.peerHandler = new PeerHandler(this, torrent);
-		peerHandler.start();
+		// this.peerHandler = new PeerHandler(this, torrent);
+		// peerHandler.start();
 
 	}
 

@@ -28,6 +28,7 @@ public class MessageHandler implements MessageVisitor {
 
 		peerHandler.setChocking(true);
 		System.out.println("Recu un Choke");
+		peerHandler.multiplyNotation(0.2);
 
 	}
 
@@ -42,6 +43,7 @@ public class MessageHandler implements MessageVisitor {
 		 */
 		System.out.println("Recu un request pour piece : " + r.getIndex()
 				+ ", bloc : " + r.getBegin());
+		peerHandler.multiplyNotation(1.01);
 
 	}
 
@@ -54,6 +56,7 @@ public class MessageHandler implements MessageVisitor {
 		peerHandler.addAEnvoer(new Choke());
 
 		System.out.println("Recu not Interested");
+		peerHandler.multiplyNotation(1);
 
 	}
 
@@ -66,8 +69,8 @@ public class MessageHandler implements MessageVisitor {
 		// DONE
 		peerHandler.addPeerPiece(h.getPieceIndex());
 
-		// System.out.println("Recu Have piece : " + h.getPieceIndex());
-
+		System.out.println("Recu Have piece : " + h.getPieceIndex());
+		peerHandler.multiplyNotation(1.00005);
 	}
 
 	@Override
@@ -80,6 +83,7 @@ public class MessageHandler implements MessageVisitor {
 		peerHandler.addAEnvoer(new Unchoke());
 
 		System.out.println("Recu Interested");
+		peerHandler.multiplyNotation(1);
 
 	}
 
@@ -90,6 +94,7 @@ public class MessageHandler implements MessageVisitor {
 		peerHandler.setPeerPiecesIndex(b.getPosessedPieces());
 
 		System.out.println("Recu bitfield");
+		peerHandler.multiplyNotation(Math.pow(1.00005, b.getNbHave()));
 	}
 
 	@Override
@@ -113,6 +118,7 @@ public class MessageHandler implements MessageVisitor {
 		System.out.println("Recu bloc : "
 				+ (s.getBlocIndex() / Piece.BLOCK_SIZE) + " de la Piece "
 				+ s.getPieceIndex());
+		peerHandler.multiplyNotation(1.25);
 
 	}
 
@@ -124,6 +130,7 @@ public class MessageHandler implements MessageVisitor {
 
 		peerHandler.setChocking(false);
 		System.out.println("Recu unchoke :):):):):):):):):):):)");
+		peerHandler.multiplyNotation(1.25);
 	}
 
 	@Override

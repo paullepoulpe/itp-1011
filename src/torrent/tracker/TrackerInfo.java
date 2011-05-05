@@ -40,7 +40,7 @@ public class TrackerInfo extends Thread {
 			failed = true;
 			System.out.println("Connection failed (" + urlAnnounce + ") : "
 					+ e.getFailureReason());
-			this.interrupt();
+			// this.interrupt();
 		}
 	}
 
@@ -52,7 +52,7 @@ public class TrackerInfo extends Thread {
 	 *             si la reponse du tracker contient une failure reason
 	 */
 	public void announce() throws FailureReasonExeption {
-		System.out.println("\nRequete a  " + urlAnnounce + "...");
+		System.out.println("\nRequete aï¿½ " + urlAnnounce + "...");
 		HTTPGet query = new HTTPGet(urlAnnounce);
 		query.add("info_hash", torrent.getMetainfo().getInfoHash().urlEncoded());
 		query.add("peer_id", Torrent.PEER_ID);
@@ -64,7 +64,9 @@ public class TrackerInfo extends Thread {
 		query.add("event", "started");
 		query.add("numwant", "80");
 		this.info = new AnnounceInfo(query.get());
-		initPeers();
+		if (!failed) {
+			initPeers();
+		}
 
 	}
 
