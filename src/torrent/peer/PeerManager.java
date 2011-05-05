@@ -2,8 +2,6 @@ package torrent.peer;
 
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Semaphore;
 
 import torrent.Torrent;
 
@@ -11,53 +9,75 @@ public class PeerManager extends Thread {
 	private boolean finished;
 	private Torrent torrent;
 	private ArrayList<Peer> peerList;
-	private ArrayBlockingQueue<PeerHandler> peerHandlers;
+	private ArrayList<PeerHandler> peerHandlers;
 	private final static int maxNbPeer = 30;
 
 	public PeerManager(Torrent torrent) {
 		this.torrent = torrent;
 		peerList = new ArrayList<Peer>();
-		peerHandlers = new ArrayBlockingQueue<PeerHandler>(maxNbPeer);
+		peerHandlers = new ArrayList<PeerHandler>(maxNbPeer);
 	}
 
-	public boolean addPeer(Peer peer) {
+	// Ajoute un peer, sans le peer handler associé
+	public void addPeer(Peer peer) {
 		synchronized (peerList) {
 
 			if (peerList.contains(peer)) {
-				return false;
 			} else {
 				peerList.add(peer);
 				System.out.println("Nouveau pair : " + peer);
-				return true;
+			}
+		}
+		synchronized (peerHandlers) {
+			if (peerHandlers.size() < maxNbPeer) {
+				PeerHandler newPeerHandler = new PeerHandler(peer, torrent);
+				newPeerHandler.start();
+				peerHandlers.add(newPeerHandler);
 			}
 		}
 	}
 
+	// ajoute un peer qui s'est connecté avec nous, donc le peerHandler associé,
+	// sauf si les pairs qu'on a sont super
 	public void addPeer(Socket s) {
-		PeerHandler peerHandler = new PeerHandler(s, torrent);
-		Peer peer = peerHandler.getPeer();
+		PeerHandler newPeerHandler = new PeerHandler(s, torrent);
+		newPeerHandler.start();
+		Peer peer = newPeerHandler.getPeer();
 		PeerHandler lazyOne = getTheLazyOne();
 		if (lazyOne.getNotation() < 5) {
-
 			synchronized (peerList) {
-				if (peerList.contains(peer)) {
-					peerList.remove(peer);
-				}
+				peerList.remove(peer);
+				peerList.add(lazyOne.getPeer());
 			}
 			synchronized (peerHandlers) {
-				try {
-					peerHandlers.put(peerHandler);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+				peerHandlers.remove(lazyOne);
+				peerHandlers.add(newPeerHandler);
+
+			}
+			lazyOne.finish();
+			try {
+				lazyOne.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+		} else {
+			newPeerHandler.finish();
+			try {
+				newPeerHandler.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			synchronized (peerList) {
+				if (!peerList.contains(peer)) {
+					peerList.add(peer);
 				}
 			}
-		} else {
-
 		}
 
 	}
 
-	@Override
+	// update la liste toutes les demi-secondes
 	public void run() {
 		while (!finished) {
 			update();
@@ -71,9 +91,16 @@ public class PeerManager extends Thread {
 		}
 	}
 
+	// regarde si nos pairactifs sont parresseux, et en met un nouveau si c'est
+	// le cas
+
 	private void update() {
 		PeerHandler lazyPeerHandler = getTheLazyOne();
-		double minActivePeerNotation = lazyPeerHandler.getNotation();
+		double minActivePeerNotation = 10;
+		if (lazyPeerHandler != null) {
+			minActivePeerNotation = lazyPeerHandler.getNotation();
+		}
+
 		boolean trouve = false;
 		Peer youngPeer = null;
 		synchronized (peerList) {
@@ -90,13 +117,11 @@ public class PeerManager extends Thread {
 		}
 		if (trouve) {
 			PeerHandler youngPeerHandler = new PeerHandler(youngPeer, torrent);
+			youngPeerHandler.start();
 			synchronized (peerHandlers) {
+
 				peerHandlers.remove(lazyPeerHandler);
-				try {
-					peerHandlers.put(youngPeerHandler);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				peerHandlers.add(youngPeerHandler);
 			}
 			lazyPeerHandler.finish();
 			try {
@@ -107,10 +132,12 @@ public class PeerManager extends Thread {
 		}
 	}
 
+	// termine le thread
 	public void finish() {
 		this.finished = true;
 	}
 
+	// trouve le plus parresseux des peerhandlers
 	private PeerHandler getTheLazyOne() {
 		double minActivePeerNotation = 10;
 		PeerHandler lazyPeerHandler = null;
@@ -122,6 +149,11 @@ public class PeerManager extends Thread {
 					lazyPeerHandler = ph;
 				}
 			}
+		}
+		if (lazyPeerHandler != null) {
+			System.out.println("Ce pair est un noob => "
+					+ lazyPeerHandler.getPeer().toString() + " "
+					+ lazyPeerHandler.getNotation());
 		}
 		return lazyPeerHandler;
 	}

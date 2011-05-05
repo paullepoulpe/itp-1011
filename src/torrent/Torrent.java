@@ -4,14 +4,13 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import IO.TorrentFileWriter;
+import IO.*;
 
 import torrent.peer.*;
 import torrent.piece.*;
 import torrent.tracker.TrackerInfo;
 
 public class Torrent {
-	private ArrayList<Peer> peerList; // TODO peerhandlers?
 	private PeerManager peerManager;
 	private Piece[] pieces;
 	private ArrayList<TrackerInfo> trackers;
@@ -34,10 +33,11 @@ public class Torrent {
 	public Torrent(File metainfoFile, int numPort) {
 		this.metainfo = new Metainfo(metainfoFile);
 		this.numPort = numPort;
-		this.peerList = new ArrayList<Peer>();
 		this.initPieces();
 		this.pieceManager = new PieceManager(this);
 		this.writer = new TorrentFileWriter(this, metainfo);
+		this.peerManager = new PeerManager(this);
+		peerManager.start();
 
 		System.out.println(this.metainfo);
 	}
@@ -120,14 +120,8 @@ public class Torrent {
 	 *            le peer qu'on veut ajouter
 	 * @return false si on l'as deja
 	 */
-	public boolean addPeer(Peer peer) {
-		if (peerList.contains(peer)) {
-			return false;
-		} else {
-			peerList.add(peer);
-			System.out.println("Nouveau pair : " + peer);
-			return true;
-		}
+	public void addPeer(Peer peer) {
+		peerManager.addPeer(peer);
 	}
 
 	/**
@@ -204,8 +198,7 @@ public class Torrent {
 	 */
 	private void initPieces() {
 		this.pieces = new Piece[(int) (Math.ceil(((double) this.metainfo
-				.getSize())
-				/ ((double) this.metainfo.getPieceLength())))];
+				.getSize()) / ((double) this.metainfo.getPieceLength())))];
 
 		for (int i = 0; i < this.pieces.length; i++) {
 			byte[] pieceHash = Arrays.copyOfRange(
@@ -236,10 +229,6 @@ public class Torrent {
 
 	public ArrayList<TrackerInfo> getTrackers() {
 		return trackers;
-	}
-
-	public ArrayList<Peer> getPeerList() {
-		return peerList;
 	}
 
 	public PieceManager getPieceManager() {

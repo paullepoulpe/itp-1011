@@ -19,7 +19,7 @@ import settings.*;
  * messages.
  */
 public class PeerHandler extends Thread {
-	private boolean finish;
+	private boolean finished;
 	private Socket socket;
 	private Peer peer;
 	private Torrent torrent;
@@ -81,7 +81,7 @@ public class PeerHandler extends Thread {
 			boolean isCompatible = shakeHands();
 
 			// test si le handshake est compatible
-			if (isCompatible) {
+			if (isCompatible && !finished) {
 
 				System.out.println("ID du pair : " + this.peer.getId());
 
@@ -100,7 +100,7 @@ public class PeerHandler extends Thread {
 				KeepAlive kA = new KeepAlive(output);
 				kA.start();
 				lastTimeFlush = System.currentTimeMillis();
-				while (!finish) {
+				while (!finished) {
 					readMessages();
 					amMaybeInterested();
 					prepareRequest();
@@ -121,7 +121,7 @@ public class PeerHandler extends Thread {
 
 		} catch (IOException e) {
 			System.out.println("Peer deconnecte");
-			this.interrupt();
+			this.finish();
 		}
 
 	}
@@ -212,7 +212,8 @@ public class PeerHandler extends Thread {
 	private void initStreams() {
 
 		boolean connect = false;
-		while (!connect) {
+		int nbFailed = 0;
+		while (!connect && !finished) {
 			if (socket == null) {
 				try {
 					socket = new Socket(peer.getIpAdress(), peer.getPort());
@@ -222,6 +223,7 @@ public class PeerHandler extends Thread {
 				} catch (IOException e) {
 					connect = false;
 					socket = null;
+					nbFailed = (nbFailed + 1) % 30;
 				}
 			} else {
 				try {
@@ -235,7 +237,12 @@ public class PeerHandler extends Thread {
 					socket = null;
 				}
 			}
-			if (!connect) {
+			if (nbFailed == 29 && !finished) {
+				this.notation /= 1.2;
+				System.err.println("FailedConnection 30 times : notation = "
+						+ notation);
+			}
+			if (!connect && !finished) {
 				yield();
 				try {
 					sleep(20);
@@ -254,29 +261,33 @@ public class PeerHandler extends Thread {
 	 * @return true si le handshake a marche, false sinon
 	 */
 	private boolean shakeHands() throws IOException {
-		Handshake ourHS = new Handshake(torrent);
-		ourHS.send(output);
+		if (!finished) {
+			Handshake ourHS = new Handshake(torrent);
+			ourHS.send(output);
 
-		Handshake theirHS = new Handshake(input);
-		this.peer.setId(theirHS.getPeerID());
-		if (theirHS.isEncryptionSupported()) {
-			return shakeEncryptedHands(theirHS) && theirHS.isCompatible(ourHS);
+			Handshake theirHS = new Handshake(input);
+			this.peer.setId(theirHS.getPeerID());
+			// if (theirHS.isEncryptionSupported()) {
+			// return shakeEncryptedHands(theirHS) &&
+			// theirHS.isCompatible(ourHS);
+			// }
+			return theirHS.isCompatible(ourHS);
 		}
-		return theirHS.isCompatible(ourHS);
+		return false;
 	}
 
-	private boolean shakeEncryptedHands(Handshake h) throws IOException {
-		SendRSAKey ourRSA = new SendRSAKey();
-		ourRSA.send(output);
-		SendRSAKey theirRSA = new SendRSAKey(input);
-		output = new RSAOutputStream(key, out);
-	}
+	/*
+	 * private boolean shakeEncryptedHands(Handshake h) throws IOException {
+	 * SendRSAKey ourRSA = new SendRSAKey(); ourRSA.send(output); SendRSAKey
+	 * theirRSA = new SendRSAKey(input); output = new RSAOutputStream(key, out);
+	 * }
+	 */
 
 	/**
 	 * lis tous les messages entrants et les traite
 	 */
 	private void readMessages() throws IOException {
-		while (input.available() > 0) {
+		while (input.available() > 0 && !finished) {
 			Message message = messageReader.readMessage();
 			if (message != null) {
 				synchronized (messageHandler) {
@@ -293,28 +304,30 @@ public class PeerHandler extends Thread {
 	 * ait moins de 10 requetes pendantes
 	 */
 	private void prepareRequest() {
-		if (requetes.size() + requetesEnvoyee.size() < requestRestrictions
-				&& !hasNoPieces()) {
-			int index = -1;
-			synchronized (pieceMgr) {
-				index = pieceMgr.getPieceOfInterest(peerPiecesIndex);
-			}
-			if (index != -1) {
-				Piece wanted = torrent.getPieces()[index];
-				requetes.add(wanted.getBlockOfInterest(this));
-			} else if (!isChocking && amInterested) {
-				aEnvoyer.add(new NotInterested());
-				amInterested = false;
-			}
+		if (!finished) {
+			if (requetes.size() + requetesEnvoyee.size() < requestRestrictions
+					&& !hasNoPieces()) {
+				int index = -1;
+				synchronized (pieceMgr) {
+					index = pieceMgr.getPieceOfInterest(peerPiecesIndex);
+				}
+				if (index != -1) {
+					Piece wanted = torrent.getPieces()[index];
+					requetes.add(wanted.getBlockOfInterest(this));
+				} else if (!isChocking && amInterested) {
+					aEnvoyer.add(new NotInterested());
+					amInterested = false;
+				}
 
-		} else if (requetesEnvoyee.size() == requestRestrictions) {
-			long thisTime = System.currentTimeMillis();
-			if ((thisTime - lastTimeFlush) > 10000) {
-				notation /= 1.2;
-				System.err.println("Notation : " + notation);
-				requetesEnvoyee.clear();
+			} else if (requetesEnvoyee.size() == requestRestrictions) {
+				long thisTime = System.currentTimeMillis();
+				if ((thisTime - lastTimeFlush) > 10000) {
+					notation /= 1.2;
+					System.err.println("Flush : Notation = " + notation);
+					requetesEnvoyee.clear();
+				}
+				lastTimeFlush = thisTime;
 			}
-			lastTimeFlush = thisTime;
 		}
 	}
 
@@ -323,14 +336,14 @@ public class PeerHandler extends Thread {
 	 * request(s'il y en a)
 	 */
 	private void sendMessages() throws IOException {
-		if (!aEnvoyer.isEmpty()) {
+		if (!aEnvoyer.isEmpty() && !finished) {
 			synchronized (output) {
 				aEnvoyer.getFirst().send(output);
 			}
 			aEnvoyer.removeFirst();
 		}
 
-		if (!isChocking && !requetes.isEmpty()) {
+		if (!isChocking && !requetes.isEmpty() && !finished) {
 			synchronized (output) {
 				requetes.getFirst().send(output);
 			}
@@ -344,7 +357,7 @@ public class PeerHandler extends Thread {
 	 * qu'il nous choke
 	 */
 	private void amMaybeInterested() throws IOException {
-		if (isChocking && !amInterested) {
+		if (isChocking && !amInterested && !finished) {
 			boolean interested;
 			synchronized (pieceMgr) {
 				interested = pieceMgr.getPieceOfInterest(peerPiecesIndex) != -1;
@@ -365,7 +378,15 @@ public class PeerHandler extends Thread {
 	}
 
 	public void finish() {
-		this.finish = true;
+		this.finished = true;
+		try {
+			this.output.flush();
+			this.output.close();
+			this.input.close();
+		} catch (IOException e) {
+			System.err.println("CHiééééééééééééééééééééééééé");
+			e.printStackTrace();
+		}
 	}
 
 	public Peer getPeer() {
@@ -379,4 +400,25 @@ public class PeerHandler extends Thread {
 		}
 		return false;
 	}
+
+	public void setNotation(double notation) {
+		if (notation < 0) {
+			notation = 0;
+		} else if (notation > 10) {
+			notation = 10;
+		} else {
+			this.notation = notation;
+		}
+	}
+
+	public void multiplyNotation(double factor) {
+		this.notation *= factor;
+		if (notation < 0) {
+			notation = 0;
+		} else if (notation > 10) {
+			notation = 10;
+		}
+		System.err.println("Notation changed :" + notation);
+	}
+
 }

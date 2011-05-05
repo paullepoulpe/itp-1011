@@ -21,7 +21,7 @@ public class TorrentTest extends Thread {
 		try {
 			UIManager.setLookAndFeel(UIManager.getInstalledLookAndFeels()[1]
 					.getClassName());
-			Torrent myTorrent = new Torrent(new File("data/optic.torrent"));
+			Torrent myTorrent = new Torrent(new File("data/G6.torrent"));
 
 			while (true) {
 				myTorrent.massAnnounce();
