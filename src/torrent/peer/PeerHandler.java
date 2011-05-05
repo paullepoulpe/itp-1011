@@ -19,6 +19,7 @@ import settings.*;
  * messages.
  */
 public class PeerHandler extends Thread {
+	private boolean finish;
 	private Socket socket;
 	private Peer peer;
 	private Torrent torrent;
@@ -31,10 +32,10 @@ public class PeerHandler extends Thread {
 	private LinkedList<Message> aEnvoyer;
 	private LinkedList<Request> requetes;
 	private LinkedList<Request> requetesEnvoyee;
-	private boolean amChocking;
-	private boolean amInterested;
-	private boolean isChocking; // est ce que le pair nous etrangle ?
-	private boolean isInterested;
+	private boolean amChocking = true;
+	private boolean amInterested = false;
+	private boolean isChocking = true; // est ce que le pair nous etrangle ?
+	private boolean isInterested = false;
 	private long lastTimeFlush;
 	private PeerSettings settings;
 	private static int requestRestrictions = 25;
@@ -50,10 +51,6 @@ public class PeerHandler extends Thread {
 		this.requetes = new LinkedList<Request>();
 		this.requetesEnvoyee = new LinkedList<Request>();
 		this.torrent = torrent;
-		this.amChocking = true;
-		this.amInterested = false;
-		this.isChocking = true;
-		this.isInterested = false;
 		this.pieceMgr = torrent.getPieceManager();
 		this.notation = 5.0;
 
@@ -67,11 +64,8 @@ public class PeerHandler extends Thread {
 		this.requetes = new LinkedList<Request>();
 		this.requetesEnvoyee = new LinkedList<Request>();
 		this.torrent = torrent;
-		this.amChocking = true;
-		this.amInterested = false;
-		this.isChocking = true;
-		this.isInterested = false;
 		this.pieceMgr = torrent.getPieceManager();
+		this.notation = 5.0;
 
 	}
 
@@ -106,14 +100,14 @@ public class PeerHandler extends Thread {
 				KeepAlive kA = new KeepAlive(output);
 				kA.start();
 				lastTimeFlush = System.currentTimeMillis();
-				while (true) {
+				while (!finish) {
 					readMessages();
 					amMaybeInterested();
 					prepareRequest();
 					sendMessages();
 					try {
 						if (notation < 2.5) {
-							this.interrupt();
+							this.finish();
 						}
 						yield();
 						sleep(20);
@@ -122,11 +116,7 @@ public class PeerHandler extends Thread {
 					}
 				}
 			} else {
-				input.close();
-				output.close();
-				socket.close();
-				System.out.println("Peer deconnecte");
-				this.interrupt();
+				this.finish();
 			}
 
 		} catch (IOException e) {
@@ -368,5 +358,13 @@ public class PeerHandler extends Thread {
 			}
 
 		}
+	}
+
+	public double getNotation() {
+		return notation;
+	}
+
+	public void finish() {
+		this.finish = true;
 	}
 }

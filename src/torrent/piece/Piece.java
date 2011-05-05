@@ -113,11 +113,8 @@ public class Piece {
 
 			for (int i = 0; i < peerHandlers.get(begin / BLOCK_SIZE).size(); i++) {
 				synchronized (peerHandlers.get(begin / BLOCK_SIZE).get(i)) {
-					peerHandlers
-							.get(begin / BLOCK_SIZE)
-							.get(i)
-							.removeRequest(
-									new Request(index, begin, bloc.length));
+					peerHandlers.get(begin / BLOCK_SIZE).get(i).removeRequest(
+							new Request(index, begin, bloc.length));
 				}
 
 			}
@@ -142,7 +139,7 @@ public class Piece {
 	 * 
 	 * @return True si tous les blocs ont etes recus, false sinon.
 	 */
-	public boolean isComplete() {
+	private boolean isComplete() {
 		if (isChecked) {
 			return true;
 		} else {
