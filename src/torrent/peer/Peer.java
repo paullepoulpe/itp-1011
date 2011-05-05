@@ -116,4 +116,25 @@ public class Peer {
 	public double getNotation() {
 		return notation;
 	}
+
+	public void setNotation(double notation) {
+		if (notation < 0) {
+			notation = 0;
+		} else if (notation > 10) {
+			notation = 10;
+		} else {
+			this.notation = notation;
+		}
+	}
+
+	public void multiplyNotation(double factor) {
+		this.notation *= factor;
+		if (notation < 0) {
+			notation = 0;
+		} else if (notation > 10) {
+			notation = 10;
+		}
+		System.err.println("Notation changed :" + notation);
+	}
+
 }
