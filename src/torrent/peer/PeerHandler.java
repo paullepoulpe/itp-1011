@@ -39,7 +39,6 @@ public class PeerHandler extends Thread {
 	private long lastTimeFlush;
 	private PeerSettings settings;
 	private static int requestRestrictions = 25;
-	private double notation; // note du pair, entre 0 et 10 (non compris),
 
 	// initialise a 5;
 
@@ -52,7 +51,6 @@ public class PeerHandler extends Thread {
 		this.requetesEnvoyee = new LinkedList<Request>();
 		this.torrent = torrent;
 		this.pieceMgr = torrent.getPieceManager();
-		this.notation = 5.0;
 
 	}
 
@@ -65,7 +63,6 @@ public class PeerHandler extends Thread {
 		this.requetesEnvoyee = new LinkedList<Request>();
 		this.torrent = torrent;
 		this.pieceMgr = torrent.getPieceManager();
-		this.notation = 5.0;
 
 	}
 
@@ -106,7 +103,7 @@ public class PeerHandler extends Thread {
 					prepareRequest();
 					sendMessages();
 					try {
-						if (notation < 2.5) {
+						if (peer.getNotation() < 2) {
 							this.finish();
 						}
 						yield();
@@ -238,9 +235,9 @@ public class PeerHandler extends Thread {
 				}
 			}
 			if (nbFailed == 29 && !finished) {
-				this.notation /= 1.2;
+				peer.multiplyNotation(1 / 1.2);
 				System.err.println("FailedConnection 30 times : notation = "
-						+ notation);
+						+ peer.getNotation());
 			}
 			if (!connect && !finished) {
 				yield();
@@ -322,8 +319,9 @@ public class PeerHandler extends Thread {
 			} else if (requetesEnvoyee.size() == requestRestrictions) {
 				long thisTime = System.currentTimeMillis();
 				if ((thisTime - lastTimeFlush) > 10000) {
-					notation /= 1.2;
-					System.err.println("Flush : Notation = " + notation);
+					peer.multiplyNotation(1 / 1.2);
+					System.err.println("Flush : Notation = "
+							+ peer.getNotation());
 					requetesEnvoyee.clear();
 				}
 				lastTimeFlush = thisTime;
@@ -402,23 +400,11 @@ public class PeerHandler extends Thread {
 	}
 
 	public void setNotation(double notation) {
-		if (notation < 0) {
-			notation = 0;
-		} else if (notation > 10) {
-			notation = 10;
-		} else {
-			this.notation = notation;
-		}
+		peer.setNotation(notation);
 	}
 
 	public void multiplyNotation(double factor) {
-		this.notation *= factor;
-		if (notation < 0) {
-			notation = 0;
-		} else if (notation > 10) {
-			notation = 10;
-		}
-		System.err.println("Notation changed :" + notation);
+		peer.multiplyNotation(factor);
 	}
 
 }
