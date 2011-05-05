@@ -37,7 +37,7 @@ public class BitField extends Message {
 		noPieces = true;
 		posessedPieces = new boolean[pieces.length];
 		for (int i = 0; i < pieces.length; i++) {
-			boolean b = pieces[i].isComplete();
+			boolean b = pieces[i].isChecked();
 			posessedPieces[i] = b;
 			noPieces = noPieces && !b;
 		}
