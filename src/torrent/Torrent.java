@@ -1,6 +1,7 @@
 package torrent;
 
 import java.io.*;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -198,7 +199,8 @@ public class Torrent {
 	 */
 	private void initPieces() {
 		this.pieces = new Piece[(int) (Math.ceil(((double) this.metainfo
-				.getSize()) / ((double) this.metainfo.getPieceLength())))];
+				.getSize())
+				/ ((double) this.metainfo.getPieceLength())))];
 
 		for (int i = 0; i < this.pieces.length; i++) {
 			byte[] pieceHash = Arrays.copyOfRange(
@@ -237,5 +239,9 @@ public class Torrent {
 
 	public TorrentFileWriter getWriter() {
 		return writer;
+	}
+
+	public void addPeer(Socket socket) {
+		peerManager.addPeer(socket);
 	}
 }

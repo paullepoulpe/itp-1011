@@ -63,6 +63,7 @@ public class PeerHandler extends Thread {
 		this.requetesEnvoyee = new LinkedList<Request>();
 		this.torrent = torrent;
 		this.pieceMgr = torrent.getPieceManager();
+		this.peer = new Peer(socket.getInetAddress(), socket.getPort(), this);
 
 	}
 
@@ -103,9 +104,6 @@ public class PeerHandler extends Thread {
 					prepareRequest();
 					sendMessages();
 					try {
-						if (peer.getNotation() < 2) {
-							this.finish();
-						}
 						yield();
 						sleep(20);
 					} catch (InterruptedException e) {
@@ -378,9 +376,14 @@ public class PeerHandler extends Thread {
 	public void finish() {
 		this.finished = true;
 		try {
-			this.output.flush();
-			this.output.close();
-			this.input.close();
+			if (this.output != null) {
+				this.output.flush();
+				this.output.close();
+			}
+			if (this.input != null) {
+				this.input.close();
+			}
+
 		} catch (IOException e) {
 			System.err.println("CHiééééééééééééééééééééééééé");
 			e.printStackTrace();

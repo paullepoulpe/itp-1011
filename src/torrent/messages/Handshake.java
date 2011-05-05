@@ -31,7 +31,7 @@ public class Handshake {
 		pstrLength = (byte) protocol.length;
 		infoHash = torrent.getMetainfo().getInfoHash().binaryHash();
 		reserved = new byte[8];
-		reserved[7] = (1<<4);
+		reserved[7] = (1 << 4);
 		try {
 			peerID = Torrent.PEER_ID.getBytes("ASCII");
 		} catch (UnsupportedEncodingException e) {
@@ -66,7 +66,7 @@ public class Handshake {
 			input.readFully(peerID);
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("Probleme Handshake envoyé!");
 		}
 
 	}

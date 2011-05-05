@@ -35,8 +35,7 @@ public class PeerAccepter extends Thread {
 			System.out.println(s.getLocalPort());
 			Socket socket = s.accept();
 			System.out.println("Connexion entrante");
-			Peer peer = new Peer(socket, torrent);
-			torrent.addPeer(peer);
+			torrent.addPeer(socket);
 			new PeerAccepter(port, torrent).start();
 			this.interrupt();
 
