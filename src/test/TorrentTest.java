@@ -35,7 +35,7 @@ public class TorrentTest extends Thread {
 			};
 			System.setErr(new PrintStream(output));
 
-			Torrent myTorrent = new Torrent(new File("data/G6.torrent"));
+			Torrent myTorrent = new Torrent(new File("data/kesako.torrent"));
 
 			while (true) {
 				myTorrent.massAnnounce();
