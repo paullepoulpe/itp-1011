@@ -25,6 +25,9 @@ public class TorrentTest extends Thread {
 		try {
 			UIManager.setLookAndFeel(UIManager.getInstalledLookAndFeels()[1]
 					.getClassName());
+<<<<<<< .mine
+			Torrent myTorrent = new Torrent(new File("data/optic.torrent"));
+=======
 			OutputStream output = new OutputStream() {
 
 				@Override
@@ -36,6 +39,7 @@ public class TorrentTest extends Thread {
 			System.setErr(new PrintStream(output));
 
 			Torrent myTorrent = new Torrent(new File("data/kesako.torrent"));
+>>>>>>> .r161
 
 			while (true) {
 				myTorrent.massAnnounce();
