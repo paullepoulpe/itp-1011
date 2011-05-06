@@ -88,10 +88,6 @@ public class Peer {
 
 	}
 
-	public void runPeerHandler() {
-		peerHandler.start();
-	}
-
 	public void setPort(int port) {
 		this.port = port;
 
