@@ -8,6 +8,9 @@ import java.util.Arrays;
 
 import javax.swing.JFileChooser;
 import javax.swing.LookAndFeel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import torrent.Metainfo;
 import torrent.Torrent;
@@ -143,6 +146,15 @@ public class TorrentFileWriter {
 
 	private String choisirDossierDestination() {
 		choisir = new JFileChooser();
+
+		try {
+			UIManager.setLookAndFeel(UIManager.getInstalledLookAndFeels()[3]
+					.getClassName());
+			choisir.updateUI();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		choisir.setDialogTitle("Choisir le dossier de Destination");
 		choisir.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		choisir.showDialog(null, "Choisir");
