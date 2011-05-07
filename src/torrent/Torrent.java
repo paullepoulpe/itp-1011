@@ -12,7 +12,7 @@ import torrent.piece.*;
 import torrent.tracker.TrackerInfo;
 
 public class Torrent {
-	private ArrayList<Peer> peerList; // TODO peerhandlers?
+	private ArrayList<Peer> peerList;
 	private PeerManager peerManager;
 	private Piece[] pieces;
 	private ArrayList<TrackerInfo> trackers;

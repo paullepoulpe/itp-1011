@@ -14,14 +14,17 @@ public class RSAInputStream extends InputStream {
 	private InputStream in;
 	private KeyPair keyPair;
 
-	public RSAInputStream(InputStream in) {
+	public RSAInputStream(KeyPair keypair , InputStream in) {
+		this.keyPair = keypair;
 		this.in=in;
-		
 	}
 
 	@Override
 	public int read() throws IOException {
-		return 0;
+		BigInteger read = BigInteger.valueOf((in.read())&255);
+		return keyPair.decrypt(read).intValue();
 	}
-
+	public void close() throws IOException{
+		in.close();
+	}
 }

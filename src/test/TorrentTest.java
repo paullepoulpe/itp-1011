@@ -22,24 +22,21 @@ public class TorrentTest extends Thread {
 	}
 
 	public void run() {
-		try {
-			UIManager.setLookAndFeel(UIManager.getInstalledLookAndFeels()[1]
-					.getClassName());
-<<<<<<< .mine
-			Torrent myTorrent = new Torrent(new File("data/optic.torrent"));
-=======
-			OutputStream output = new OutputStream() {
+		
+			Torrent myTorrent = new Torrent(new File("data/glee.torrent"));
 
-				@Override
-				public void write(int b) throws IOException {
-					// TODO Auto-generated method stub
+//			OutputStream output = new OutputStream() {
+//
+//				@Override
+//				public void write(int b) throws IOException {
+//					// TODO Auto-generated method stub
+//
+//				}
+//			};
+//			System.setErr(new PrintStream(output));
 
-				}
-			};
-			System.setErr(new PrintStream(output));
 
-			Torrent myTorrent = new Torrent(new File("data/kesako.torrent"));
->>>>>>> .r161
+
 
 			while (true) {
 				myTorrent.massAnnounce();
@@ -49,18 +46,6 @@ public class TorrentTest extends Thread {
 					e.printStackTrace();
 				}
 			}
-		} catch (ClassNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (InstantiationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IllegalAccessException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (UnsupportedLookAndFeelException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		
 	}
 }

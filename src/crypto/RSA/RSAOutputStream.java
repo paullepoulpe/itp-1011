@@ -1,8 +1,6 @@
 package crypto.RSA;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.math.BigInteger;
 
 /**
@@ -26,8 +24,13 @@ public class RSAOutputStream extends OutputStream {
 		out.write(keyPair.encrypt(BigInteger.valueOf(b)).intValue());
 	}
 
-	@Override
-	public void write(byte[] b) throws IOException {
+	public void flush() throws IOException {
+		out.flush();
+		super.flush();
 	}
 
+	public void close() throws IOException {
+		out.close();
+		super.close();
+	}
 }

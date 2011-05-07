@@ -146,7 +146,14 @@ public class TorrentFileWriter {
 		choisir.setDialogTitle("Choisir le dossier de Destination");
 		choisir.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		choisir.showDialog(null, "Choisir");
-		return choisir.getSelectedFile().getAbsolutePath();
+		String dossier = null;
+		try {
+			dossier = choisir.getSelectedFile().getAbsolutePath();
+		} catch (NullPointerException e) {
+			System.err.println("Vous avez annulé le choix de dossier");
+			System.exit(0);
+		}
+		return dossier;
 	}
 
 	public void updateUI() {
