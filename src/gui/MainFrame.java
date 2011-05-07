@@ -12,7 +12,7 @@ public class MainFrame extends JFrame {
 	private JPanel listeTorrent;
 	private JTabbedPane torrent;
 
-	public MainFrame() {
+	public MainFrame(ArrayList<Torrent> torrents) {
 		setLayout(new BorderLayout());
 		
 		
