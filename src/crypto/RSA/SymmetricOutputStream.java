@@ -1,7 +1,6 @@
 package crypto.RSA;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.math.BigInteger;
 
 /**
@@ -12,18 +11,16 @@ import java.math.BigInteger;
  * 
  */
 public class SymmetricOutputStream extends OutputStream {
-	private KeyPair keyPair;
-	private OutputStream out;
+	private byte[] XORKey;
+	private DataOutputStream out;
 
-	public SymmetricOutputStream(BigInteger key, OutputStream out) {
+	public SymmetricOutputStream(byte[] key, DataOutputStream out) {
+		this.out = out;
+		this.XORKey = key;
 	}
 
 	@Override
 	public void write(int b) throws IOException {
-	}
-
-	@Override
-	public void write(byte[] b) throws IOException {
-		super.write(b);
+		
 	}
 }

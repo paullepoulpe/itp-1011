@@ -1,12 +1,10 @@
 package torrent.peer;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.util.LinkedList;
 
-import crypto.RSA.RSAOutputStream;
+import crypto.RSA.*;
 
 import torrent.Torrent;
 import torrent.messages.*;
@@ -65,11 +63,8 @@ public class PeerHandler extends Thread {
 		this.requetesEnvoyee = new LinkedList<Request>();
 		this.torrent = torrent;
 		this.pieceMgr = torrent.getPieceManager();
-<<<<<<< .mine
 		this.notation = 5.0;
-=======
 		this.peer = new Peer(socket.getInetAddress(), socket.getPort(), this);
->>>>>>> .r161
 
 	}
 
@@ -110,12 +105,11 @@ public class PeerHandler extends Thread {
 					prepareRequest();
 					sendMessages();
 					try {
-<<<<<<< .mine
+
 						if (notation < 2.5) {
 							this.finish();
 						}
-=======
->>>>>>> .r161
+
 						yield();
 						sleep(20);
 					} catch (InterruptedException e) {
@@ -266,9 +260,9 @@ public class PeerHandler extends Thread {
 
 		Handshake theirHS = new Handshake(input);
 		this.peer.setId(theirHS.getPeerID());
-		if (theirHS.isEncryptionSupported()) {
-			return shakeEncryptedHands(theirHS) && theirHS.isCompatible(ourHS);
-		}
+		 if (theirHS.isEncryptionSupported()) {
+		 return shakeEncryptedHands(theirHS) && theirHS.isCompatible(ourHS);
+		 }
 		return theirHS.isCompatible(ourHS);
 	}
 
@@ -276,7 +270,20 @@ public class PeerHandler extends Thread {
 		SendRSAKey ourRSA = new SendRSAKey();
 		ourRSA.send(output);
 		SendRSAKey theirRSA = new SendRSAKey(input);
-		output = new RSAOutputStream(key, out);
+		if(ourRSA.getId()!=theirRSA.getId())
+			return false;
+		output = new DataOutputStream(new RSAOutputStream(
+				theirRSA.getKeyPair(), output));
+		input = new DataInputStream(new RSAInputStream(ourRSA.getKeyPair(),
+				input));
+		SendSymmetricKey ourSym = new SendSymmetricKey();
+		ourSym.send(output);
+		SendSymmetricKey theirSym = new SendSymmetricKey(input);
+		if(ourSym.getId()!=theirSym.getId())
+			return false;
+		output = new DataOutputStream(new SymmetricOutputStream(theirSym.getXORKey(), output));
+		input = new DataInputStream(new SymmetricInputStream(ourSym.getXORKey(), input));
+		return true;
 	}
 
 	/**
@@ -372,10 +379,7 @@ public class PeerHandler extends Thread {
 	}
 
 	public void finish() {
-<<<<<<< .mine
 		this.finish = true;
-=======
-		this.finished = true;
 		try {
 			if (this.output != null) {
 				this.output.flush();
@@ -386,10 +390,11 @@ public class PeerHandler extends Thread {
 			}
 
 		} catch (IOException e) {
-			System.err.println("CHiééééééééééééééééééééééééé");
+			System.err
+					.println("CHiééééééééééééééééééééééééé");
 			e.printStackTrace();
 		}
->>>>>>> .r161
+
 	}
 
 	public Peer getPeer() {

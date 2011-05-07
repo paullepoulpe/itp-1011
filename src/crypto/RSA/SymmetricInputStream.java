@@ -1,7 +1,6 @@
 package crypto.RSA;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.math.BigInteger;
 
 /**
@@ -12,15 +11,20 @@ import java.math.BigInteger;
  * 
  */
 public class SymmetricInputStream extends InputStream {
-	private KeyPair keyPair;
-	private InputStream in;
+	private byte[] XORKey;
+	private DataInputStream in;
 
-	public SymmetricInputStream(BigInteger key, InputStream in) {
-		
+	public SymmetricInputStream(byte[] key, DataInputStream in) {
+		this.XORKey = key;
+		this.in=in;
 	}
 
 	@Override
 	public int read() throws IOException {
-		return 0;
+		int messageLength = in.readInt();
+		int read = in.read();
+		int key = (XORKey[3]<<12)+(XORKey[2]<<8)+(XORKey[1]<<4)+XORKey[0];
+		int decrypt = read^key;
+		return decrypt;
 	}
 }

@@ -42,11 +42,10 @@ public class Peer {
 
 		this.id = "<?>";
 		notation = 5;
-<<<<<<< .mine
+
 		this.peerHandler = new PeerHandler(this, torrent);
 		peerHandler.start();
-=======
->>>>>>> .r161
+
 
 	}
 

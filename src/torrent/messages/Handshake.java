@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
+import javax.swing.JOptionPane;
+
 import torrent.Torrent;
 
 /**
@@ -112,6 +114,12 @@ public class Handshake {
 	 * @return True si l'encryption est supportee, false sinon.
 	 */
 	public boolean isEncryptionSupported() {
+		JOptionPane
+				.showMessageDialog(
+						null,
+						"Test de compatibilté d'encyption: bytes reservés : "
+								+ this.reserved[7]
+								+ "\n Ce message doit etre descative dans la classe HandShake.java");
 		if ((0x10 & this.reserved[7]) == 0x10) {
 			return true;
 		}

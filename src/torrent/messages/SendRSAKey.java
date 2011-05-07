@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 
+import javax.swing.JOptionPane;
+
 import crypto.RSA.KeyPair;
 
 /**
@@ -17,15 +19,16 @@ import crypto.RSA.KeyPair;
  */
 public class SendRSAKey extends Message {
 	private BigInteger N, eKey;
-	private int kLength, Nlength, eKeyLength;
+	private int id, kLength, Nlength, eKeyLength;
 	private KeyPair keyPair;
 
 	public SendRSAKey() {
-
+		this.id=11;
 	}
 
 	public SendRSAKey(DataInputStream in) throws IOException {
-		in.read();
+		int messageLength = in.readInt();
+		this.id = in.read();
 		this.kLength = in.readInt();
 		this.eKeyLength = in.readInt();
 		this.Nlength = in.readInt();
@@ -44,16 +47,23 @@ public class SendRSAKey extends Message {
 
 	@Override
 	public void send(DataOutputStream output) throws IOException {
-		output.writeInt(1);
+		output.write(1 + 4 + 4 + 4 + kLength + eKeyLength);
+		output.write(id);
 		output.writeInt(kLength);
 		output.writeInt(eKeyLength);
 		output.writeInt(Nlength);
 		output.write(eKey.toByteArray());
 		output.write(N.toByteArray());
-		System.out.println("Envoye notre cle publique RSA");
+		JOptionPane
+				.showMessageDialog(
+						null,
+						"Envoye notre cle publique RSA!!! (Desactiver ce message dans la classe SendRSAKey ;P");
 	}
 
 	public KeyPair getKeyPair() {
 		return keyPair;
+	}
+	public int getId() {
+		return id;
 	}
 }
