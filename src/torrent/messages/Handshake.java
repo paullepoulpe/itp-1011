@@ -114,13 +114,13 @@ public class Handshake {
 	 * @return True si l'encryption est supportee, false sinon.
 	 */
 	public boolean isEncryptionSupported() {
-		JOptionPane
-				.showMessageDialog(
-						null,
-						"Test de compatibilté d'encyption: bytes reservés : "
-								+ this.reserved[7]
-								+ "\n Ce message doit etre descative dans la classe HandShake.java");
 		if ((0x10 & this.reserved[7]) == 0x10) {
+			JOptionPane
+			.showMessageDialog(
+					null,
+					"Test de compatibilté d'encyption reussi! Bytes reservés[7] : "
+							+ this.reserved[7]
+							+ "\n Ce message doit etre desactive dans la classe HandShake.java");
 			return true;
 		}
 		return false;
