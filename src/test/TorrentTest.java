@@ -22,30 +22,27 @@ public class TorrentTest extends Thread {
 	}
 
 	public void run() {
-		
-			Torrent myTorrent = new Torrent(new File("data/glee.torrent"));
 
-//			OutputStream output = new OutputStream() {
-//
-//				@Override
-//				public void write(int b) throws IOException {
-//					// TODO Auto-generated method stub
-//
-//				}
-//			};
-//			System.setErr(new PrintStream(output));
+		Torrent myTorrent = new Torrent(new File("data/G6.torrent"));
 
+		OutputStream output = new OutputStream() {
 
+			@Override
+			public void write(int b) throws IOException {
+				// TODO Auto-generated method stub
 
-
-			while (true) {
-				myTorrent.massAnnounce();
-				try {
-					sleep(240000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 			}
-		
+		};
+		System.setErr(new PrintStream(output));
+
+		while (true) {
+			myTorrent.massAnnounce();
+			try {
+				sleep(240000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
 	}
 }
