@@ -1,4 +1,4 @@
-package test;
+package testGUI;
 
 import java.awt.*;
 import java.awt.event.*;
