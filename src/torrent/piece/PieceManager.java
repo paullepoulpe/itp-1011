@@ -2,6 +2,7 @@ package torrent.piece;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 import torrent.Torrent;
 
@@ -9,7 +10,7 @@ import torrent.Torrent;
  * Cette classe s'occupe de la gestion des pieces. Elle selectionne lesquelles
  * doivent etre demandees aux peers.
  * 
- * @author Damien Engels, Maarten Sap 
+ * @author Damien Engels, Maarten Sap
  */
 public class PieceManager {
 	private LinkedList<Piece> PiecesOfInterest, allPieces;
@@ -42,9 +43,11 @@ public class PieceManager {
 	 */
 	public void updatePriorities() {
 		if (!torrent.isComplete()) {
-			for (int i = 0; i < PiecesOfInterest.size(); i++) {
-				if (PiecesOfInterest.get(i).isChecked()) {
-					PiecesOfInterest.remove(i);
+			ListIterator<Piece> iterator = PiecesOfInterest.listIterator();
+			while (iterator.hasNext()) {
+				Piece piece = iterator.next();
+				if (piece.isChecked()) {
+					iterator.remove();
 					if (!allPieces.isEmpty()) {
 						PiecesOfInterest.addLast(allPieces.getFirst());
 						allPieces.removeFirst();
@@ -57,7 +60,6 @@ public class PieceManager {
 					+ " %....................");
 		} else {
 			synchronized (System.out) {
-				System.gc();
 				torrent.writeToFile();
 			}
 

@@ -113,8 +113,11 @@ public class Piece {
 
 			for (int i = 0; i < peerHandlers.get(begin / BLOCK_SIZE).size(); i++) {
 				synchronized (peerHandlers.get(begin / BLOCK_SIZE).get(i)) {
-					peerHandlers.get(begin / BLOCK_SIZE).get(i).removeRequest(
-							new Request(index, begin, bloc.length));
+					peerHandlers
+							.get(begin / BLOCK_SIZE)
+							.get(i)
+							.removeRequest(
+									new Request(index, begin, bloc.length));
 				}
 
 			}
@@ -167,21 +170,21 @@ public class Piece {
 			try {
 				shaDigest = MessageDigest.getInstance("SHA");
 
+				byte[] testSHA = shaDigest.digest(this.data);
+				for (int i = 0; i < hash.length; i++) {
+					if (testSHA[i] != this.hash[i]) {
+						this.reset();
+						return false;
+					}
+				}
+				this.isChecked = true;
+				System.out.println("Piece " + index
+						+ " recue completement !!!!!!!!!!!");
+				return true;
 			} catch (NoSuchAlgorithmException e) {
 				System.out.println("No SHA support in this VM.");
+				return false;
 			}
-
-			byte[] testSHA = shaDigest.digest(this.data);
-			for (int i = 0; i < hash.length; i++) {
-				if (testSHA[i] != this.hash[i]) {
-					this.reset();
-					return false;
-				}
-			}
-			this.isChecked = true;
-			System.out.println("Piece " + index
-					+ " recue completement !!!!!!!!!!!");
-			return true;
 		} else {
 			this.reset();
 			return false;
@@ -254,7 +257,8 @@ public class Piece {
 	public Request getBlockOfInterest(PeerHandler peerHandler) {
 		int blocIndex = 0;
 		int min = Integer.MAX_VALUE;
-		for (int i = 0; i < peerHandlers.size(); i++) {
+		int length = peerHandlers.size();
+		for (int i = 0; i < length; i++) {
 			if (min > peerHandlers.get(i).size() && !receipt[i]) {
 				blocIndex = i;
 				min = peerHandlers.get(i).size();
