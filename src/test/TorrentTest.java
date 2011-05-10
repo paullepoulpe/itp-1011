@@ -18,6 +18,8 @@ public class TorrentTest extends Thread {
 
 		Torrent myTorrent = new Torrent(new File("data/kesako.torrent"));
 
+<<<<<<< .mine
+=======
 		// OutputStream output = new OutputStream() {
 		//
 		// @Override
@@ -28,6 +30,7 @@ public class TorrentTest extends Thread {
 		// };
 		// System.setErr(new PrintStream(output));
 
+>>>>>>> .r170
 		while (true) {
 			myTorrent.massAnnounce();
 			try {
