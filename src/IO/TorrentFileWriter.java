@@ -148,7 +148,7 @@ public class TorrentFileWriter {
 		choisir = new JFileChooser();
 
 		try {
-			UIManager.setLookAndFeel(UIManager.getInstalledLookAndFeels()[3]
+			UIManager.setLookAndFeel(UIManager.getInstalledLookAndFeels()[1]
 					.getClassName());
 			choisir.updateUI();
 		} catch (Exception e) {
@@ -162,7 +162,7 @@ public class TorrentFileWriter {
 		try {
 			dossier = choisir.getSelectedFile().getAbsolutePath();
 		} catch (NullPointerException e) {
-			System.err.println("Vous avez annulé le choix de dossier");
+			System.err.println("Vous avez annulï¿½ le choix de dossier");
 			System.exit(0);
 		}
 		return dossier;

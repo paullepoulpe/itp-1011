@@ -60,8 +60,7 @@ public class AnnounceInfo {
 				this.peers = dico.get("peers").getBytes();
 			}
 		} catch (InvalidBEncodingException e) {
-			System.out
-					.println("Invalid BEncoding : " + e.getLocalizedMessage());
+			throw new FailureReasonExeption(e.getLocalizedMessage());
 		} catch (IOException e) {
 			System.out.println(e.getLocalizedMessage());
 		}

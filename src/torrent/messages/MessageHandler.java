@@ -107,9 +107,7 @@ public class MessageHandler implements MessageVisitor {
 		synchronized (entering) {
 			entering.feed(s.getBlocIndex(), s.getBloc());
 		}
-		synchronized (peerHandler) {
-			peerHandler.getPieceMgr().updatePriorities();
-		}
+		peerHandler.getPieceMgr().updatePriorities();
 		System.out.println("Recu bloc : "
 				+ (s.getBlocIndex() / Piece.BLOCK_SIZE) + " de la Piece "
 				+ s.getPieceIndex());

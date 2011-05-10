@@ -214,10 +214,10 @@ public class Torrent {
 			if (i == pieces.length - 1) {
 				int length = this.metainfo.getSize()
 						- ((pieces.length - 1) * this.metainfo.getPieceLength());
-				pieces[i] = new Piece(i, length, pieceHash);
+				pieces[i] = new Piece(i, length, pieceHash, this);
 			} else {
 				pieces[i] = new Piece(i, this.metainfo.getPieceLength(),
-						pieceHash);
+						pieceHash, this);
 			}
 		}
 
@@ -253,5 +253,10 @@ public class Torrent {
 
 	public void addPeer(Socket socket) {
 		peerManager.addPeer(socket);
+	}
+
+	public void notifyPeerHandlers(int index) {
+		peerManager.notifyPeerHandlers(index);
+
 	}
 }
