@@ -40,6 +40,8 @@ public class Torrent {
 		this.initPieces();
 		this.pieceManager = new PieceManager(this);
 		this.writer = new TorrentFileWriter(this, metainfo);
+		peerManager = new PeerManager(this);
+		peerManager.start();
 
 		System.out.println(this.metainfo);
 	}
@@ -122,14 +124,8 @@ public class Torrent {
 	 *            le peer qu'on veut ajouter
 	 * @return false si on l'as deja
 	 */
-	public boolean addPeer(Peer peer) {
-		if (peerList.contains(peer)) {
-			return false;
-		} else {
-			peerList.add(peer);
-			System.out.println("Nouveau pair : " + peer);
-			return true;
-		}
+	public void addPeer(Peer peer) {
+		peerManager.addPeer(peer);
 	}
 
 	/**

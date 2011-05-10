@@ -12,8 +12,7 @@ import torrent.Torrent;
  * @author Damien Engels, Maarten Sap
  * 
  */
-public class Peer {
-	private PeerHandler peerHandler;
+public class Peer implements Comparable<Peer> {
 	private InetAddress ipAdress;
 	private int port;
 	private String id;
@@ -42,16 +41,11 @@ public class Peer {
 
 		this.id = "<?>";
 		notation = 5;
-
-		this.peerHandler = new PeerHandler(this, torrent);
-		peerHandler.start();
-
 	}
 
-	public Peer(InetAddress ipAdress, int port, PeerHandler peerHandler) {
+	public Peer(InetAddress ipAdress, int port) {
 		this.ipAdress = ipAdress;
 		this.port = port;
-		this.peerHandler = peerHandler;
 	}
 
 	public String toString() {
@@ -112,5 +106,16 @@ public class Peer {
 			notation = 10;
 		}
 
+	}
+
+	@Override
+	public int compareTo(Peer peer) {
+		if (peer.notation > this.notation) {
+			return 1;
+		} else if (peer.notation < this.notation) {
+			return -1;
+		} else {
+			return 0;
+		}
 	}
 }

@@ -28,6 +28,7 @@ public class MessageHandler implements MessageVisitor {
 
 		peerHandler.setChocking(true);
 		System.out.println("Recu un Choke");
+		peerHandler.multiplyNotation(1 / 2);
 
 	}
 

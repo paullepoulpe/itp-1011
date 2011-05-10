@@ -37,25 +37,23 @@ public class PeerHandler extends Thread {
 	private long lastTimeFlush;
 	private PeerSettings settings;
 	private static int requestRestrictions = 25;
-	private double notation; // note du pair, entre 0 et 10 (non compris),
 
 	// initialise a 5;
 
 	public PeerHandler(Peer peer, Torrent torrent) {
+		this(torrent);
 		this.peer = peer;
-		this.messageHandler = new MessageHandler(this, torrent);
-		this.peerPiecesIndex = new boolean[torrent.getPieces().length];
-		this.aEnvoyer = new LinkedList<Message>();
-		this.requetes = new LinkedList<Request>();
-		this.requetesEnvoyee = new LinkedList<Request>();
-		this.torrent = torrent;
-		this.pieceMgr = torrent.getPieceManager();
-		this.notation = 5.0;
 
 	}
 
 	public PeerHandler(Socket socket, Torrent torrent) {
+		this(torrent);
 		this.socket = socket;
+		this.peer = new Peer(socket.getInetAddress(), socket.getPort());
+
+	}
+
+	private PeerHandler(Torrent torrent) {
 		this.messageHandler = new MessageHandler(this, torrent);
 		this.peerPiecesIndex = new boolean[torrent.getPieces().length];
 		this.aEnvoyer = new LinkedList<Message>();
@@ -63,9 +61,6 @@ public class PeerHandler extends Thread {
 		this.requetesEnvoyee = new LinkedList<Request>();
 		this.torrent = torrent;
 		this.pieceMgr = torrent.getPieceManager();
-		this.notation = 5.0;
-		this.peer = new Peer(socket.getInetAddress(), socket.getPort(), this);
-
 	}
 
 	public void run() {
@@ -105,11 +100,6 @@ public class PeerHandler extends Thread {
 					prepareRequest();
 					sendMessages();
 					try {
-
-						if (notation < 2.5) {
-							this.finish();
-						}
-
 						yield();
 						sleep(20);
 					} catch (InterruptedException e) {
@@ -212,41 +202,43 @@ public class PeerHandler extends Thread {
 	 * initialise les streams
 	 */
 	private void initStreams() {
+		if (!finished) {
+			boolean connect = false;
+			while (!connect) {
+				if (socket == null) {
+					try {
+						socket = new Socket(peer.getIpAdress(), peer.getPort());
+						input = new DataInputStream(socket.getInputStream());
+						output = new DataOutputStream(socket.getOutputStream());
+						connect = true;
+					} catch (IOException e) {
+						connect = false;
+						socket = null;
+					}
+				} else {
+					try {
+						input = new DataInputStream(socket.getInputStream());
+						output = new DataOutputStream(socket.getOutputStream());
+						this.peer.setPort(socket.getPort());
+						this.peer.setInet(socket.getInetAddress());
+						connect = true;
+					} catch (IOException e) {
+						connect = false;
+						socket = null;
+					}
+				}
+				if (!connect) {
+					yield();
+					try {
+						sleep(20);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 
-		boolean connect = false;
-		while (!connect) {
-			if (socket == null) {
-				try {
-					socket = new Socket(peer.getIpAdress(), peer.getPort());
-					input = new DataInputStream(socket.getInputStream());
-					output = new DataOutputStream(socket.getOutputStream());
-					connect = true;
-				} catch (IOException e) {
-					connect = false;
-					socket = null;
 				}
-			} else {
-				try {
-					input = new DataInputStream(socket.getInputStream());
-					output = new DataOutputStream(socket.getOutputStream());
-					this.peer.setPort(socket.getPort());
-					this.peer.setInet(socket.getInetAddress());
-					connect = true;
-				} catch (IOException e) {
-					connect = false;
-					socket = null;
-				}
-			}
-			if (!connect) {
-				yield();
-				try {
-					sleep(20);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-
 			}
 		}
+
 	}
 
 	/**
@@ -327,8 +319,7 @@ public class PeerHandler extends Thread {
 		} else if (requetesEnvoyee.size() == requestRestrictions) {
 			long thisTime = System.currentTimeMillis();
 			if ((thisTime - lastTimeFlush) > 10000) {
-				notation /= 1.2;
-				System.err.println("Notation : " + notation);
+				peer.multiplyNotation(1 / 1.2);
 				requetesEnvoyee.clear();
 			}
 			lastTimeFlush = thisTime;
@@ -417,6 +408,10 @@ public class PeerHandler extends Thread {
 				aEnvoyer.addLast(new Have(i));
 			}
 		}
+	}
+
+	public void multiplyNotation(double d) {
+		peer.multiplyNotation(d);
 	}
 
 }
