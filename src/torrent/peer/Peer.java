@@ -1,7 +1,6 @@
 package torrent.peer;
 
 import java.net.InetAddress;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import torrent.Torrent;
 
@@ -12,11 +11,11 @@ import torrent.Torrent;
  * @author Damien Engels, Maarten Sap
  * 
  */
-public class Peer implements Comparable<Peer> {
+public class Peer {
 	private InetAddress ipAdress;
 	private int port;
-	private String id;
-	private double notation;
+	private String id = "<?>";
+	private double notation = 5;
 
 	/**
 	 * Constructeur. On demarrer (start) le processus PeerHandler, car c'est
@@ -38,9 +37,6 @@ public class Peer implements Comparable<Peer> {
 			System.out.println(e.getLocalizedMessage());
 		}
 		port = (int) (((data[4] << 8) + data[5]) & 0xffff);
-
-		this.id = "<?>";
-		notation = 5;
 	}
 
 	public Peer(InetAddress ipAdress, int port) {
@@ -85,37 +81,19 @@ public class Peer implements Comparable<Peer> {
 
 	}
 
-	public void setPort(int port) {
-		this.port = port;
-
-	}
-
-	public void setInet(InetAddress inetAddress) {
-		this.ipAdress = inetAddress;
-	}
-
 	public double getNotation() {
 		return notation;
 	}
 
 	public void multiplyNotation(double d) {
-		notation *= notation;
+		notation *= d;
 		if (notation < 0) {
 			notation = 0;
 		} else if (notation > 10) {
 			notation = 10;
 		}
+		// System.err.println("Notation :" + notation);
 
 	}
 
-	@Override
-	public int compareTo(Peer peer) {
-		if (peer.notation > this.notation) {
-			return 1;
-		} else if (peer.notation < this.notation) {
-			return -1;
-		} else {
-			return 0;
-		}
-	}
 }

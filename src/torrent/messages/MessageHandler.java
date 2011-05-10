@@ -36,13 +36,14 @@ public class MessageHandler implements MessageVisitor {
 	public void visit(Request r) {
 		// si on recoit cela, on doit idealement preparer un message
 		// SendBloc dans notre queue de messages avec les attributs de request
-		/*
-		 * SendBlock sendBlock = new SendBlock(r.getIndex(), r.getBegin(),
-		 * torrent.getPieces()[r.getIndex()].getBlock(r.getBegin()));
-		 * peerHandler.addAEnvoer(sendBlock);
-		 */
+
+		SendBlock sendBlock = new SendBlock(r.getIndex(), r.getBegin(), torrent
+				.getPieces()[r.getIndex()].getBlock(r.getBegin()));
+		peerHandler.addAEnvoyer(sendBlock);
+
 		System.out.println("Recu un request pour piece : " + r.getIndex()
 				+ ", bloc : " + r.getBegin());
+		peerHandler.multiplyNotation(1.001);
 
 	}
 
@@ -52,9 +53,10 @@ public class MessageHandler implements MessageVisitor {
 		// cela, afin de eviter les requetes inutiles
 
 		peerHandler.setInterested(false);
-		peerHandler.addAEnvoer(new Choke());
+		peerHandler.addAEnvoyer(new Choke());
 
 		System.out.println("Recu not Interested");
+		peerHandler.multiplyNotation(1);
 
 	}
 
@@ -66,7 +68,7 @@ public class MessageHandler implements MessageVisitor {
 
 		// DONE
 		peerHandler.addPeerPiece(h.getPieceIndex());
-
+		peerHandler.multiplyNotation(1.0001);
 		// System.out.println("Recu Have piece : " + h.getPieceIndex());
 
 	}
@@ -78,7 +80,7 @@ public class MessageHandler implements MessageVisitor {
 		// mettre dans la queue de messages
 
 		peerHandler.setInterested(true);
-		peerHandler.addAEnvoer(new Unchoke());
+		peerHandler.addAEnvoyer(new Unchoke());
 
 		System.out.println("Recu Interested");
 
@@ -89,8 +91,8 @@ public class MessageHandler implements MessageVisitor {
 		// donne la liste des pieces que le pair emetteur possede.
 
 		peerHandler.setPeerPiecesIndex(b.getPosessedPieces());
-
-		System.out.println("Recu bitfield");
+		peerHandler.multiplyNotation(Math.pow(1.0001, b.getNbPiece()));
+		// System.out.println("Recu bitfield");
 	}
 
 	@Override
@@ -101,18 +103,16 @@ public class MessageHandler implements MessageVisitor {
 		 * PieceManager se rende compte qu une piece a ete recue
 		 */
 		Piece entering = null;
-		synchronized (torrent) {
-			entering = torrent.getPieces()[s.getPieceIndex()];
-			torrent.setBlocsReceived();
-		}
+		entering = torrent.getPieces()[s.getPieceIndex()];
+		// torrent.setBlocsReceived();
 
-		synchronized (entering) {
-			entering.feed(s.getBlocIndex(), s.getBloc());
-		}
+		entering.feed(s.getBlocIndex(), s.getBloc());
+
 		peerHandler.getPieceMgr().updatePriorities();
-		System.out.println("Recu bloc : "
-				+ (s.getBlocIndex() / Piece.BLOCK_SIZE) + " de la Piece "
-				+ s.getPieceIndex());
+		peerHandler.multiplyNotation(1.01);
+		// System.out.println("Recu bloc : "
+		// + (s.getBlocIndex() / Piece.BLOCK_SIZE) + " de la Piece "
+		// + s.getPieceIndex());
 
 	}
 
@@ -123,7 +123,8 @@ public class MessageHandler implements MessageVisitor {
 		// liste de pieces interessantes etc
 
 		peerHandler.setChocking(false);
-		System.out.println("Recu unchoke :):):):):):):):):):):)");
+		// System.out.println("Recu unchoke :):):):):):):):):):):)");
+		peerHandler.multiplyNotation(1.01);
 	}
 
 	@Override
