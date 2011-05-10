@@ -2,8 +2,6 @@ package torrent.peer;
 
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Semaphore;
 
 import torrent.Torrent;
 
@@ -11,24 +9,30 @@ public class PeerManager extends Thread {
 	private boolean finished;
 	private Torrent torrent;
 	private ArrayList<Peer> peerList;
-	private ArrayBlockingQueue<PeerHandler> peerHandlers;
-	private final static int maxNbPeer = 100;
+	private ArrayList<PeerHandler> peerHandlers;
+	private final static int MAX_NB_PEERS = 100;
 
 	public PeerManager(Torrent torrent) {
 		this.torrent = torrent;
 		peerList = new ArrayList<Peer>();
-		peerHandlers = new ArrayBlockingQueue<PeerHandler>(maxNbPeer);
+		peerHandlers = new ArrayList<PeerHandler>(MAX_NB_PEERS);
 	}
 
-	public boolean addPeer(Peer peer) {
-		synchronized (peerList) {
-
-			if (peerList.contains(peer)) {
-				return false;
-			} else {
-				peerList.add(peer);
-				System.out.println("Nouveau pair : " + peer);
-				return true;
+	public void addPeer(Peer peer) {
+		boolean started = false;
+		synchronized (peerHandlers) {
+			if (peerHandlers.size() < MAX_NB_PEERS) {
+				PeerHandler peerHandler = new PeerHandler(peer, torrent);
+				peerHandler.start();
+				started = true;
+				peerHandlers.add(peerHandler);
+			}
+		}
+		if (!started) {
+			synchronized (peerList) {
+				if (!peerList.contains(peer)) {
+					peerList.add(peer);
+				}
 			}
 		}
 	}
@@ -45,11 +49,9 @@ public class PeerManager extends Thread {
 				}
 			}
 			synchronized (peerHandlers) {
-				try {
-					peerHandlers.put(peerHandler);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+
+				peerHandlers.add(peerHandler);
+
 			}
 		} else {
 
@@ -61,6 +63,7 @@ public class PeerManager extends Thread {
 	public void run() {
 		while (!finished) {
 			update();
+			System.out.println("Peer Handlers Actifs : " + peerHandlers.size());
 			if (!finished) {
 				try {
 					sleep(500);
@@ -73,36 +76,38 @@ public class PeerManager extends Thread {
 
 	private void update() {
 		PeerHandler lazyPeerHandler = getTheLazyOne();
-		double minActivePeerNotation = lazyPeerHandler.getNotation();
-		boolean trouve = false;
-		Peer youngPeer = null;
-		synchronized (peerList) {
-			for (Peer peer : peerList) {
-				if (peer.getNotation() > minActivePeerNotation) {
-					Peer lazyPeer = lazyPeerHandler.getPeer();
-					peerList.remove(peer);
-					peerList.add(lazyPeer);
-					youngPeer = peer;
-					trouve = true;
-					break;
+		if (lazyPeerHandler != null) {
+
+			double minActivePeerNotation = lazyPeerHandler.getNotation();
+			boolean trouve = false;
+			Peer youngPeer = null;
+			synchronized (peerList) {
+				for (Peer peer : peerList) {
+					if (peer.getNotation() > minActivePeerNotation) {
+						Peer lazyPeer = lazyPeerHandler.getPeer();
+						peerList.remove(peer);
+						peerList.add(lazyPeer);
+						youngPeer = peer;
+						trouve = true;
+						break;
+					}
 				}
 			}
-		}
-		if (trouve) {
-			PeerHandler youngPeerHandler = new PeerHandler(youngPeer, torrent);
-			synchronized (peerHandlers) {
-				peerHandlers.remove(lazyPeerHandler);
+			if (trouve) {
+				PeerHandler youngPeerHandler = new PeerHandler(youngPeer,
+						torrent);
+				synchronized (peerHandlers) {
+					peerHandlers.remove(lazyPeerHandler);
+
+					peerHandlers.add(youngPeerHandler);
+
+				}
+				lazyPeerHandler.finish();
 				try {
-					peerHandlers.put(youngPeerHandler);
+					lazyPeerHandler.join();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-			}
-			lazyPeerHandler.finish();
-			try {
-				lazyPeerHandler.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
 			}
 		}
 	}
