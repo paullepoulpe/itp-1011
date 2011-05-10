@@ -5,14 +5,7 @@
 
 package test;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import torrent.Torrent;
 
@@ -23,17 +16,17 @@ public class TorrentTest extends Thread {
 
 	public void run() {
 
-		Torrent myTorrent = new Torrent(new File("data/G6.torrent"));
+		Torrent myTorrent = new Torrent(new File("data/kesako.torrent"));
 
-		OutputStream output = new OutputStream() {
-
-			@Override
-			public void write(int b) throws IOException {
-				// TODO Auto-generated method stub
-
-			}
-		};
-		System.setErr(new PrintStream(output));
+		// OutputStream output = new OutputStream() {
+		//
+		// @Override
+		// public void write(int b) throws IOException {
+		// // TODO Auto-generated method stub
+		//
+		// }
+		// };
+		// System.setErr(new PrintStream(output));
 
 		while (true) {
 			myTorrent.massAnnounce();

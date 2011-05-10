@@ -46,7 +46,6 @@ public class Peer {
 		this.peerHandler = new PeerHandler(this, torrent);
 		peerHandler.start();
 
-
 	}
 
 	public Peer(InetAddress ipAdress, int port, PeerHandler peerHandler) {
@@ -103,5 +102,15 @@ public class Peer {
 
 	public double getNotation() {
 		return notation;
+	}
+
+	public void multiplyNotation(double d) {
+		notation *= notation;
+		if (notation < 0) {
+			notation = 0;
+		} else if (notation > 10) {
+			notation = 10;
+		}
+
 	}
 }

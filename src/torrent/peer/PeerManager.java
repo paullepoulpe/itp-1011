@@ -125,4 +125,13 @@ public class PeerManager extends Thread {
 		}
 		return lazyPeerHandler;
 	}
+
+	public void notifyPeerHandlers(int index) {
+		synchronized (peerHandlers) {
+			for (PeerHandler ph : peerHandlers) {
+				ph.newPieceHave(index);
+			}
+		}
+
+	}
 }

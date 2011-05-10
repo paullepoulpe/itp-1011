@@ -1,6 +1,7 @@
 package torrent.piece;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -13,14 +14,14 @@ import torrent.Torrent;
  * @author Damien Engels, Maarten Sap
  */
 public class PieceManager {
-	private LinkedList<Piece> PiecesOfInterest, allPieces;
+	private LinkedList<Piece> piecesOfInterest, allPieces;
 	final static int MAX_NUM_OF_PIECES = 100;
 	private Torrent torrent;
 
 	public PieceManager(Torrent torrent) {
 		this.torrent = torrent;
 		this.allPieces = new LinkedList<Piece>();
-		this.PiecesOfInterest = new LinkedList<Piece>();
+		this.piecesOfInterest = new LinkedList<Piece>();
 		// on met les pieces dans la liste de pieces
 		for (int i = 0; i < torrent.getPieces().length; i++) {
 			this.allPieces.add(torrent.getPieces()[i]);
@@ -28,9 +29,9 @@ public class PieceManager {
 		// On melange toutes les pieces
 		Collections.shuffle(this.allPieces);
 		for (int i = 0; i < MAX_NUM_OF_PIECES && i < allPieces.size(); i++) {
-			PiecesOfInterest.add(allPieces.get(i));
+			piecesOfInterest.add(allPieces.get(i));
 		}
-		allPieces.removeAll(PiecesOfInterest);
+		allPieces.removeAll(piecesOfInterest);
 
 	}
 
@@ -43,21 +44,23 @@ public class PieceManager {
 	 */
 	public void updatePriorities() {
 		if (!torrent.isComplete()) {
-			ListIterator<Piece> iterator = PiecesOfInterest.listIterator();
-			while (iterator.hasNext()) {
-				Piece piece = iterator.next();
-				if (piece.isChecked()) {
-					iterator.remove();
-					if (!allPieces.isEmpty()) {
-						PiecesOfInterest.addLast(allPieces.getFirst());
-						allPieces.removeFirst();
+			synchronized (piecesOfInterest) {
+
+				ListIterator<Piece> iterator = piecesOfInterest.listIterator();
+				while (iterator.hasNext()) {
+					Piece piece = iterator.next();
+					if (piece.isChecked()) {
+						iterator.remove();
+						if (!allPieces.isEmpty()) {
+							iterator.add(allPieces.getFirst());
+							allPieces.removeFirst();
+						}
 					}
 				}
 			}
 			System.out.println((int) Math.round(torrent
 					.getDownloadedCompleteness() * 100)
-					/ 100.0
-					+ " %....................");
+					/ 100.0 + " %....................");
 		} else {
 			synchronized (System.out) {
 				torrent.writeToFile();
@@ -77,11 +80,15 @@ public class PieceManager {
 	public int getPieceOfInterest(boolean[] peerPieceIndex) {
 		int index = 0;
 		int minDemandes = Integer.MAX_VALUE;
-		for (int i = 0; i < PiecesOfInterest.size(); i++) {
-			if (PiecesOfInterest.get(i).getNbDemandes() < minDemandes
-					&& peerPieceIndex[index]) {
-				index = PiecesOfInterest.get(i).getIndex();
-				minDemandes = PiecesOfInterest.get(i).getNbDemandes();
+		synchronized (piecesOfInterest) {
+			Iterator<Piece> iterator = piecesOfInterest.iterator();
+			while (iterator.hasNext()) {
+				Piece piece = iterator.next();
+				if (piece.getNbDemandes() < minDemandes
+						&& peerPieceIndex[index]) {
+					index = piece.getIndex();
+					minDemandes = piece.getNbDemandes();
+				}
 			}
 		}
 		if (minDemandes < Integer.MAX_VALUE) {
