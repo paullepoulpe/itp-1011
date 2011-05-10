@@ -51,6 +51,7 @@ public class PieceManager {
 					Piece piece = iterator.next();
 					if (piece.isChecked()) {
 						iterator.remove();
+						torrent.notifyPeerHandlers(piece.getIndex());
 						if (!allPieces.isEmpty()) {
 							iterator.add(allPieces.getFirst());
 							allPieces.removeFirst();

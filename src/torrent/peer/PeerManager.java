@@ -66,7 +66,7 @@ public class PeerManager extends Thread {
 			System.out.println("Peer Handlers Actifs : " + peerHandlers.size());
 			if (!finished) {
 				try {
-					sleep(500);
+					sleep(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

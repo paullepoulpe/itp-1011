@@ -14,6 +14,7 @@ import torrent.piece.Piece;
 public class BitField extends Message {
 	private boolean[] posessedPieces;
 	private boolean noPieces;
+	private int nbPieces;
 
 	public BitField(byte[] bitField) {
 		posessedPieces = new boolean[bitField.length * 8];
@@ -22,6 +23,7 @@ public class BitField extends Message {
 			for (int j = 0; j < 8; j++) {
 				if ((bits & 1) == 1) {
 					if (8 * (i + 1) - j - 1 < posessedPieces.length) {
+						nbPieces++;
 						posessedPieces[8 * (i + 1) - j - 1] = true;
 					} else {
 						break;
@@ -84,5 +86,9 @@ public class BitField extends Message {
 
 	public boolean hasNoPieces() {
 		return noPieces;
+	}
+
+	public double getNbPiece() {
+		return nbPieces;
 	}
 }

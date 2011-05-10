@@ -36,9 +36,7 @@ public class PeerHandler extends Thread {
 	private boolean isInterested = false;
 	private long lastTimeFlush;
 	private PeerSettings settings;
-	private static int requestRestrictions = 25;
-
-	// initialise a 5;
+	private static int REQUEST_RESTRICTIONS = 15;
 
 	public PeerHandler(Peer peer, Torrent torrent) {
 		this(torrent);
@@ -68,8 +66,8 @@ public class PeerHandler extends Thread {
 			// initialisation des streams
 			initStreams();
 
-			System.out.println("Connection a " + peer.getIpAdress()
-					+ " reussie!");
+			// System.out.println("Connection a " + peer.getIpAdress()
+			// + " reussie!");
 
 			// etablissement du Handshake
 			boolean isCompatible = shakeHands();
@@ -77,7 +75,7 @@ public class PeerHandler extends Thread {
 			// test si le handshake est compatible
 			if (isCompatible) {
 
-				System.out.println("ID du pair : " + this.peer.getId());
+				// System.out.println("ID du pair : " + this.peer.getId());
 
 				// ecrire un bitfield au client pour lui indiquer quelles
 				// pieces on a
@@ -166,8 +164,12 @@ public class PeerHandler extends Thread {
 	 * 
 	 * @param message
 	 */
-	public void addAEnvoer(Message message) {
-		aEnvoyer.addLast(message);
+	public void addAEnvoyer(Message message) {
+		if (!finished) {
+			synchronized (aEnvoyer) {
+				aEnvoyer.addLast(message);
+			}
+		}
 	}
 
 	/**
@@ -177,12 +179,18 @@ public class PeerHandler extends Thread {
 	 *            Request a enlever de la liste
 	 */
 	public void removeRequest(Request requete) {
-		while (requetes.contains(requete)) {
-			requetes.remove(requete);
+		synchronized (requetes) {
+			while (requetes.contains(requete)) {
+				requetes.remove(requete);
+			}
 		}
-		while (requetesEnvoyee.contains(requete)) {
-			requetesEnvoyee.remove(requete);
+
+		synchronized (requetesEnvoyee) {
+			while (requetesEnvoyee.contains(requete)) {
+				requetesEnvoyee.remove(requete);
+			}
 		}
+
 	}
 
 	/**
@@ -202,41 +210,45 @@ public class PeerHandler extends Thread {
 	 * initialise les streams
 	 */
 	private void initStreams() {
-		if (!finished) {
-			boolean connect = false;
-			while (!connect) {
-				if (socket == null) {
-					try {
-						socket = new Socket(peer.getIpAdress(), peer.getPort());
-						input = new DataInputStream(socket.getInputStream());
-						output = new DataOutputStream(socket.getOutputStream());
-						connect = true;
-					} catch (IOException e) {
-						connect = false;
-						socket = null;
-					}
-				} else {
-					try {
-						input = new DataInputStream(socket.getInputStream());
-						output = new DataOutputStream(socket.getOutputStream());
-						this.peer.setPort(socket.getPort());
-						this.peer.setInet(socket.getInetAddress());
-						connect = true;
-					} catch (IOException e) {
-						connect = false;
-						socket = null;
-					}
-				}
-				if (!connect) {
-					yield();
-					try {
-						sleep(20);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
 
+		boolean connect = false;
+		int tentatives = 0;
+		while (!connect && !finished) {
+			if (socket == null) {
+				try {
+					socket = new Socket(peer.getIpAdress(), peer.getPort());
+					input = new DataInputStream(socket.getInputStream());
+					output = new DataOutputStream(socket.getOutputStream());
+					connect = true;
+				} catch (IOException e) {
+					connect = false;
+					socket = null;
+				}
+			} else {
+				try {
+					input = new DataInputStream(socket.getInputStream());
+					output = new DataOutputStream(socket.getOutputStream());
+					connect = true;
+				} catch (IOException e) {
+					connect = false;
+					socket = null;
 				}
 			}
+			if (!connect && !finished) {
+				tentatives++;
+				if (tentatives >= 30) {
+					tentatives = 0;
+					peer.multiplyNotation(1 / 1.5);
+				}
+				yield();
+				try {
+					sleep(20);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+			}
+
 		}
 
 	}
@@ -248,15 +260,20 @@ public class PeerHandler extends Thread {
 	 * @return true si le handshake a marche, false sinon
 	 */
 	private boolean shakeHands() throws IOException {
-		Handshake ourHS = new Handshake(torrent);
-		ourHS.send(output);
+		if (!finished) {
+			Handshake ourHS = new Handshake(torrent);
+			ourHS.send(output);
 
-		Handshake theirHS = new Handshake(input);
-		this.peer.setId(theirHS.getPeerID());
-		if (theirHS.isEncryptionSupported()) {
-			return shakeEncryptedHands(theirHS) && theirHS.isCompatible(ourHS);
+			Handshake theirHS = new Handshake(input);
+			this.peer.setId(theirHS.getPeerID());
+			// if (theirHS.isEncryptionSupported()) {
+			// return shakeEncryptedHands(theirHS)
+			// && theirHS.isCompatible(ourHS);
+			// }
+			return theirHS.isCompatible(ourHS);
 		}
-		return theirHS.isCompatible(ourHS);
+		return false;
+
 	}
 
 	private boolean shakeEncryptedHands(Handshake h) throws IOException {
@@ -285,7 +302,7 @@ public class PeerHandler extends Thread {
 	 * lis tous les messages entrants et les traite
 	 */
 	private void readMessages() throws IOException {
-		while (input.available() > 0) {
+		while (input.available() > 0 && !finished) {
 			Message message = messageReader.readMessage();
 			if (message != null) {
 				synchronized (messageHandler) {
@@ -302,12 +319,11 @@ public class PeerHandler extends Thread {
 	 * ait moins de 10 requetes pendantes
 	 */
 	private void prepareRequest() {
-		if (requetes.size() + requetesEnvoyee.size() < requestRestrictions
-				&& !hasNoPieces()) {
+		if (requetes.size() + requetesEnvoyee.size() < REQUEST_RESTRICTIONS
+				&& !hasNoPieces() && !finished) {
 			int index = -1;
-			synchronized (pieceMgr) {
-				index = pieceMgr.getPieceOfInterest(peerPiecesIndex);
-			}
+			index = pieceMgr.getPieceOfInterest(peerPiecesIndex);
+
 			if (index != -1) {
 				Piece wanted = torrent.getPieces()[index];
 				requetes.add(wanted.getBlockOfInterest(this));
@@ -316,7 +332,7 @@ public class PeerHandler extends Thread {
 				amInterested = false;
 			}
 
-		} else if (requetesEnvoyee.size() == requestRestrictions) {
+		} else if (requetesEnvoyee.size() == REQUEST_RESTRICTIONS && !finished) {
 			long thisTime = System.currentTimeMillis();
 			if ((thisTime - lastTimeFlush) > 10000) {
 				peer.multiplyNotation(1 / 1.2);
@@ -331,19 +347,17 @@ public class PeerHandler extends Thread {
 	 * request(s'il y en a)
 	 */
 	private void sendMessages() throws IOException {
-		if (!aEnvoyer.isEmpty()) {
+		if (!aEnvoyer.isEmpty() && !finished) {
 			synchronized (output) {
-				aEnvoyer.getFirst().send(output);
+				aEnvoyer.removeFirst().send(output);
 			}
-			aEnvoyer.removeFirst();
 		}
 
-		if (!isChocking && !requetes.isEmpty()) {
+		if (!isChocking && !requetes.isEmpty() && !finished) {
 			synchronized (output) {
 				requetes.getFirst().send(output);
 			}
-			requetesEnvoyee.addLast(requetes.getFirst());
-			requetes.removeFirst();
+			requetesEnvoyee.addLast(requetes.removeFirst());
 		}
 	}
 
@@ -352,7 +366,7 @@ public class PeerHandler extends Thread {
 	 * qu'il nous choke
 	 */
 	private void amMaybeInterested() throws IOException {
-		if (isChocking && !amInterested) {
+		if (isChocking && !amInterested && !finished) {
 			boolean interested;
 			synchronized (pieceMgr) {
 				interested = pieceMgr.getPieceOfInterest(peerPiecesIndex) != -1;

@@ -251,15 +251,19 @@ public class Torrent {
 	public void addPeer(Socket socket) {
 		peerManager.addPeer(socket);
 	}
-	public long getUpload(){
+
+	public long getUpload() {
 		return this.uploadSpeed;
 	}
+
 	public void setBlocsReceived() {
 		long currentTime = System.currentTimeMillis();
-		this.downloadSpeed = (Piece.BLOCK_SIZE)/((currentTime-lastBlockReceived)*1000);
-		this.lastBlockReceived = System.currentTimeMillis();		
+		this.downloadSpeed = (Piece.BLOCK_SIZE)
+				/ ((currentTime - lastBlockReceived) * 1000);
+		this.lastBlockReceived = System.currentTimeMillis();
 	}
-	public long getDownload(){
+
+	public long getDownload() {
 		return downloadSpeed;
 	}
 
@@ -268,4 +272,3 @@ public class Torrent {
 
 	}
 }
-

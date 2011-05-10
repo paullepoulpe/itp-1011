@@ -20,7 +20,7 @@ public class Interested extends Message {
 		try {
 			output.writeInt(1);
 			output.writeByte(2);
-			System.out.println("Sent Interested");
+			// System.out.println("Sent Interested");
 		} catch (IOException e) {
 			throw e;
 		}
