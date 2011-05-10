@@ -148,8 +148,17 @@ public class TorrentFileWriter {
 		choisir = new JFileChooser();
 
 		try {
-			UIManager.setLookAndFeel(UIManager.getInstalledLookAndFeels()[1]
-					.getClassName());
+
+			if (System.getProperty("os.name").equals("Linux")) {
+				UIManager
+						.setLookAndFeel(UIManager.getInstalledLookAndFeels()[1]
+								.getClassName());
+			} else {
+				UIManager
+						.setLookAndFeel(UIManager.getInstalledLookAndFeels()[3]
+								.getClassName());
+			}
+
 			choisir.updateUI();
 		} catch (Exception e) {
 			e.printStackTrace();
