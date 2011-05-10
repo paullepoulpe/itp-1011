@@ -102,6 +102,7 @@ public class MessageHandler implements MessageVisitor {
 		Piece entering = null;
 		synchronized (torrent) {
 			entering = torrent.getPieces()[s.getPieceIndex()];
+			torrent.setBlocsReceived();
 		}
 
 		synchronized (entering) {

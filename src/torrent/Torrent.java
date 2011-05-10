@@ -22,6 +22,7 @@ public class Torrent {
 	public static String PEER_ID = PeerIDGenerator.generateID();
 	private boolean isComplete;
 	private TorrentFileWriter writer;
+	private long lastBlockReceived, downloadSpeed, uploadSpeed;
 
 	/**
 	 * comstructeur avec numero de port
@@ -254,9 +255,21 @@ public class Torrent {
 	public void addPeer(Socket socket) {
 		peerManager.addPeer(socket);
 	}
+	public long getUpload(){
+		return this.uploadSpeed;
+	}
+	public void setBlocsReceived() {
+		long currentTime = System.currentTimeMillis();
+		this.downloadSpeed = (Piece.BLOCK_SIZE)/((currentTime-lastBlockReceived)*1000);
+		this.lastBlockReceived = System.currentTimeMillis();		
+	}
+	public long getDownload(){
+		return downloadSpeed;
+	}
 
 	public void notifyPeerHandlers(int index) {
 		peerManager.notifyPeerHandlers(index);
 
 	}
 }
+
