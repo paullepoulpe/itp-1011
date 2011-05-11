@@ -18,7 +18,6 @@ public class MenuBar extends JMenuBar {
 		file.add(add);
 		file.addSeparator();
 		exit.addActionListener(new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(JOptionPane.showConfirmDialog(null, "Are you sure you want to exit? All downloads will stop.", "Confirm exit", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE)==JOptionPane.YES_OPTION){
