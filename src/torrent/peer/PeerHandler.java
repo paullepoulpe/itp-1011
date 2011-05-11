@@ -2,7 +2,9 @@ package torrent.peer;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 import crypto.RSA.*;
 
@@ -27,9 +29,9 @@ public class PeerHandler extends Thread {
 	private DataOutputStream output;
 	private PieceManager pieceMgr;
 	private boolean[] peerPiecesIndex;
-	private LinkedList<Message> aEnvoyer;
-	private LinkedList<Request> requetes;
-	private LinkedList<Request> requetesEnvoyee;
+	private LinkedList<Message> aEnvoyer = new LinkedList<Message>();
+	private LinkedList<Request> requetes = new LinkedList<Request>();
+	private LinkedList<Request> requetesEnvoyee = new LinkedList<Request>();
 	private boolean amChocking = true;
 	private boolean amInterested = false;
 	private boolean isChocking = true; // est ce que le pair nous etrangle ?
@@ -54,9 +56,6 @@ public class PeerHandler extends Thread {
 	private PeerHandler(Torrent torrent) {
 		this.messageHandler = new MessageHandler(this, torrent);
 		this.peerPiecesIndex = new boolean[torrent.getPieces().length];
-		this.aEnvoyer = new LinkedList<Message>();
-		this.requetes = new LinkedList<Request>();
-		this.requetesEnvoyee = new LinkedList<Request>();
 		this.torrent = torrent;
 		this.pieceMgr = torrent.getPieceManager();
 	}
@@ -166,9 +165,7 @@ public class PeerHandler extends Thread {
 	 */
 	public void addAEnvoyer(Message message) {
 		if (!finished) {
-			synchronized (aEnvoyer) {
-				aEnvoyer.addLast(message);
-			}
+			aEnvoyer.addLast(message);
 		}
 	}
 
@@ -179,16 +176,13 @@ public class PeerHandler extends Thread {
 	 *            Request a enlever de la liste
 	 */
 	public void removeRequest(Request requete) {
-		synchronized (requetes) {
-			while (requetes.contains(requete)) {
-				requetes.remove(requete);
-			}
+
+		while (requetes.contains(requete)) {
+			requetes.remove(requete);
 		}
 
-		synchronized (requetesEnvoyee) {
-			while (requetesEnvoyee.contains(requete)) {
-				requetesEnvoyee.remove(requete);
-			}
+		while (requetesEnvoyee.contains(requete)) {
+			requetesEnvoyee.remove(requete);
 		}
 
 	}
@@ -305,10 +299,9 @@ public class PeerHandler extends Thread {
 		while (input.available() > 0 && !finished) {
 			Message message = messageReader.readMessage();
 			if (message != null) {
-				synchronized (messageHandler) {
-					// accept: on traite le message
-					message.accept(messageHandler);
-				}
+
+				// accept: on traite le message
+				message.accept(messageHandler);
 			}
 		}
 
@@ -368,9 +361,7 @@ public class PeerHandler extends Thread {
 	private void amMaybeInterested() throws IOException {
 		if (isChocking && !amInterested && !finished) {
 			boolean interested;
-			synchronized (pieceMgr) {
-				interested = pieceMgr.getPieceOfInterest(peerPiecesIndex) != -1;
-			}
+			interested = pieceMgr.getPieceOfInterest(peerPiecesIndex) != -1;
 			if (interested) {
 				synchronized (output) {
 					new Interested().send(output);
@@ -418,9 +409,7 @@ public class PeerHandler extends Thread {
 
 	public void newPieceHave(int i) {
 		if (!finished) {
-			synchronized (aEnvoyer) {
-				aEnvoyer.addLast(new Have(i));
-			}
+			aEnvoyer.addLast(new Have(i));
 		}
 	}
 

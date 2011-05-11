@@ -16,7 +16,7 @@ public class TorrentTest extends Thread {
 
 	public void run() {
 
-		Torrent myTorrent = new Torrent(new File("data/LePetitPrince.torrent"));
+		Torrent myTorrent = new Torrent(new File("data/eminem.torrent"));
 
 		// OutputStream output = new OutputStream() {
 		//

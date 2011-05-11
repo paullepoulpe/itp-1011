@@ -10,7 +10,7 @@ public class PeerManager extends Thread {
 	private Torrent torrent;
 	private ArrayList<Peer> peerList;
 	private ArrayList<PeerHandler> peerHandlers;
-	private final static int MAX_NB_PEERS = 100;
+	private final static int MAX_NB_PEERS = 200;
 
 	public PeerManager(Torrent torrent) {
 		this.torrent = torrent;
