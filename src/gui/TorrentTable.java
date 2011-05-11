@@ -4,36 +4,43 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.*;
+import javax.swing.table.TableCellRenderer;
+
 import java.awt.*;
 import java.io.File;
 
 import torrent.Torrent;
 
-public class TorrentTable extends JPanel{
-	private Vector<TorrentVector> tor;
+public class TorrentTable extends JPanel {
 	private JTable table;
+	private ArrayList<Torrent> torrentlist;
 
 	public TorrentTable(ArrayList<Torrent> t) {
-		table = new JTable(new TorrentTableModel(t));
-		table.getColumnModel().getColumn(1).getCellRenderer().getTableCellRendererComponent(table,null, true, true, 0, 1);
-		add(table);
+		torrentlist = t;
+		setLayout(new FlowLayout());
+		table = constructTable();
+		add(new JScrollPane(table));
 	}
 
 	public void addTorrent(Torrent t) {
-
+		torrentlist.add(t);
+		constructTable();
 	}
-}
-
-class TorrentVector extends Vector<Torrent> {
-	private String name;
-	private JProgressBar percent;
-	private JLabel size;
-
-	public TorrentVector(Torrent t) {
-		name = t.getMetainfo().getFileName();
-		percent = new JProgressBar(0, 100);
-		percent.setValue((int) Math.floor(t.getDownloadedCompleteness() * 100) / 100);
-		size = new JLabel(t.getMetainfo().getSize() + " Bytes");
+	public JTable constructTable(){
+		removeAll();
+		TorrentTableModel tm = new TorrentTableModel(torrentlist);
+		table = new JTable(tm);
+		table.setPreferredScrollableViewportSize(new Dimension(800, 100));
+		table.getColumnModel().getColumn(0).setPreferredWidth(500);
+		table.setDefaultRenderer(Component.class, new TableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable table,
+					Object value, boolean isSelected, boolean hasFocus,
+					int row, int column) {
+				return (Component) table.getValueAt(row, column);
+			}
+		});
+		return table;
 	}
 }
 
@@ -41,10 +48,13 @@ class TorrentTestTable {
 	public static void main(String[] args) {
 		ArrayList<Torrent> tor = new ArrayList<Torrent>();
 		tor.add(new Torrent(new File("data/G6.torrent")));
-		// tor.add(new Torrent(new File("data/BEP.torrent")));
+		tor.add(new Torrent(new File("data/BEP.torrent")));
 		TorrentTable tab = new TorrentTable(tor);
 		JFrame fen = new JFrame("test");
-		fen.getContentPane().add(tab);
+		JScrollPane bob = new JScrollPane(tab);
+//		fen.getContentPane().add(tab);
+		fen.getContentPane().add(bob);
+		fen.pack();
 		fen.setVisible(true);
 		fen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}

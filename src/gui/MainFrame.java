@@ -14,7 +14,8 @@ import torrent.Torrent;
 
 public class MainFrame extends JFrame {
 	private ArrayList<Torrent> torrentz;
-	private TorrentListPane listeTorrent;
+	private TorrentTable tableTorrent;
+	private JScrollPane scrollPane;
 	private MenuBar menu;
 	private JTabbedPane torrent;
 
@@ -23,8 +24,15 @@ public class MainFrame extends JFrame {
 		Container c = getContentPane();
 		c.setLayout(new BorderLayout());
 		try {
-			UIManager.setLookAndFeel(UIManager.getInstalledLookAndFeels()[3]
-					.getClassName());
+			if (System.getProperty("os.name").equals("Linux")) {
+				UIManager
+						.setLookAndFeel(UIManager.getInstalledLookAndFeels()[1]
+								.getClassName());
+			} else {
+				UIManager
+						.setLookAndFeel(UIManager.getInstalledLookAndFeels()[3]
+								.getClassName());
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -36,14 +44,14 @@ public class MainFrame extends JFrame {
 			}
 		});
 		c.add(menu, BorderLayout.NORTH);
-
-		listeTorrent = new TorrentListPane(torrentz);
-		c.add(listeTorrent, BorderLayout.CENTER);
+		tableTorrent = new TorrentTable(torrentz);
+		scrollPane = new JScrollPane(tableTorrent);
+		c.add(scrollPane, BorderLayout.CENTER);
 		setExtendedState(MAXIMIZED_BOTH);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setIconImage(Toolkit.getDefaultToolkit().getImage("src/gui/ico2.png"));
 		setSize(new Dimension(800, 500));
-		if(torrentz.size()==0)
+		if (torrentz.size() == 0)
 			addTorrent();
 		setVisible(true);
 	}
@@ -61,6 +69,10 @@ public class MainFrame extends JFrame {
 		Torrent t = new Torrent(new File(chooser.getSelectedFile()
 				.getAbsolutePath()));
 		this.torrentz.add(t);
+
+		tableTorrent = new TorrentTable(torrentz);
+		scrollPane.removeAll();
+		scrollPane = new JScrollPane(tableTorrent);
 		if (JOptionPane.YES_OPTION == JOptionPane
 				.showConfirmDialog(
 						rootPane,
@@ -69,6 +81,6 @@ public class MainFrame extends JFrame {
 						"Start downloading", JOptionPane.YES_NO_OPTION)) {
 			t.massAnnounce();
 		}
-		listeTorrent.setListData(torrentz);
+		validate();
 	}
 }
