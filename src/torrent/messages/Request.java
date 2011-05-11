@@ -2,10 +2,12 @@ package torrent.messages;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 /**
  * Cette classe est un message de requete de blocs.
+ * 
  * @author Damien, Maarten
- *
+ * 
  */
 public class Request extends Message {
 	private int index, begin, length;
@@ -34,21 +36,21 @@ public class Request extends Message {
 
 	@Override
 	public void send(DataOutputStream output) throws IOException {
-		try {
-			output.writeInt(13);
-			output.writeByte(6);
-			output.writeInt(index);
-			output.writeInt(begin);
-			output.writeInt(length);
-		} catch (IOException e) {
-			throw e;
-		}
+		output.writeInt(13);
+		output.writeByte(6);
+		output.writeInt(index);
+		output.writeInt(begin);
+		output.writeInt(length);
 
 	}
 
-	public boolean equals(Request otherRequest) {
-		return otherRequest.begin == this.begin
-				&& otherRequest.index == this.index
-				&& otherRequest.length == this.length;
+	public boolean equals(Object otherRequest) {
+		if (otherRequest instanceof Request) {
+			return ((Request) otherRequest).begin == this.begin
+					&& ((Request) otherRequest).index == this.index
+					&& ((Request) otherRequest).length == this.length;
+		}
+		return false;
+
 	}
 }
