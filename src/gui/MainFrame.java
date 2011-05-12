@@ -44,9 +44,10 @@ public class MainFrame extends JFrame {
 			}
 		});
 		c.add(menu, BorderLayout.NORTH);
+
 		tableTorrent = new TorrentTable(torrentz);
-		scrollPane = new JScrollPane(tableTorrent);
-		c.add(scrollPane, BorderLayout.CENTER);
+
+		c.add(tableTorrent, BorderLayout.CENTER);
 		setExtendedState(MAXIMIZED_BOTH);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setIconImage(Toolkit.getDefaultToolkit().getImage("src/gui/ico2.png"));
@@ -68,11 +69,12 @@ public class MainFrame extends JFrame {
 		chooser.showDialog(this, "Add Torrent to downloadlist !");
 		Torrent t = new Torrent(new File(chooser.getSelectedFile()
 				.getAbsolutePath()));
-		this.torrentz.add(t);
-
+		remove(tableTorrent);
+		torrentz.add(t);
+		System.out.println("torrent added to list");
 		tableTorrent = new TorrentTable(torrentz);
-//		scrollPane.removeAll();
-		scrollPane = new JScrollPane(tableTorrent);
+		add(tableTorrent, "Center");
+		System.out.println("TorrentTable created");
 		if (JOptionPane.YES_OPTION == JOptionPane
 				.showConfirmDialog(
 						rootPane,
@@ -82,5 +84,7 @@ public class MainFrame extends JFrame {
 			t.massAnnounce();
 		}
 		validate();
+		tableTorrent.revalidate();
+		System.out.println("Validate happened");
 	}
 }
