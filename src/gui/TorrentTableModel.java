@@ -27,7 +27,6 @@ public class TorrentTableModel extends AbstractTableModel {
 			to[i][2] = new JLabel(t.get(i).getMetainfo().getSize() + " Bytes");
 			to[i][3] = ti.getUpload();
 			to[i][4] = ti.getDownload();
-//			System.out.println("test " + i);
 		}
 
 	}
@@ -55,22 +54,4 @@ public class TorrentTableModel extends AbstractTableModel {
 		return colNames[col];
 	}
 
-	class TorrentProgressBar extends JLabel implements TableCellRenderer {
-
-		@Override
-		public Component getTableCellRendererComponent(JTable table,
-				Object value, boolean isSelected, boolean hasFocus, int row,
-				int column) {
-			if (column == 1) {
-				JProgressBar prog = new JProgressBar(0, 100);
-				prog.setValue((Integer) value);
-				return prog;
-			}
-			if (column == 2) {
-				return new JLabel((String) value);
-			}
-			return null;
-		}
-
-	}
 }
