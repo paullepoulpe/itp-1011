@@ -36,9 +36,11 @@ public class PeerHandler extends Thread {
 	private boolean amInterested = false;
 	private boolean isChocking = true; // est ce que le pair nous etrangle ?
 	private boolean isInterested = false;
+	private boolean connecte = false;
 	private long lastTimeFlush;
 	private PeerSettings settings;
-	private static int REQUEST_RESTRICTIONS = 15;
+	private static int REQUEST_RESTRICTIONS = 25;
+	static int NbPairsConnectes;
 
 	public PeerHandler(Peer peer, Torrent torrent) {
 		this(torrent);
@@ -64,7 +66,7 @@ public class PeerHandler extends Thread {
 		try {
 			// initialisation des streams
 			initStreams();
-
+			NbPairsConnectes++;
 			// System.out.println("Connection a " + peer.getIpAdress()
 			// + " reussie!");
 
@@ -204,31 +206,29 @@ public class PeerHandler extends Thread {
 	 * initialise les streams
 	 */
 	private void initStreams() {
-
-		boolean connect = false;
 		int tentatives = 0;
-		while (!connect && !finished) {
+		while (!connecte && !finished) {
 			if (socket == null) {
 				try {
 					socket = new Socket(peer.getIpAdress(), peer.getPort());
 					input = new DataInputStream(socket.getInputStream());
 					output = new DataOutputStream(socket.getOutputStream());
-					connect = true;
+					connecte = true;
 				} catch (IOException e) {
-					connect = false;
+					connecte = false;
 					socket = null;
 				}
 			} else {
 				try {
 					input = new DataInputStream(socket.getInputStream());
 					output = new DataOutputStream(socket.getOutputStream());
-					connect = true;
+					connecte = true;
 				} catch (IOException e) {
-					connect = false;
+					connecte = false;
 					socket = null;
 				}
 			}
-			if (!connect && !finished) {
+			if (!connecte && !finished) {
 				tentatives++;
 				if (tentatives >= 30) {
 					tentatives = 0;
@@ -285,8 +285,8 @@ public class PeerHandler extends Thread {
 		SendSymmetricKey theirSym = new SendSymmetricKey(input);
 		if (ourSym.getId() != theirSym.getId())
 			return false;
-		output = new DataOutputStream(new SymmetricOutputStream(theirSym
-				.getXORKey(), output));
+		output = new DataOutputStream(new SymmetricOutputStream(
+				theirSym.getXORKey(), output));
 		input = new DataInputStream(new SymmetricInputStream(
 				ourSym.getXORKey(), input));
 		return true;
@@ -379,6 +379,10 @@ public class PeerHandler extends Thread {
 
 	public void finish() {
 		this.finished = true;
+		if (connecte = true) {
+			NbPairsConnectes--;
+		}
+		connecte = false;
 		try {
 			if (this.output != null) {
 				this.output.flush();
