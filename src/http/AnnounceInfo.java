@@ -37,6 +37,14 @@ public class AnnounceInfo {
 		BEValue decodValue = null;
 		Map<String, BEValue> dico = null;
 
+		synchronized (System.out) {
+			System.out.println("\n");
+			for (int i = 0; i < data.length; i++) {
+				System.out.print((char) data[i]);
+			}
+			System.out.println("\n");
+		}
+
 		try {
 			decodeur = new BDecoder(new ByteArrayInputStream(data));
 			decodValue = decodeur.bdecodeMap();
@@ -60,7 +68,14 @@ public class AnnounceInfo {
 				this.peers = dico.get("peers").getBytes();
 			}
 		} catch (InvalidBEncodingException e) {
-			throw new FailureReasonExeption(e.getLocalizedMessage());
+			if (data[0] == '<' && data[1] == 'h' && data[2] == 't'
+					&& data[3] == 'm' && data[4] == 'l' && data[5] == '>') {
+				throw new FailureReasonExeption(
+						"Reponse du tracker en html : ca sent pas bon!");
+			} else {
+				throw new FailureReasonExeption(e.getLocalizedMessage());
+			}
+
 		} catch (IOException e) {
 			System.out.println(e.getLocalizedMessage());
 		}
