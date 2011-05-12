@@ -52,7 +52,6 @@ class TorrentTestTable {
 		TorrentTable tab = new TorrentTable(tor);
 		JFrame fen = new JFrame("test");
 		JScrollPane bob = new JScrollPane(tab);
-//		fen.getContentPane().add(tab);
 		fen.getContentPane().add(bob);
 		fen.pack();
 		fen.setVisible(true);

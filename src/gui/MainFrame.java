@@ -51,9 +51,9 @@ public class MainFrame extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setIconImage(Toolkit.getDefaultToolkit().getImage("src/gui/ico2.png"));
 		setSize(new Dimension(800, 500));
+		setVisible(true);
 		if (torrentz.size() == 0)
 			addTorrent();
-		setVisible(true);
 	}
 
 	public void addTorrent() {
@@ -65,13 +65,13 @@ public class MainFrame extends JFrame {
 				+ File.separator + "Downloads"));
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		chooser.setMultiSelectionEnabled(false);
-		chooser.showDialog(null, "Start downloading !");
+		chooser.showDialog(this, "Add Torrent to downloadlist !");
 		Torrent t = new Torrent(new File(chooser.getSelectedFile()
 				.getAbsolutePath()));
 		this.torrentz.add(t);
 
 		tableTorrent = new TorrentTable(torrentz);
-		scrollPane.removeAll();
+//		scrollPane.removeAll();
 		scrollPane = new JScrollPane(tableTorrent);
 		if (JOptionPane.YES_OPTION == JOptionPane
 				.showConfirmDialog(
