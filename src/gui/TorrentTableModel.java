@@ -1,6 +1,8 @@
 package gui;
 
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
@@ -12,7 +14,8 @@ import javax.swing.table.TableCellRenderer;
 
 import torrent.Torrent;
 
-public class TorrentTableModel extends AbstractTableModel {
+public class TorrentTableModel extends AbstractTableModel implements
+		PropertyChangeListener {
 	private Object[][] to;
 	static final String[] colNames = { "Filename", "Progress", "Size",
 			"Upload", "Download" };
@@ -26,6 +29,9 @@ public class TorrentTableModel extends AbstractTableModel {
 			((JProgressBar) to[i][1]).setValue((int) ti
 					.getDownloadedCompleteness());
 			((JProgressBar) to[i][1]).setStringPainted(true);
+			UpdateProgressBar updater = new UpdateProgressBar(ti, i);
+			updater.addPropertyChangeListener(this);
+			updater.execute();
 			to[i][2] = t.get(i).getMetainfo().getSize() + " Bytes";
 			to[i][3] = ti.getUpload();
 			to[i][4] = ti.getDownload();
@@ -55,13 +61,37 @@ public class TorrentTableModel extends AbstractTableModel {
 	public String getColumnName(int col) {
 		return colNames[col];
 	}
-	class UpdateProgressBar extends  SwingWorker<Void, Void>{
 
-		@Override
+	class UpdateProgressBar extends SwingWorker<Void, Void> {
+		int index;
+		Torrent t;
+
+		public UpdateProgressBar(Torrent torrent, int index) {
+			t = torrent;
+			this.index = index;
+		}
+
 		protected Void doInBackground() throws Exception {
-			
+			int progress = 0;
+			try {
+				setProgress((int) t.getDownloadedCompleteness());
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			return null;
 		}
-		
+
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+
+		for (int i = 0; i < to.length; i++) {
+
+			int progress = (Integer) evt.getNewValue();
+			((JProgressBar) to[i][1]).setValue(progress);
+
+		}
 	}
 }
