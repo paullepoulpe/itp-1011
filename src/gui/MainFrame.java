@@ -15,7 +15,6 @@ import torrent.Torrent;
 public class MainFrame extends JFrame {
 	private ArrayList<Torrent> torrentz;
 	private TorrentTable tableTorrent;
-	private JScrollPane scrollPane;
 	private MenuBar menu;
 	private JTabbedPane torrent;
 

@@ -10,7 +10,8 @@ import IO.TorrentFileWriter;
 import torrent.peer.*;
 import torrent.piece.*;
 import torrent.tracker.TrackerInfo;
-
+/*
+ * IMPLEMENTER LA METHODE Torrent.stop() !!!!!!*/
 public class Torrent {
 	private ArrayList<Peer> peerList;
 	private PeerManager peerManager;
