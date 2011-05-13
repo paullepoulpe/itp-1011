@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.JTable;
+import javax.swing.SwingWorker;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 
@@ -24,7 +25,8 @@ public class TorrentTableModel extends AbstractTableModel {
 			to[i][1] = new JProgressBar(0, 100);
 			((JProgressBar) to[i][1]).setValue((int) ti
 					.getDownloadedCompleteness());
-			to[i][2] = new JLabel(t.get(i).getMetainfo().getSize() + " Bytes");
+			((JProgressBar) to[i][1]).setStringPainted(true);
+			to[i][2] = t.get(i).getMetainfo().getSize() + " Bytes";
 			to[i][3] = ti.getUpload();
 			to[i][4] = ti.getDownload();
 		}
@@ -53,5 +55,13 @@ public class TorrentTableModel extends AbstractTableModel {
 	public String getColumnName(int col) {
 		return colNames[col];
 	}
+	class UpdateProgressBar extends  SwingWorker<Void, Void>{
 
+		@Override
+		protected Void doInBackground() throws Exception {
+			
+			return null;
+		}
+		
+	}
 }
