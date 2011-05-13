@@ -1,7 +1,12 @@
 package settings;
 
+import crypto.RSA.KeyPair;
+
 public class PeerSettings {
+	
+	
 	public PeerSettings() {
-		// TODO Auto-generated constructor stub
+		
+
 	}
 }
