@@ -33,6 +33,10 @@ public class TorrentTable extends JPanel {
 					popup.show(null, e.getXOnScreen(), e.getYOnScreen());
 				}
 			}
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				mousePressed(e);
+			}
 		});
 		add(new JScrollPane(table));
 	}
@@ -52,7 +56,6 @@ public class TorrentTable extends JPanel {
 				return (Component) table.getValueAt(row, column);
 			}
 		});
-		System.out.println("New table created");
 		return table;
 	}
 

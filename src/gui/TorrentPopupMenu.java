@@ -27,6 +27,8 @@ public class TorrentPopupMenu extends JPopupMenu {
 			public void actionPerformed(ActionEvent e) {
 				t.massAnnounce();
 				announce.setEnabled(false);
+				setVisible(false);
+				
 			}
 		});
 		stop.addActionListener(new ActionListener() {
