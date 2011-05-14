@@ -25,10 +25,7 @@ public class TorrentTableModel extends AbstractTableModel implements
 		for (int i = 0; i < t.size(); i++) {
 			Torrent ti = t.get(i);
 			to[i][0] = ti.getMetainfo().getFileName();
-			to[i][1] = new JProgressBar(0, 100);
-			((JProgressBar) to[i][1]).setValue((int) ti
-					.getDownloadedCompleteness());
-			((JProgressBar) to[i][1]).setStringPainted(true);
+			to[i][1] = ti.getProgressBar();
 			UpdateProgressBar updater = new UpdateProgressBar(ti, i);
 			updater.addPropertyChangeListener(this);
 			updater.execute();
@@ -62,8 +59,8 @@ public class TorrentTableModel extends AbstractTableModel implements
 		return colNames[col];
 	}
 
-	class UpdateProgressBar extends SwingWorker<Void, Void> {
-		int index;
+	class UpdateProgressBar extends SwingWorker<Integer, Void> {
+		int index, progress;
 		Torrent t;
 
 		public UpdateProgressBar(Torrent torrent, int index) {
@@ -71,15 +68,15 @@ public class TorrentTableModel extends AbstractTableModel implements
 			this.index = index;
 		}
 
-		protected Void doInBackground() throws Exception {
-			int progress = 0;
+		protected Integer doInBackground() throws Exception {
+			progress = 0;
 			try {
 				setProgress((int) t.getDownloadedCompleteness());
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			return null;
+			return (int)t.getDownloadedCompleteness();
 		}
 
 	}
@@ -88,9 +85,9 @@ public class TorrentTableModel extends AbstractTableModel implements
 	public void propertyChange(PropertyChangeEvent evt) {
 
 		for (int i = 0; i < to.length; i++) {
-
-			int progress = (Integer) evt.getNewValue();
-			((JProgressBar) to[i][1]).setValue(progress);
+			System.err.println(evt.getNewValue());
+//			int progress = (Integer) evt.getNewValue();
+//			((JProgressBar) to[i][1]).setValue(progress);
 
 		}
 	}

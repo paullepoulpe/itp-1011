@@ -5,11 +5,14 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.swing.JProgressBar;
+
 import IO.TorrentFileWriter;
 
 import torrent.peer.*;
 import torrent.piece.*;
 import torrent.tracker.TrackerInfo;
+
 /*
  * IMPLEMENTER LA METHODE Torrent.stop() !!!!!!*/
 public class Torrent {
@@ -24,6 +27,7 @@ public class Torrent {
 	private boolean isComplete;
 	private TorrentFileWriter writer;
 	private long lastBlockReceived, downloadSpeed, uploadSpeed;
+	private JProgressBar progressBar;
 
 	/**
 	 * comstructeur avec numero de port
@@ -43,6 +47,8 @@ public class Torrent {
 		this.writer = new TorrentFileWriter(this, metainfo);
 		peerManager = new PeerManager(this);
 		peerManager.start();
+		progressBar = new JProgressBar(0, 100);
+		progressBar.setStringPainted(true);
 
 		System.out.println(this.metainfo);
 	}
@@ -203,8 +209,7 @@ public class Torrent {
 	 */
 	private void initPieces() {
 		this.pieces = new Piece[(int) (Math.ceil(((double) this.metainfo
-				.getSize())
-				/ ((double) this.metainfo.getPieceLength())))];
+				.getSize()) / ((double) this.metainfo.getPieceLength())))];
 
 		for (int i = 0; i < this.pieces.length; i++) {
 			byte[] pieceHash = Arrays.copyOfRange(
@@ -266,6 +271,11 @@ public class Torrent {
 
 	public long getDownload() {
 		return downloadSpeed;
+	}
+
+	public JProgressBar getProgressBar() {
+		progressBar.setValue((int)getDownloadedCompleteness());
+		return progressBar;
 	}
 
 	public void notifyPeerHandlers(int index) {

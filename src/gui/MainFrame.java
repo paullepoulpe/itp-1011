@@ -70,10 +70,8 @@ public class MainFrame extends JFrame {
 				.getAbsolutePath()));
 		remove(tableTorrent);
 		torrentz.add(t);
-		System.out.println("torrent added to list");
 		tableTorrent = new TorrentTable(torrentz);
 		add(tableTorrent, "Center");
-		System.out.println("TorrentTable created");
 		if (JOptionPane.YES_OPTION == JOptionPane
 				.showConfirmDialog(
 						rootPane,
@@ -84,6 +82,5 @@ public class MainFrame extends JFrame {
 		}
 		validate();
 		tableTorrent.revalidate();
-		System.out.println("Validate happened");
 	}
 }
