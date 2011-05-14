@@ -37,14 +37,6 @@ public class AnnounceInfo {
 		BEValue decodValue = null;
 		Map<String, BEValue> dico = null;
 
-		synchronized (System.out) {
-			System.out.println("\n");
-			for (int i = 0; i < data.length; i++) {
-				System.out.print((char) data[i]);
-			}
-			System.out.println("\n");
-		}
-
 		try {
 			decodeur = new BDecoder(new ByteArrayInputStream(data));
 			decodValue = decodeur.bdecodeMap();
