@@ -3,6 +3,7 @@ package torrent.peer;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import settings.GeneralSettings;
 import torrent.Torrent;
 
 public class PeerManager extends Thread {
@@ -10,18 +11,18 @@ public class PeerManager extends Thread {
 	private Torrent torrent;
 	private ArrayList<Peer> peerList;
 	private ArrayList<PeerHandler> peerHandlers;
-	private final static int MAX_NB_PEERS = 200;
 
 	public PeerManager(Torrent torrent) {
 		this.torrent = torrent;
 		peerList = new ArrayList<Peer>();
-		peerHandlers = new ArrayList<PeerHandler>(MAX_NB_PEERS);
+		peerHandlers = new ArrayList<PeerHandler>(
+				GeneralSettings.NB_MAX_PEERHANDLERS);
 	}
 
 	public void addPeer(Peer peer) {
 		boolean started = false;
 		synchronized (peerHandlers) {
-			if (peerHandlers.size() < MAX_NB_PEERS) {
+			if (peerHandlers.size() < GeneralSettings.NB_MAX_PEERHANDLERS) {
 				PeerHandler peerHandler = new PeerHandler(peer, torrent);
 				peerHandler.start();
 				started = true;
@@ -64,8 +65,6 @@ public class PeerManager extends Thread {
 		while (!finished) {
 			update();
 			System.out.println("Peer Handlers Actifs : " + peerHandlers.size());
-			System.out.println("Peer connectés : "
-					+ PeerHandler.NbPairsConnectes);
 			if (!finished) {
 				try {
 					sleep(1000);

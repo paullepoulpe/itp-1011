@@ -4,6 +4,7 @@ import http.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import settings.GeneralSettings;
 import torrent.Torrent;
 import torrent.peer.*;
 
@@ -61,7 +62,7 @@ public class TrackerInfo extends Thread {
 		query.add("left", torrent.getMetainfo().getSize() + "");
 		query.add("compact", "1");
 		query.add("event", "started");
-		query.add("numwant", "80");
+		query.add("numwant", GeneralSettings.NUMWANT + "");
 		this.info = new AnnounceInfo(query.get());
 		initPeers();
 

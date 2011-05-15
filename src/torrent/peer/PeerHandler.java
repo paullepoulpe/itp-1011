@@ -39,8 +39,6 @@ public class PeerHandler extends Thread {
 	private boolean connecte = false;
 	private long lastTimeFlush;
 	private PeerSettings settings;
-	private static int REQUEST_RESTRICTIONS = 25;
-	static int NbPairsConnectes;
 
 	public PeerHandler(Peer peer, Torrent torrent) {
 		this(torrent);
@@ -66,7 +64,6 @@ public class PeerHandler extends Thread {
 		try {
 			// initialisation des streams
 			initStreams();
-			NbPairsConnectes++;
 			// System.out.println("Connection a " + peer.getIpAdress()
 			// + " reussie!");
 
@@ -131,6 +128,7 @@ public class PeerHandler extends Thread {
 
 	public void setChocking(boolean isChocking) {
 		this.isChocking = isChocking;
+		System.err.println(this.getId());
 	}
 
 	/**
@@ -312,7 +310,7 @@ public class PeerHandler extends Thread {
 	 * ait moins de 10 requetes pendantes
 	 */
 	private void prepareRequest() {
-		if (requetes.size() + requetesEnvoyee.size() < REQUEST_RESTRICTIONS
+		if (requetes.size() + requetesEnvoyee.size() < GeneralSettings.NB_MAX_REQUESTS
 				&& !hasNoPieces() && !finished) {
 			int index = -1;
 			index = pieceMgr.getPieceOfInterest(peerPiecesIndex);
@@ -325,7 +323,8 @@ public class PeerHandler extends Thread {
 				amInterested = false;
 			}
 
-		} else if (requetesEnvoyee.size() == REQUEST_RESTRICTIONS && !finished) {
+		} else if (requetesEnvoyee.size() == GeneralSettings.NB_MAX_REQUESTS
+				&& !finished) {
 			long thisTime = System.currentTimeMillis();
 			if ((thisTime - lastTimeFlush) > 10000) {
 				peer.multiplyNotation(1 / 1.2);
@@ -379,9 +378,6 @@ public class PeerHandler extends Thread {
 
 	public void finish() {
 		this.finished = true;
-		if (connecte = true) {
-			NbPairsConnectes--;
-		}
 		connecte = false;
 		try {
 			if (this.output != null) {
