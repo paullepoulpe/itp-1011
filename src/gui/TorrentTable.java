@@ -5,6 +5,7 @@ import java.util.Vector;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -17,6 +18,7 @@ public class TorrentTable extends JPanel {
 	private JTable table;
 	private JPopupMenu popup;
 	private ArrayList<Torrent> torrentlist;
+	private TorrentTableModel tm;
 
 	public TorrentTable(ArrayList<Torrent> t) {
 		torrentlist = t;
@@ -44,7 +46,7 @@ public class TorrentTable extends JPanel {
 
 	public JTable constructTable() {
 		removeAll();
-		TorrentTableModel tm = new TorrentTableModel(torrentlist);
+		tm = new TorrentTableModel(torrentlist);
 		table = new JTable(tm);
 		table.setPreferredScrollableViewportSize(new Dimension(900, 100));
 		table.getColumnModel().getColumn(0).setPreferredWidth(500);
@@ -57,11 +59,36 @@ public class TorrentTable extends JPanel {
 				return (Component) table.getValueAt(row, column);
 			}
 		});
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				while(true){
+					try {
+						Thread.sleep(1000);
+						updateProgressBar();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}).start();
 		return table;
 	}
 
 	public int getSelectedRow() {
 		return table.getSelectedRow();
+	}
+	public void updateProgressBar(){
+		for(int i = 0; i<torrentlist.size();i++){
+			table.setValueAt(torrentlist.get(i).getProgressBar(),i, 1);
+			tm.fireTableCellUpdated(i, 1);
+		}
+	}
+	public JTable getTable() {
+		table.revalidate();
+		return table;
 	}
 }
 
