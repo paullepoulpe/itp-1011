@@ -46,7 +46,6 @@ public class MainFrame extends JFrame implements Runnable {
 		c.add(menu, BorderLayout.NORTH);
 
 		tableTorrent = new TorrentTable(torrentz);
-		// new Thread(tableTorrent).start();
 
 		c.add(tableTorrent, BorderLayout.CENTER);
 		setExtendedState(MAXIMIZED_BOTH);
@@ -62,10 +61,8 @@ public class MainFrame extends JFrame implements Runnable {
 	public void run() {
 		while (true){
 			try{
-				Thread.sleep(1000);	
-				c.remove(tableTorrent);
-				tableTorrent = new TorrentTable(torrentz);
-				c.add(tableTorrent, BorderLayout.CENTER);
+				Thread.sleep(60000);
+				tableTorrent.validate();
 				validate();
 				}catch (InterruptedException e){
 					e.printStackTrace();

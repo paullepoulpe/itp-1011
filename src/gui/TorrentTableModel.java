@@ -26,9 +26,9 @@ public class TorrentTableModel extends AbstractTableModel implements
 			Torrent ti = t.get(i);
 			to[i][0] = ti.getMetainfo().getFileName();
 			to[i][1] = ti.getProgressBar();
-//			UpdateProgressBar updater = new UpdateProgressBar(ti, i);
-//			updater.addPropertyChangeListener(this);
-//			updater.execute();
+			// UpdateProgressBar updater = new UpdateProgressBar(ti, i);
+			// updater.addPropertyChangeListener(this);
+			// updater.execute();
 			to[i][2] = t.get(i).getMetainfo().getSize() + " Bytes";
 			to[i][3] = ti.getUpload();
 			to[i][4] = ti.getDownload();
@@ -52,42 +52,30 @@ public class TorrentTableModel extends AbstractTableModel implements
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
+		System.err.println("Value read in TableModel at row " + rowIndex
+				+ " col " + columnIndex);
 		return to[rowIndex][columnIndex];
+	}
+
+	@Override
+	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+		System.err.println("Value set in TableModel at row " + rowIndex
+				+ " col " + columnIndex);
+		to[rowIndex][columnIndex] = aValue;
 	}
 
 	public String getColumnName(int col) {
 		return colNames[col];
 	}
 
-	class UpdateProgressBar extends SwingWorker<Integer, Void> {
-		int index, progress;
-		Torrent t;
-
-		public UpdateProgressBar(Torrent torrent, int index) {
-			t = torrent;
-			this.index = index;
-		}
-
-		protected Integer doInBackground() throws Exception {
-			progress = 0;
-			try {
-				setProgress((int) t.getDownloadedCompleteness());
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			return (int)t.getDownloadedCompleteness();
-		}
-
-	}
-
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 
 		for (int i = 0; i < to.length; i++) {
-			System.err.println("NEW VALUE @ "+System.currentTimeMillis()+" --> "+evt.getNewValue());
-//			int progress = (Integer) evt.getNewValue();
-//			((JProgressBar) to[i][1]).setValue(progress);
+			System.err.println("NEW VALUE @ " + System.currentTimeMillis()
+					+ " --> " + evt.getNewValue());
+			// int progress = (Integer) evt.getNewValue();
+			// ((JProgressBar) to[i][1]).setValue(progress);
 
 		}
 	}
