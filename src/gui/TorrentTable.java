@@ -23,16 +23,17 @@ public class TorrentTable extends JPanel {
 		setLayout(new FlowLayout());
 		table = constructTable();
 		popup = new JPopupMenu();
-		
+
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				if (e.isPopupTrigger()) {
 					int i = table.getSelectedRow();
-					popup  = new TorrentPopupMenu(torrentlist.get(i));
+					popup = new TorrentPopupMenu(torrentlist.get(i));
 					popup.show(null, e.getXOnScreen(), e.getYOnScreen());
 				}
 			}
+
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				mousePressed(e);
@@ -68,7 +69,7 @@ class TorrentTestTable {
 	public static void main(String[] args) {
 		ArrayList<Torrent> tor = new ArrayList<Torrent>();
 		tor.add(new Torrent(new File("data/G6.torrent")));
-//		tor.add(new Torrent(new File("data/BEP.torrent")));
+		// tor.add(new Torrent(new File("data/BEP.torrent")));
 		TorrentTable tab = new TorrentTable(tor);
 		JFrame fen = new JFrame("test");
 		fen.getContentPane().add(tab);

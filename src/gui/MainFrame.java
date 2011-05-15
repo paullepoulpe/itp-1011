@@ -12,15 +12,16 @@ import java.awt.event.ActionListener;
 
 import torrent.Torrent;
 
-public class MainFrame extends JFrame {
+public class MainFrame extends JFrame implements Runnable {
 	private ArrayList<Torrent> torrentz;
 	private TorrentTable tableTorrent;
 	private MenuBar menu;
+	private Container c;
 	private JTabbedPane torrent;
 
 	public MainFrame(ArrayList<Torrent> torrents) {
 		this.torrentz = torrents;
-		Container c = getContentPane();
+		c = getContentPane();
 		c.setLayout(new BorderLayout());
 		try {
 			if (System.getProperty("os.name").equals("Linux")) {
@@ -45,6 +46,7 @@ public class MainFrame extends JFrame {
 		c.add(menu, BorderLayout.NORTH);
 
 		tableTorrent = new TorrentTable(torrentz);
+		// new Thread(tableTorrent).start();
 
 		c.add(tableTorrent, BorderLayout.CENTER);
 		setExtendedState(MAXIMIZED_BOTH);
@@ -54,6 +56,21 @@ public class MainFrame extends JFrame {
 		setVisible(true);
 		if (torrentz.size() == 0)
 			addTorrent();
+	}
+
+	@Override
+	public void run() {
+		while (true){
+			try{
+				Thread.sleep(1000);	
+				c.remove(tableTorrent);
+				tableTorrent = new TorrentTable(torrentz);
+				c.add(tableTorrent, BorderLayout.CENTER);
+				validate();
+				}catch (InterruptedException e){
+					e.printStackTrace();
+				}
+		}
 	}
 
 	public void addTorrent() {
