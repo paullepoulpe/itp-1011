@@ -12,7 +12,7 @@ public class MainFrameTest1 {
 		ArrayList<Torrent> tor = new ArrayList<Torrent>();
 //		tor.add(new Torrent(new File("data/G6.torrent")));
 		tor.add(new Torrent(new File("data/BEP.torrent")));
-		MainFrame fen = new MainFrame(tor);
+		new Thread( new MainFrame(tor)).start();
 	}
 }
 /*
