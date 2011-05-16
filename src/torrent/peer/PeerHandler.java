@@ -263,13 +263,16 @@ public class PeerHandler extends Thread {
 	private boolean shakeHands() throws IOException {
 		if (!finished) {
 			Handshake ourHS = new Handshake(torrent);
-
+			System.out
+					.println(socket.getInetAddress() + "/" + socket.getPort());
 			if (encryptionEnabled) {
 				ourHS.setEncryptionEnabled();
 			}
 
 			ourHS.send(output);
+			System.out.println("Handshake envoyé");
 			Handshake theirHS = new Handshake(input);
+			System.out.println("Handshake recu");
 			System.out.println(Arrays.toString(theirHS.getReserved()));
 			this.peer.setId(theirHS.getPeerID());
 
@@ -291,7 +294,7 @@ public class PeerHandler extends Thread {
 
 		input = new DataInputStream(new RSAInputStream(myKey, input));
 		output = new DataOutputStream(new RSAOutputStream(myKey, output));
-		
+
 		if (ourRSA.getId() != theirRSA.getId())
 			return false;
 		output = new DataOutputStream(new RSAOutputStream(
@@ -303,8 +306,8 @@ public class PeerHandler extends Thread {
 		SendSymmetricKey theirSym = new SendSymmetricKey(input);
 		if (ourSym.getId() != theirSym.getId())
 			return false;
-		output = new DataOutputStream(new SymmetricOutputStream(
-				theirSym.getXORKey(), output));
+		output = new DataOutputStream(new SymmetricOutputStream(theirSym
+				.getXORKey(), output));
 		input = new DataInputStream(new SymmetricInputStream(
 				ourSym.getXORKey(), input));
 		return true;
