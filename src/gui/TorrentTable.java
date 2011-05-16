@@ -66,7 +66,7 @@ public class TorrentTable extends JPanel {
 				
 				while(true){
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(100);
 						updateProgressBar();
 					} catch (InterruptedException e) {
 						e.printStackTrace();
