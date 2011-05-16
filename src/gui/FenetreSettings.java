@@ -69,13 +69,13 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		choixDossier.add(browse, BorderLayout.EAST);
 		param.add(choixDossier);
 
-		param.add(new Label("Paramètre numwant pour les trackers"));
+		param.add(new Label("Parametre numwant pour les trackers"));
 		param.add(numwant);
 
 		param.add(new Label("Nombre maximum de pairs actifs"));
 		param.add(nbMaxPeerHandler);
 
-		param.add(new Label("Nombre maximum de requetes de blocs simultanées"));
+		param.add(new Label("Nombre maximum de requetes de blocs simultanees"));
 		param.add(nbMaxRequests);
 
 		param.add(new Label("Delai avant de couper la connection avec un pair"));
@@ -124,6 +124,7 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		}
 		if (source == valider) {
 			getValues();
+			close();
 		}
 
 		setVisual();

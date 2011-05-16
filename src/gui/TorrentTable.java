@@ -32,7 +32,7 @@ public class TorrentTable extends JPanel {
 				int i = table.getSelectedRow();
 				if (e.isPopupTrigger() && (i > -1)) {
 					popup = new TorrentPopupMenu(torrentlist.get(i));
-					popup.show(getParent(),  e.getXOnScreen(), e.getYOnScreen());
+					popup.show(TorrentTable.this.getTable(),  e.getX(), e.getY());
 				}
 			}
 

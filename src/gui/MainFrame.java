@@ -24,6 +24,7 @@ public class MainFrame extends JFrame implements Runnable {
 		this.torrentz = torrents;
 		c = getContentPane();
 		c.setLayout(new BorderLayout());
+
 		try {
 			if (System.getProperty("os.name").equals("Linux")) {
 				UIManager
@@ -44,13 +45,20 @@ public class MainFrame extends JFrame implements Runnable {
 				addTorrent();
 			}
 		});
+		menu.getSettings().addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				new FenetreSettings(MainFrame.this).showDialog();
+			}
+		});
 		c.add(menu, BorderLayout.NORTH);
 
 		tableTorrent = new TorrentTable(torrentz);
-/*		torrentInfo = new JTabbedPane();
-		TorrentInfoTab tInfo = new TorrentInfoTab("Info");
-		torrentInfo.add(tInfo.getName(), tInfo);
-		c.add(torrentInfo, BorderLayout.CENTER);*/
+		/*
+		 * torrentInfo = new JTabbedPane(); TorrentInfoTab tInfo = new
+		 * TorrentInfoTab("Info"); torrentInfo.add(tInfo.getName(), tInfo);
+		 * c.add(torrentInfo, BorderLayout.CENTER);
+		 */
 
 		c.add(tableTorrent, BorderLayout.SOUTH);
 		setExtendedState(MAXIMIZED_BOTH);
@@ -90,7 +98,7 @@ public class MainFrame extends JFrame implements Runnable {
 		remove(tableTorrent);
 		torrentz.add(t);
 		tableTorrent = new TorrentTable(torrentz);
-		add(tableTorrent, "Center");
+		c.add(tableTorrent, BorderLayout.SOUTH);
 		if (JOptionPane.YES_OPTION == JOptionPane
 				.showConfirmDialog(
 						rootPane,
