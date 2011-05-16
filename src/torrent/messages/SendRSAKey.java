@@ -72,4 +72,9 @@ public class SendRSAKey extends Message {
 	public int getId() {
 		return id;
 	}
+
+	@Override
+	public String toString() {
+		return "Mod = " + mod.toString() + ", eKey = " + eKey.toString();
+	}
 }
