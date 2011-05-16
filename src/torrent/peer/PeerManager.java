@@ -11,6 +11,7 @@ public class PeerManager extends Thread {
 	private Torrent torrent;
 	private ArrayList<Peer> peerList;
 	private ArrayList<PeerHandler> peerHandlers;
+	private boolean encrytionEnabled = GeneralSettings.ENCRYPTION_ENABLED;
 
 	public PeerManager(Torrent torrent) {
 		this.torrent = torrent;
@@ -23,7 +24,8 @@ public class PeerManager extends Thread {
 		boolean started = false;
 		synchronized (peerHandlers) {
 			if (peerHandlers.size() < GeneralSettings.NB_MAX_PEERHANDLERS) {
-				PeerHandler peerHandler = new PeerHandler(peer, torrent);
+				PeerHandler peerHandler = new PeerHandler(peer, torrent,
+						encrytionEnabled);
 				peerHandler.start();
 				started = true;
 				peerHandlers.add(peerHandler);
@@ -39,7 +41,7 @@ public class PeerManager extends Thread {
 	}
 
 	public void addPeer(Socket s) {
-		PeerHandler peerHandler = new PeerHandler(s, torrent);
+		PeerHandler peerHandler = new PeerHandler(s, torrent, encrytionEnabled);
 		Peer peer = peerHandler.getPeer();
 		PeerHandler lazyOne = getTheLazyOne();
 		if (lazyOne.getNotation() < 5) {
@@ -95,7 +97,7 @@ public class PeerManager extends Thread {
 			}
 			if (trouve) {
 				PeerHandler youngPeerHandler = new PeerHandler(youngPeer,
-						torrent);
+						torrent, encrytionEnabled);
 				synchronized (peerHandlers) {
 					peerHandlers.remove(lazyPeerHandler);
 

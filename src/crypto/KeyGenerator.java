@@ -1,33 +1,34 @@
-package crypto.RSA;
+package crypto;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Random;
+import crypto.RSA.*;
 
 public class KeyGenerator {
 
 	/**
 	 * Genere une paire de cle (chiffrement, dechifrement) RSA aleatoire!
 	 * 
-	 * @param kLength
+	 * @param modLength
 	 *            Longueur de la cle en bits
 	 * @return Une instance de {@link KeyPair} qui represente notre paire de
 	 *         cles!
 	 */
-	public static KeyPair generateRSAKeyPair(int kLength) {
+	public static KeyPair generateRSAKeyPair(int modLength) {
 		BigInteger phi;
 		BigInteger eKey;
 		BigInteger mod;
 		BigInteger p;
 		BigInteger q;
 		do {
-			p = BigInteger.probablePrime(kLength / 2, new Random());
+			p = BigInteger.probablePrime(modLength / 2, new Random());
 			/*
 			 * Verifie que p et q sont differents pour avoir un calcul de phi
 			 * correct
 			 */
 			do {
-				q = BigInteger.probablePrime(kLength / 2, new Random());
+				q = BigInteger.probablePrime(modLength / 2, new Random());
 			} while (p.equals(q));
 			mod = p.multiply(q);
 			phi = p.subtract(BigInteger.valueOf(1)).multiply(
@@ -35,7 +36,7 @@ public class KeyGenerator {
 			eKey = BigInteger.valueOf(65537);
 		} while (!phi.gcd(eKey).equals(BigInteger.valueOf(1)));
 		BigInteger dKey = eKey.modInverse(phi);
-		return new KeyPair(mod, eKey, dKey, kLength);
+		return new KeyPair(mod, eKey, dKey, modLength);
 	}
 
 	/**

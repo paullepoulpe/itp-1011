@@ -5,7 +5,7 @@ import java.math.BigInteger;
 
 import org.junit.Test;
 
-import crypto.RSA.KeyGenerator;
+import crypto.KeyGenerator;
 import crypto.RSA.KeyPair;
 
 public class RSAEncodeDecodeTest {

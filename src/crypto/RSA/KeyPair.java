@@ -5,16 +5,17 @@ import java.security.SecureRandom;
 
 public class KeyPair {
 	private BigInteger mod, eKey, dKey;
-	private int kLength;
+	private int modLength;
 
-	public KeyPair(BigInteger mod, BigInteger eKey, BigInteger dKey, int kLength) {
-		if (kLength % 8 != 0) {
+	public KeyPair(BigInteger mod, BigInteger eKey, BigInteger dKey,
+			int modLength) {
+		if (modLength % 8 != 0) {
 			throw new IllegalArgumentException();
 		} else {
 			this.mod = mod;
 			this.eKey = eKey;
 			this.dKey = dKey;
-			this.kLength = kLength;
+			this.modLength = modLength;
 		}
 	}
 
@@ -39,6 +40,18 @@ public class KeyPair {
 	 */
 	public BigInteger decrypt(BigInteger cryptogramm) {
 		return cryptogramm.modPow(dKey, mod);
+	}
+
+	public int getModLength() {
+		return modLength;
+	}
+
+	public BigInteger getEKey() {
+		return eKey;
+	}
+
+	public BigInteger getMod() {
+		return mod;
 	}
 
 }
