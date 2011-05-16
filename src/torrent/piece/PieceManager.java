@@ -1,10 +1,15 @@
 package torrent.piece;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import IO.TorrentFileWriter;
+
+import torrent.Metainfo;
 import torrent.Torrent;
 
 /**
@@ -14,24 +19,26 @@ import torrent.Torrent;
  * @author Damien Engels, Maarten Sap
  */
 public class PieceManager {
-	private LinkedList<Piece> piecesOfInterest, allPieces;
-	final static int MAX_NUM_OF_PIECES = 100;
+	private ArrayList<Piece> allPieces;
+	private LinkedList<Piece> piecesOfInterest, leftPieces;
+	final static int MAX_NUM_OF_PIECES = 50;
 	private Torrent torrent;
+	private TorrentFileWriter writer;
 
 	public PieceManager(Torrent torrent) {
 		this.torrent = torrent;
-		this.allPieces = new LinkedList<Piece>();
+		this.leftPieces = new LinkedList<Piece>();
 		this.piecesOfInterest = new LinkedList<Piece>();
+		initPieces();
+		this.writer = new TorrentFileWriter(torrent, allPieces);
 		// on met les pieces dans la liste de pieces
-		for (int i = 0; i < torrent.getPieces().length; i++) {
-			this.allPieces.add(torrent.getPieces()[i]);
-		}
+		leftPieces.addAll(allPieces);
 		// On melange toutes les pieces
-		Collections.shuffle(this.allPieces);
-		for (int i = 0; i < MAX_NUM_OF_PIECES && i < allPieces.size(); i++) {
-			piecesOfInterest.add(allPieces.get(i));
+		Collections.shuffle(this.leftPieces);
+		for (int i = 0; i < MAX_NUM_OF_PIECES && i < leftPieces.size(); i++) {
+			piecesOfInterest.add(leftPieces.get(i));
 		}
-		allPieces.removeAll(piecesOfInterest);
+		leftPieces.removeAll(piecesOfInterest);
 
 	}
 
@@ -43,7 +50,7 @@ public class PieceManager {
 	 * visit(SendBlock s).
 	 */
 	public void updatePriorities() {
-		if (!torrent.isComplete()) {
+		if (!isComplete()) {
 			synchronized (piecesOfInterest) {
 
 				ListIterator<Piece> iterator = piecesOfInterest.listIterator();
@@ -52,19 +59,23 @@ public class PieceManager {
 					if (piece.isChecked()) {
 						iterator.remove();
 						torrent.notifyPeerHandlers(piece.getIndex());
-						if (!allPieces.isEmpty()) {
-							iterator.add(allPieces.getFirst());
-							allPieces.removeFirst();
+						if (!leftPieces.isEmpty()) {
+							iterator.add(leftPieces.getFirst());
+							leftPieces.removeFirst();
 						}
 					}
 				}
 			}
-			 System.out.println((int) Math.round(torrent
-			 .getDownloadedCompleteness() * 100)
-			 / 100.0 + " %....................");
+			System.out.println((int) Math
+					.round(getDownloadedCompleteness() * 100)
+					/ 100.0
+					+ " %....................");
+			// System.err.println("Nombre de pieces :" + getNbPieces());
+			// System.err.println(piecesOfInterest.toString());
+			// System.err.println(leftPieces.toString());
 		} else {
 			synchronized (System.out) {
-				torrent.writeToFile();
+				writer.writeAll();
 			}
 
 		}
@@ -98,5 +109,74 @@ public class PieceManager {
 			return -1;
 		}
 
+	}
+
+	/**
+	 * retourne la completion du telechargement
+	 * 
+	 * @return le pourcentage d'avancement du telechargement (un double)
+	 */
+	public double getDownloadedCompleteness() {
+		double downloadedCompleteness = 0;
+		ListIterator<Piece> iterator = allPieces.listIterator();
+		while (iterator.hasNext()) {
+			downloadedCompleteness += iterator.next().getDownloadCompleteness();
+		}
+		return downloadedCompleteness / allPieces.size();
+	}
+
+	/**
+	 * verifie si on a au moins une piece!
+	 * 
+	 * @return true si on a aucune piece de complete
+	 */
+	public boolean isEmpty() {
+		return piecesOfInterest.size() + leftPieces.size() == allPieces.size();
+	}
+
+	/**
+	 * teste si le torrent est complet ou non
+	 * 
+	 * @return true si toutes les pieces sont completes et verfifiees
+	 */
+	public boolean isComplete() {
+		return (leftPieces.size() + piecesOfInterest.size()) == 0;
+	}
+
+	/**
+	 * initialise le tableau des pieces a la bonne taille, et initialise chaque
+	 * piece avec son index et sa somme de controle
+	 */
+	private void initPieces() {
+		Metainfo metainfo = torrent.getMetainfo();
+		int nbPieces = (int) (Math.ceil(((double) metainfo.getSize())
+				/ ((double) metainfo.getPieceLength())));
+		allPieces = new ArrayList<Piece>(nbPieces);
+
+		for (int i = 0; i < nbPieces; i++) {
+			byte[] pieceHash = Arrays.copyOfRange(metainfo.getPiecesHash(),
+					20 * i, 20 * (i + 1));
+			if (i == allPieces.size() - 1) {
+				int length = metainfo.getSize()
+						- ((allPieces.size() - 1) * metainfo.getPieceLength());
+				allPieces.add(i, new Piece(i, length, pieceHash));
+			} else {
+				allPieces.add(i, new Piece(i, metainfo.getPieceLength(),
+						pieceHash));
+			}
+		}
+
+	}
+
+	public Piece[] getPieces() {
+		return allPieces.toArray(new Piece[allPieces.size()]);
+	}
+
+	public int getNbPieces() {
+		return allPieces.size();
+	}
+
+	public Piece getPiece(int index) {
+		return allPieces.get(index);
 	}
 }

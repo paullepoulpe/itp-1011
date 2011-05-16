@@ -24,14 +24,10 @@ public class Have extends Message {
 
 	@Override
 	public void send(DataOutputStream output) throws IOException {
-		try {
-			output.writeInt(5);
-			output.writeByte(4);
-			output.writeInt(pieceIndex);
-			// System.out.println("Sent Have");
-		} catch (IOException e) {
-			throw e;
-		}
+
+		output.writeInt(5);
+		output.writeByte(4);
+		output.writeInt(pieceIndex);
 
 	}
 

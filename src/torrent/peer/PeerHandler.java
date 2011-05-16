@@ -55,9 +55,10 @@ public class PeerHandler extends Thread {
 
 	private PeerHandler(Torrent torrent) {
 		this.messageHandler = new MessageHandler(this, torrent);
-		this.peerPiecesIndex = new boolean[torrent.getPieces().length];
-		this.torrent = torrent;
 		this.pieceMgr = torrent.getPieceManager();
+		this.peerPiecesIndex = new boolean[pieceMgr.getNbPieces()];
+		this.torrent = torrent;
+
 	}
 
 	public void run() {
@@ -204,7 +205,7 @@ public class PeerHandler extends Thread {
 	 * initialise les streams
 	 */
 	private void initStreams() {
-		int tentatives = 0;
+		long timeStarted = System.currentTimeMillis();
 		while (!connecte && !finished) {
 			if (socket == null) {
 				try {
@@ -227,10 +228,8 @@ public class PeerHandler extends Thread {
 				}
 			}
 			if (!connecte && !finished) {
-				tentatives++;
-				if (tentatives >= 30) {
-					tentatives = 0;
-					peer.multiplyNotation(1 / 1.5);
+				if (System.currentTimeMillis() - timeStarted > GeneralSettings.PEER_RESPONSE_DELAY) {
+					peer.multiplyNotation(1 / 3);
 				}
 				yield();
 				try {
@@ -283,8 +282,8 @@ public class PeerHandler extends Thread {
 		SendSymmetricKey theirSym = new SendSymmetricKey(input);
 		if (ourSym.getId() != theirSym.getId())
 			return false;
-		output = new DataOutputStream(new SymmetricOutputStream(theirSym
-				.getXORKey(), output));
+		output = new DataOutputStream(new SymmetricOutputStream(
+				theirSym.getXORKey(), output));
 		input = new DataInputStream(new SymmetricInputStream(
 				ourSym.getXORKey(), input));
 		return true;
@@ -316,7 +315,7 @@ public class PeerHandler extends Thread {
 			index = pieceMgr.getPieceOfInterest(peerPiecesIndex);
 
 			if (index != -1) {
-				Piece wanted = torrent.getPieces()[index];
+				Piece wanted = pieceMgr.getPiece(index);
 				requetes.add(wanted.getBlockOfInterest(this));
 			} else if (!isChocking && amInterested) {
 				aEnvoyer.add(new NotInterested());

@@ -35,8 +35,8 @@ public class BitField extends Message {
 	}
 
 	public BitField(Torrent torrent) {
-		Piece[] pieces = torrent.getPieces();
-		noPieces = true;
+		Piece[] pieces = torrent.getPieceManager().getPieces();
+		noPieces = torrent.getPieceManager().isEmpty();
 		posessedPieces = new boolean[pieces.length];
 		for (int i = 0; i < pieces.length; i++) {
 			boolean b = pieces[i].isChecked();
@@ -56,26 +56,21 @@ public class BitField extends Message {
 
 	public void send(DataOutputStream output) throws IOException {
 		if (!noPieces) {
-			try {
-				output.writeInt(1 + (int) Math
-						.ceil(posessedPieces.length / 8.0));
+			output.writeInt(1 + (int) Math.ceil(posessedPieces.length / 8.0));
 
-				for (int i = 0; i < Math.ceil(posessedPieces.length / 8.0); i++) {
-					byte bits = 0;
-					for (int j = 0; j < 8; j++) {
-						if (((i * 8) + j < posessedPieces.length)
-								&& (posessedPieces[(i * 8) + j])) {
-							bits |= 1;
-						}
-						bits <<= 1;
+			for (int i = 0; i < Math.ceil(posessedPieces.length / 8.0); i++) {
+				byte bits = 0;
+				for (int j = 0; j < 8; j++) {
+					if (((i * 8) + j < posessedPieces.length)
+							&& (posessedPieces[(i * 8) + j])) {
+						bits |= 1;
 					}
-					output.writeByte(bits);
+					bits <<= 1;
 				}
-				output.flush();
-			} catch (IOException e) {
-				throw e;
+				output.writeByte(bits);
 			}
-		} else {
+			output.flush();
+
 		}
 
 	}

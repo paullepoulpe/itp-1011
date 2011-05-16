@@ -39,16 +39,13 @@ public class SendBlock extends Message {
 
 	@Override
 	public void send(DataOutputStream output) throws IOException {
-		try {
-			output.writeInt(9 + bloc.length);
-			output.writeByte(7);
-			output.writeInt(pieceIndex);
-			output.writeInt(blocIndex);
-			output.write(bloc);
-			System.out.println("Sent SendBlock");
-		} catch (IOException e) {
-			throw e;
-		}
+
+		output.writeInt(9 + bloc.length);
+		output.writeByte(7);
+		output.writeInt(pieceIndex);
+		output.writeInt(blocIndex);
+		output.write(bloc);
+		System.out.println("Sent SendBlock");
 
 	}
 

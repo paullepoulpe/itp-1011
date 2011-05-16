@@ -8,10 +8,7 @@ import java.util.Arrays;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.LookAndFeel;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import torrent.Metainfo;
 import torrent.Torrent;
@@ -21,32 +18,32 @@ public class TorrentFileWriter {
 	private Torrent torrent;
 	private int[][] fileDelimiters;
 	private String[][] filesPath;
-	private Piece[] pieces;
+	private ArrayList<Piece> pieces;
 	private boolean[] piecesWritten;
 	private boolean writtenOnFile;
 	private JFileChooser choisir;
 	private String dossier;
 
-	public TorrentFileWriter(Torrent torrent, Metainfo metainfo) {
+	public TorrentFileWriter(Torrent torrent, ArrayList<Piece> pieces) {
 		this.torrent = torrent;
-		pieces = torrent.getPieces();
-		computeDelimiters(metainfo);
-		computePaths(metainfo);
-		piecesWritten = new boolean[pieces.length];
+		this.pieces = pieces;
+		computeDelimiters(torrent.getMetainfo());
+		computePaths(torrent.getMetainfo());
+		piecesWritten = new boolean[pieces.size()];
 		dossier = choisirDossierDestination();
 
 	}
 
 	private boolean writePiece(int index) {
-		if (piecesWritten[index] || !pieces[index].isChecked()) {
-
-		}
+		// if (piecesWritten[index] || !pieces[index].isChecked()) {
+		//
+		// }
 		return false;
 
 	}
 
 	public boolean writeAll() {
-		if (torrent.isComplete() && !writtenOnFile) {
+		if (torrent.getPieceManager().isComplete() && !writtenOnFile) {
 			try {
 				FileOutputStream fileStream = null;
 				for (int i = 0; i < filesPath.length; i++) {
@@ -66,7 +63,7 @@ public class TorrentFileWriter {
 
 						// System.out.println("Piece " + (j) + " ok!");
 
-						byte[] currentData = pieces[j].getData();
+						byte[] currentData = pieces.get(j).getData();
 
 						if (j == fileDelimiters[i][0]) {
 							currentData = Arrays.copyOfRange(currentData,
@@ -90,7 +87,7 @@ public class TorrentFileWriter {
 						.showMessageDialog(
 								null,
 								"IL faudrait implementer la methode Stop dans torrent, et l'apeller des que le fichier est ecrit sur le disque...");
-				 System.exit(0);
+				System.exit(0);
 			} catch (IOException e) {
 				e.printStackTrace();
 				return false;
@@ -121,29 +118,29 @@ public class TorrentFileWriter {
 			fileDelimiters[0][1] = 0;
 			for (int i = 0; i < filesLength.length - 1; i++) {
 				fileDelimiters[i][3] = (fileDelimiters[i][0] + filesLength[i] - 1)
-						% pieces[0].getSizeTab();
+						% pieces.get(0).getSizeTab();
 				fileDelimiters[i][2] = fileDelimiters[i][0]
 						+ (fileDelimiters[i][0] + filesLength[i] - fileDelimiters[i][3])
-						/ pieces[0].getSizeTab();
+						/ pieces.get(0).getSizeTab();
 
 				fileDelimiters[i + 1][1] = (fileDelimiters[i][3] + 1)
-						% pieces[0].getSizeTab();
+						% pieces.get(0).getSizeTab();
 				fileDelimiters[i + 1][0] = fileDelimiters[i][2];
 				if (fileDelimiters[i + 1][1] == 0) {
 					fileDelimiters[i + 1][0]++;
 				}
 
 			}
-			fileDelimiters[filesLength.length - 1][2] = pieces.length - 1;
-			fileDelimiters[filesLength.length - 1][3] = pieces[pieces.length - 1]
-					.getSizeTab() - 1;
+			fileDelimiters[filesLength.length - 1][2] = pieces.size() - 1;
+			fileDelimiters[filesLength.length - 1][3] = pieces.get(
+					pieces.size() - 1).getSizeTab() - 1;
 		} else {
 			this.fileDelimiters = new int[1][4];
 
 			fileDelimiters[0][0] = 0;
 			fileDelimiters[0][1] = 0;
-			fileDelimiters[0][2] = pieces.length - 1;
-			fileDelimiters[0][3] = pieces[pieces.length - 1].getSizeTab() - 1;
+			fileDelimiters[0][2] = pieces.size() - 1;
+			fileDelimiters[0][3] = pieces.get(pieces.size() - 1).getSizeTab() - 1;
 
 		}
 

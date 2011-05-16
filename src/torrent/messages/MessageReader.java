@@ -26,86 +26,83 @@ public class MessageReader {
 		Message message = null;
 		int lengthMess = 0;
 		byte id;
-		try {
-			lengthMess = input.readInt();
-			if (lengthMess == 0) {
-				return null;
-			} else {
-				id = input.readByte();
-				switch (ID.values()[id]) {
 
-				case choke:
-					// System.out.println("Lu choke");
-					message = new Choke();
-					break;
+		lengthMess = input.readInt();
+		if (lengthMess == 0) {
+			return null;
+		} else {
+			id = input.readByte();
+			switch (ID.values()[id]) {
 
-				case unchoke:
-					// System.out.println("Lu unchoke");
-					message = new Unchoke();
-					break;
+			case choke:
+				// System.out.println("Lu choke");
+				message = new Choke();
+				break;
 
-				case interested:
-					// System.out.println("Lu interested");
-					message = new Interested();
-					break;
+			case unchoke:
+				// System.out.println("Lu unchoke");
+				message = new Unchoke();
+				break;
 
-				case notInterested:
-					// System.out.println("Lu notinterested");
-					message = new NotInterested();
-					break;
+			case interested:
+				// System.out.println("Lu interested");
+				message = new Interested();
+				break;
 
-				case have:
-					// System.out.println("Lu have");
-					message = new Have(input.readInt());
-					break;
+			case notInterested:
+				// System.out.println("Lu notinterested");
+				message = new NotInterested();
+				break;
 
-				case bitField:
-					// System.out.println("Lu bitfield");
-					byte[] bitField = new byte[lengthMess - 1];
-					input.readFully(bitField);
-					message = new BitField(bitField);
-					break;
+			case have:
+				// System.out.println("Lu have");
+				message = new Have(input.readInt());
+				break;
 
-				case request:
-					// System.out.println("Lu request");
-					int index = input.readInt();
-					int begin = input.readInt();
-					int length = input.readInt();
-					message = new Request(index, begin, length);
-					break;
+			case bitField:
+				// System.out.println("Lu bitfield");
+				byte[] bitField = new byte[lengthMess - 1];
+				input.readFully(bitField);
+				message = new BitField(bitField);
+				break;
 
-				case piece:
-					// System.out.println("Lu sendblock");
-					int pieceIndex = input.readInt();
-					int blocIndex = input.readInt();
-					byte[] bloc = new byte[lengthMess - 9];
-					input.readFully(bloc);
-					message = new SendBlock(pieceIndex, blocIndex, bloc);
-					break;
+			case request:
+				// System.out.println("Lu request");
+				int index = input.readInt();
+				int begin = input.readInt();
+				int length = input.readInt();
+				message = new Request(index, begin, length);
+				break;
 
-				case cancel:
-					// System.out.println("Lu cancel");
-					input.skipBytes(lengthMess - 1);
-					break;
+			case piece:
+				// System.out.println("Lu sendblock");
+				int pieceIndex = input.readInt();
+				int blocIndex = input.readInt();
+				byte[] bloc = new byte[lengthMess - 9];
+				input.readFully(bloc);
+				message = new SendBlock(pieceIndex, blocIndex, bloc);
+				break;
 
-				case port:
-					// System.out.println("Lu port");
-					input.skipBytes(lengthMess - 1);
-					break;
+			case cancel:
+				// System.out.println("Lu cancel");
+				input.skipBytes(lengthMess - 1);
+				break;
 
-				case sendRSAkey:
-					break;
+			case port:
+				// System.out.println("Lu port");
+				input.skipBytes(lengthMess - 1);
+				break;
 
-				case sendSymmetricKey:
-					break;
+			case sendRSAkey:
+				break;
 
-				default:
-					break;
-				}
+			case sendSymmetricKey:
+				break;
 
+			default:
+				break;
 			}
-		} catch (IOException e) {
-			throw e;
+
 		}
 		return message;
 

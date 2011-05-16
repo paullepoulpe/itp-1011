@@ -116,26 +116,24 @@ public class Handshake {
 	public boolean isEncryptionSupported() {
 		if ((0x10 & this.reserved[7]) == 0x10) {
 			JOptionPane
-			.showMessageDialog(
-					null,
-					"Test de compatibilté d'encyption reussi! Bytes reservés[7] : "
-							+ this.reserved[7]
-							+ "\n Ce message doit etre desactive dans la classe HandShake.java");
+					.showMessageDialog(
+							null,
+							"Test de compatibiltï¿½ d'encyption reussi! Bytes reservï¿½s[7] : "
+									+ this.reserved[7]
+									+ "\n Ce message doit etre desactive dans la classe HandShake.java");
 			return true;
 		}
 		return false;
 	}
 
 	public void send(DataOutputStream output) throws IOException {
-		try {
-			output.writeByte(pstrLength);
-			output.write(protocol);
-			output.write(reserved);
-			output.write(infoHash);
-			output.write(peerID);
-		} catch (IOException e) {
-			throw e;
-		}
+
+		output.writeByte(pstrLength);
+		output.write(protocol);
+		output.write(reserved);
+		output.write(infoHash);
+		output.write(peerID);
+
 	}
 
 	public byte[] getPeerID() {
