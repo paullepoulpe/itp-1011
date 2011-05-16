@@ -156,9 +156,9 @@ public class PieceManager {
 		for (int i = 0; i < nbPieces; i++) {
 			byte[] pieceHash = Arrays.copyOfRange(metainfo.getPiecesHash(),
 					20 * i, 20 * (i + 1));
-			if (i == allPieces.size() - 1) {
+			if (i == nbPieces - 1) {
 				int length = metainfo.getSize()
-						- ((allPieces.size() - 1) * metainfo.getPieceLength());
+						- ((nbPieces - 1) * metainfo.getPieceLength());
 				allPieces.add(i, new Piece(i, length, pieceHash));
 			} else {
 				allPieces.add(i, new Piece(i, metainfo.getPieceLength(),

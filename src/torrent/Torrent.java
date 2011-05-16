@@ -3,6 +3,7 @@ package torrent;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.ListIterator;
 
 import javax.swing.JProgressBar;
 
@@ -11,11 +12,8 @@ import torrent.peer.*;
 import torrent.piece.*;
 import torrent.tracker.TrackerInfo;
 
-/*
- * IMPLEMENTER LA METHODE Torrent.stop() !!!!!!*/
 public class Torrent {
 	private PeerManager peerManager;
-	// private Piece[] pieces;
 	private ArrayList<TrackerInfo> trackers;
 	private Metainfo metainfo;
 	private int numPort;
@@ -126,5 +124,9 @@ public class Torrent {
 	public void notifyPeerHandlers(int index) {
 		peerManager.notifyPeerHandlers(index);
 
+	}
+
+	public void stop() {
+		peerManager.finish();
 	}
 }

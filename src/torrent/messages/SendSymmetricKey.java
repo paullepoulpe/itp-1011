@@ -4,7 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import crypto.RSA.KeyGenerator;
+import crypto.KeyGenerator;
 
 /**
  * Cette classe represente un message d'echange de cle symetrique avec le pair.
@@ -35,14 +35,16 @@ public class SendSymmetricKey extends Message {
 
 	@Override
 	public void send(DataOutputStream output) throws IOException {
-		output.write(XORKey.length + 1);
-		output.write(id);
+		output.writeInt(XORKey.length + 1);
+		output.writeByte(id);
 		output.write(XORKey);
+		output.flush();
 	}
 
 	public byte[] getXORKey() {
 		return XORKey;
 	}
+
 	public int getId() {
 		return id;
 	}

@@ -116,6 +116,7 @@ public class Handshake {
 		output.write(reserved);
 		output.write(infoHash);
 		output.write(peerID);
+		output.flush();
 
 	}
 

@@ -2,6 +2,7 @@ package torrent.peer;
 
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.ListIterator;
 
 import settings.GeneralSettings;
 import torrent.Torrent;
@@ -73,6 +74,11 @@ public class PeerManager extends Thread {
 					e.printStackTrace();
 				}
 			}
+		}
+		ListIterator<PeerHandler> iterator = peerHandlers.listIterator();
+		while (iterator.hasNext()) {
+			iterator.next().finish();
+			iterator.remove();
 		}
 	}
 
