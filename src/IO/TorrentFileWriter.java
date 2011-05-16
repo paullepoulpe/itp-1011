@@ -83,11 +83,7 @@ public class TorrentFileWriter {
 
 				writtenOnFile = true;
 				System.out.println("Fichiers ecrit dans " + dossier);
-				JOptionPane
-						.showMessageDialog(
-								null,
-								"IL faudrait implementer la methode Stop dans torrent, et l'apeller des que le fichier est ecrit sur le disque...");
-				System.exit(0);
+				torrent.stop();
 			} catch (IOException e) {
 				e.printStackTrace();
 				return false;
