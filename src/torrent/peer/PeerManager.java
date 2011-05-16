@@ -64,7 +64,6 @@ public class PeerManager extends Thread {
 	public void run() {
 		while (!finished) {
 			update();
-			System.out.println("Peer Handlers Actifs : " + peerHandlers.size());
 			if (!finished) {
 				try {
 					sleep(1000);

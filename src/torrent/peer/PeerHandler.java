@@ -34,7 +34,7 @@ public class PeerHandler extends Thread {
 	private LinkedList<Request> requetesEnvoyee = new LinkedList<Request>();
 	private boolean amChocking = true;
 	private boolean amInterested = false;
-	private boolean isChocking = true; // est ce que le pair nous etrangle ?
+	private boolean isChocking = true;
 	private boolean isInterested = false;
 	private boolean connecte = false;
 	private long lastTimeFlush;
@@ -283,8 +283,8 @@ public class PeerHandler extends Thread {
 		SendSymmetricKey theirSym = new SendSymmetricKey(input);
 		if (ourSym.getId() != theirSym.getId())
 			return false;
-		output = new DataOutputStream(new SymmetricOutputStream(
-				theirSym.getXORKey(), output));
+		output = new DataOutputStream(new SymmetricOutputStream(theirSym
+				.getXORKey(), output));
 		input = new DataInputStream(new SymmetricInputStream(
 				ourSym.getXORKey(), input));
 		return true;

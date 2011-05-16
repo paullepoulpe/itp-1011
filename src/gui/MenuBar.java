@@ -36,6 +36,7 @@ public class MenuBar extends JMenuBar {
 		file.add(exit);
 		help.add(new AboutAction());
 		add(file);
+		add(options);
 		add(help);
 	}
 
