@@ -93,7 +93,6 @@ public class Handshake {
 	public void setEncryptionEnabled() {
 		System.out.println("EnableEncryption!");
 		this.reserved[7] = 0x10;
-		System.out.println(Arrays.toString(reserved));
 	}
 
 	/**
