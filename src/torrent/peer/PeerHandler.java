@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import crypto.KeyGenerator;
 import crypto.RSA.*;
 
 import torrent.Torrent;
@@ -37,23 +38,25 @@ public class PeerHandler extends Thread {
 	private boolean isChocking = true;
 	private boolean isInterested = false;
 	private boolean connecte = false;
+	private boolean encryptionEnabled = false;
 	private long lastTimeFlush;
 	private PeerSettings settings;
 
-	public PeerHandler(Peer peer, Torrent torrent) {
-		this(torrent);
+	public PeerHandler(Peer peer, Torrent torrent, boolean encryptionEnabled) {
+		this(torrent, encryptionEnabled);
 		this.peer = peer;
 
 	}
 
-	public PeerHandler(Socket socket, Torrent torrent) {
-		this(torrent);
+	public PeerHandler(Socket socket, Torrent torrent, boolean encryptionEnabled) {
+		this(torrent, encryptionEnabled);
 		this.socket = socket;
 		this.peer = new Peer(socket.getInetAddress(), socket.getPort());
 
 	}
 
-	private PeerHandler(Torrent torrent) {
+	private PeerHandler(Torrent torrent, boolean encryptionEnabled) {
+		this.encryptionEnabled = encryptionEnabled;
 		this.messageHandler = new MessageHandler(this, torrent);
 		this.pieceMgr = torrent.getPieceManager();
 		this.peerPiecesIndex = new boolean[pieceMgr.getNbPieces()];
@@ -73,7 +76,9 @@ public class PeerHandler extends Thread {
 
 			// test si le handshake est compatible
 			if (isCompatible) {
-
+				if (encryptionEnabled) {
+					shareKeys();
+				}
 				// System.out.println("ID du pair : " + this.peer.getId());
 
 				// ecrire un bitfield au client pour lui indiquer quelles
@@ -179,11 +184,14 @@ public class PeerHandler extends Thread {
 	public void removeRequest(Request requete) {
 
 		while (requetes.contains(requete)) {
-			requetes.remove(requete);
+			boolean b = requetes.remove(requete);
+			System.out.println("J'enleve une requete de requetes : " + b);
 		}
 
 		while (requetesEnvoyee.contains(requete)) {
-			requetesEnvoyee.remove(requete);
+			boolean b = requetesEnvoyee.remove(requete);
+			System.out.println("J'enleve une requete de requetesEnvoyées : "
+					+ b);
 		}
 
 	}
@@ -253,22 +261,27 @@ public class PeerHandler extends Thread {
 	private boolean shakeHands() throws IOException {
 		if (!finished) {
 			Handshake ourHS = new Handshake(torrent);
+			if (encryptionEnabled) {
+				ourHS.setEncryptionEnabled();
+			}
 			ourHS.send(output);
-
 			Handshake theirHS = new Handshake(input);
 			this.peer.setId(theirHS.getPeerID());
-			// if (theirHS.isEncryptionSupported()) {
-			// return shakeEncryptedHands(theirHS)
-			// && theirHS.isCompatible(ourHS);
-			// }
+
 			return theirHS.isCompatible(ourHS);
 		}
 		return false;
 
 	}
 
-	private boolean shakeEncryptedHands(Handshake h) throws IOException {
-		SendRSAKey ourRSA = new SendRSAKey();
+	private boolean shareKeys() throws IOException {
+		KeyPair myKey = KeyGenerator.generateRSAKeyPair(settings
+				.getPrivateRSAModLength());
+
+		SendRSAKey ourRSA = new SendRSAKey(myKey);
+
+		input = new DataInputStream(new RSAInputStream(myKey, input));
+		output = new DataOutputStream(new RSAOutputStream(myKey, output));
 		ourRSA.send(output);
 		SendRSAKey theirRSA = new SendRSAKey(input);
 		if (ourRSA.getId() != theirRSA.getId())
@@ -294,9 +307,10 @@ public class PeerHandler extends Thread {
 	 */
 	private void readMessages() throws IOException {
 		while (input.available() > 0 && !finished) {
+
 			Message message = messageReader.readMessage();
 			if (message != null) {
-
+				System.out.println("Je Lis des Messages" + message.getClass());
 				// accept: on traite le message
 				message.accept(messageHandler);
 			}
@@ -313,7 +327,7 @@ public class PeerHandler extends Thread {
 				&& !hasNoPieces() && !finished) {
 			int index = -1;
 			index = pieceMgr.getPieceOfInterest(peerPiecesIndex);
-
+			System.out.println("Je prepare requete :" + index);
 			if (index != -1) {
 				Piece wanted = pieceMgr.getPiece(index);
 				requetes.add(wanted.getBlockOfInterest(this));
@@ -322,7 +336,7 @@ public class PeerHandler extends Thread {
 				amInterested = false;
 			}
 
-		} else if (requetesEnvoyee.size() == GeneralSettings.NB_MAX_REQUESTS
+		} else if (requetesEnvoyee.size() >= GeneralSettings.NB_MAX_REQUESTS
 				&& !finished) {
 			long thisTime = System.currentTimeMillis();
 			if ((thisTime - lastTimeFlush) > 10000) {
@@ -341,12 +355,14 @@ public class PeerHandler extends Thread {
 		if (!aEnvoyer.isEmpty() && !finished) {
 			synchronized (output) {
 				aEnvoyer.removeFirst().send(output);
+				System.out.println("J'envoie un message");
 			}
 		}
 
 		if (!isChocking && !requetes.isEmpty() && !finished) {
 			synchronized (output) {
 				requetes.getFirst().send(output);
+				System.out.println("J'envoie une requete");
 			}
 			requetesEnvoyee.addLast(requetes.removeFirst());
 		}

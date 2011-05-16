@@ -91,6 +91,10 @@ public class Handshake {
 
 	}
 
+	public void setEncryptionEnabled() {
+		this.reserved[7] = 0x10;
+	}
+
 	/**
 	 * On teste si le Handshake recu est compatible avec le protocole qu on
 	 * utilise en comparant le protocole et le hash.
@@ -99,31 +103,10 @@ public class Handshake {
 	 * @return true si le HS est compatible, false sinon.
 	 */
 	public boolean isCompatible(Handshake otherHanshake) {
-		/*
-		 * System.out.println(Arrays.toString(this.reserved) +
-		 * Arrays.toString(otherHanshake.reserved));
-		 */
+		boolean compatibleEncryption = (this.reserved[7] & 0x10) == (otherHanshake.reserved[7] & 0x10);
 		return Arrays.equals(this.protocol, otherHanshake.protocol)
 				&& Arrays.equals(this.infoHash, otherHanshake.infoHash)
-		/* && Arrays.equals(this.reserved, otherHanshake.reserved) */;
-	}
-
-	/**
-	 * Cette methode determine si le pair supporte l'encryption.
-	 * 
-	 * @return True si l'encryption est supportee, false sinon.
-	 */
-	public boolean isEncryptionSupported() {
-		if ((0x10 & this.reserved[7]) == 0x10) {
-			JOptionPane
-					.showMessageDialog(
-							null,
-							"Test de compatibilt� d'encyption reussi! Bytes reserv�s[7] : "
-									+ this.reserved[7]
-									+ "\n Ce message doit etre desactive dans la classe HandShake.java");
-			return true;
-		}
-		return false;
+				&& compatibleEncryption;
 	}
 
 	public void send(DataOutputStream output) throws IOException {

@@ -60,13 +60,8 @@ public class AnnounceInfo {
 				this.peers = dico.get("peers").getBytes();
 			}
 		} catch (InvalidBEncodingException e) {
-			if (data[0] == '<' && data[1] == 'h' && data[2] == 't'
-					&& data[3] == 'm' && data[4] == 'l' && data[5] == '>') {
-				throw new FailureReasonExeption(
-						"Reponse du tracker en html : ca sent pas bon!");
-			} else {
-				throw new FailureReasonExeption(e.getLocalizedMessage());
-			}
+
+			throw new FailureReasonExeption(e.getLocalizedMessage());
 
 		} catch (IOException e) {
 			System.out.println(e.getLocalizedMessage());

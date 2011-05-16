@@ -18,27 +18,34 @@ import crypto.RSA.KeyPair;
  * 
  */
 public class SendRSAKey extends Message {
-	private BigInteger N, eKey;
-	private int id, kLength, Nlength, eKeyLength;
+	private BigInteger mod, eKey;
+	private int id, modLength;
 	private KeyPair keyPair;
 
-	public SendRSAKey() {
-		this.id=11;
+	public SendRSAKey(KeyPair key) {
+		id = 11;
+		eKey = key.getEKey();
+		modLength = key.getModLength();
+		mod = key.getMod();
+
 	}
 
 	public SendRSAKey(DataInputStream in) throws IOException {
 		int messageLength = in.readInt();
-		this.id = in.read();
-		this.kLength = in.readInt();
-		this.eKeyLength = in.readInt();
-		this.Nlength = in.readInt();
-		byte[] eBytes = new byte[eKeyLength];
-		byte[] nBytes = new byte[Nlength];
-		in.read(eBytes);
-		in.read(nBytes);
+		this.id = in.readByte();
+		modLength = in.readInt();
+
+		int n = in.readInt();
+		byte[] eBytes = new byte[n];
+		in.readFully(eBytes);
 		eKey = new BigInteger(eBytes);
-		N = new BigInteger(nBytes);
-		keyPair = new KeyPair(N, eKey, null, kLength);
+
+		int m = in.readInt();
+		byte[] modBytes = new byte[m];
+		in.readFully(modBytes);
+		mod = new BigInteger(modBytes);
+
+		keyPair = new KeyPair(mod, eKey, null, modLength);
 	}
 
 	public void accept(MessageVisitor v) {
@@ -47,22 +54,21 @@ public class SendRSAKey extends Message {
 
 	@Override
 	public void send(DataOutputStream output) throws IOException {
-		output.write(1 + 4 + 4 + 4 + kLength + eKeyLength);
-		output.write(id);
-		output.writeInt(kLength);
-		output.writeInt(eKeyLength);
-		output.writeInt(Nlength);
+		int n = eKey.toByteArray().length;
+		int m = eKey.toByteArray().length;
+		output.writeInt(1 + 4 + 4 + 4 + n + m);
+		output.writeByte(id);
+		output.writeInt(modLength);
+		output.writeInt(n);
 		output.write(eKey.toByteArray());
-		output.write(N.toByteArray());
-		JOptionPane
-				.showMessageDialog(
-						null,
-						"Envoye notre cle publique RSA!!! (Desactiver ce message dans la classe SendRSAKey ;P");
+		output.writeInt(m);
+		output.write(mod.toByteArray());
 	}
 
 	public KeyPair getKeyPair() {
 		return keyPair;
 	}
+
 	public int getId() {
 		return id;
 	}

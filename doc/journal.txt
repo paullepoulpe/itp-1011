@@ -74,3 +74,5 @@
 - Pendant les vacances, le code a ete ameliore, les methodes optimisees etc...
 La gui avance de plus en plus (cela faisait une semaine que je beugait sur le fonctionnement des JTables, maintenant j'ai enfin compris comment utiliser un TableModel (or whatever it's called)
 - La semaine suivant j'étais (je = Maarten) occupé à comprendre comment afficher les Components dans cette JTable, et comment updater ma Progressbar (tout fonctionne maintenant) reste plus qu'à coder les autres parties de la GUI (esperons qu'elles soient moins foireuses ^^)
+- Nouvelles classes rajoutés, meilleurs distributions des fonctions entre les classe, classes d'entrées sortie sur fichier et de paramètres créés
+
