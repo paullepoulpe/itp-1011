@@ -29,8 +29,8 @@ public class TorrentTable extends JPanel {
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if (e.isPopupTrigger()) {
-					int i = table.getSelectedRow();
+				int i = table.getSelectedRow();
+				if (e.isPopupTrigger()&&(i>-1)) {
 					popup = new TorrentPopupMenu(torrentlist.get(i));
 					popup.show(null, e.getXOnScreen(), e.getYOnScreen());
 				}

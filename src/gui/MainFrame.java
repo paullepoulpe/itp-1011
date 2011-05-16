@@ -50,7 +50,7 @@ public class MainFrame extends JFrame implements Runnable {
 		c.add(tableTorrent, BorderLayout.CENTER);
 		setExtendedState(MAXIMIZED_BOTH);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setIconImage(Toolkit.getDefaultToolkit().getImage("src/gui/ico2.png"));
+		setIconImage(Toolkit.getDefaultToolkit().getImage("src/gui/ico1.png"));
 		setSize(new Dimension(800, 500));
 		setVisible(true);
 		if (torrentz.size() == 0)
@@ -62,7 +62,6 @@ public class MainFrame extends JFrame implements Runnable {
 		while (true){
 			try{
 				Thread.sleep(60000);
-				tableTorrent.validate();
 				validate();
 				}catch (InterruptedException e){
 					e.printStackTrace();
