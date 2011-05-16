@@ -7,7 +7,8 @@ public class PeerSettings {
 	private int xorKeyLength = -1;
 
 	public PeerSettings() {
-
+		privateRSAModLength = 128;
+		xorKeyLength = 128;
 	}
 
 	public int getPrivateRSAModLength() {

@@ -2,6 +2,7 @@ package torrent.peer;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -56,6 +57,7 @@ public class PeerHandler extends Thread {
 	}
 
 	private PeerHandler(Torrent torrent, boolean encryptionEnabled) {
+		this.settings = new PeerSettings();
 		this.encryptionEnabled = encryptionEnabled;
 		this.messageHandler = new MessageHandler(this, torrent);
 		this.pieceMgr = torrent.getPieceManager();
@@ -261,11 +263,16 @@ public class PeerHandler extends Thread {
 	private boolean shakeHands() throws IOException {
 		if (!finished) {
 			Handshake ourHS = new Handshake(torrent);
+			System.out.println("Encryption enabled :" + encryptionEnabled);
+
 			if (encryptionEnabled) {
 				ourHS.setEncryptionEnabled();
 			}
+			System.out.println(Arrays.toString(ourHS.getReserved()));
+
 			ourHS.send(output);
 			Handshake theirHS = new Handshake(input);
+			System.out.println(Arrays.toString(theirHS.getReserved()));
 			this.peer.setId(theirHS.getPeerID());
 
 			return theirHS.isCompatible(ourHS);
@@ -275,6 +282,7 @@ public class PeerHandler extends Thread {
 	}
 
 	private boolean shareKeys() throws IOException {
+		System.out.println("Encryption supportée, echange de clés");
 		KeyPair myKey = KeyGenerator.generateRSAKeyPair(settings
 				.getPrivateRSAModLength());
 
@@ -295,8 +303,8 @@ public class PeerHandler extends Thread {
 		SendSymmetricKey theirSym = new SendSymmetricKey(input);
 		if (ourSym.getId() != theirSym.getId())
 			return false;
-		output = new DataOutputStream(new SymmetricOutputStream(
-				theirSym.getXORKey(), output));
+		output = new DataOutputStream(new SymmetricOutputStream(theirSym
+				.getXORKey(), output));
 		input = new DataInputStream(new SymmetricInputStream(
 				ourSym.getXORKey(), input));
 		return true;

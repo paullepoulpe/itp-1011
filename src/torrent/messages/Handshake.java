@@ -33,7 +33,6 @@ public class Handshake {
 		pstrLength = (byte) protocol.length;
 		infoHash = torrent.getMetainfo().getInfoHash().binaryHash();
 		reserved = new byte[8];
-		reserved[7] = (1 << 4);
 		try {
 			peerID = Torrent.PEER_ID.getBytes("ASCII");
 		} catch (UnsupportedEncodingException e) {
@@ -92,7 +91,9 @@ public class Handshake {
 	}
 
 	public void setEncryptionEnabled() {
+		System.out.println("EnableEncryption!");
 		this.reserved[7] = 0x10;
+		System.out.println(Arrays.toString(reserved));
 	}
 
 	/**
