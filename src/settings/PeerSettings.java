@@ -14,4 +14,8 @@ public class PeerSettings {
 	public int getPrivateRSAModLength() {
 		return privateRSAModLength;
 	}
+
+	public int getXorKeyLength() {
+		return xorKeyLength;
+	}
 }
