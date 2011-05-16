@@ -17,9 +17,10 @@ public class MainFrame extends JFrame implements Runnable {
 	private TorrentTable tableTorrent;
 	private MenuBar menu;
 	private Container c;
-	private JTabbedPane torrent;
+	private JTabbedPane torrentInfo;
 
 	public MainFrame(ArrayList<Torrent> torrents) {
+		super("MAARTENTORRENT ;P hihihi ^^");
 		this.torrentz = torrents;
 		c = getContentPane();
 		c.setLayout(new BorderLayout());
@@ -46,11 +47,16 @@ public class MainFrame extends JFrame implements Runnable {
 		c.add(menu, BorderLayout.NORTH);
 
 		tableTorrent = new TorrentTable(torrentz);
+/*		torrentInfo = new JTabbedPane();
+		TorrentInfoTab tInfo = new TorrentInfoTab("Info");
+		torrentInfo.add(tInfo.getName(), tInfo);
+		c.add(torrentInfo, BorderLayout.CENTER);*/
 
-		c.add(tableTorrent, BorderLayout.CENTER);
+		c.add(tableTorrent, BorderLayout.SOUTH);
 		setExtendedState(MAXIMIZED_BOTH);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setIconImage(Toolkit.getDefaultToolkit().getImage("src/gui/ico1.png"));
+
 		setSize(new Dimension(800, 500));
 		setVisible(true);
 		if (torrentz.size() == 0)
@@ -59,13 +65,13 @@ public class MainFrame extends JFrame implements Runnable {
 
 	@Override
 	public void run() {
-		while (true){
-			try{
+		while (true) {
+			try {
 				Thread.sleep(60000);
 				validate();
-				}catch (InterruptedException e){
-					e.printStackTrace();
-				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -95,5 +101,9 @@ public class MainFrame extends JFrame implements Runnable {
 		}
 		validate();
 		tableTorrent.revalidate();
+	}
+
+	public Torrent selectedTorrent() {
+		return torrentz.get(tableTorrent.getSelectedRow());
 	}
 }

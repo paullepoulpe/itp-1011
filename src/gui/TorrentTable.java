@@ -30,9 +30,9 @@ public class TorrentTable extends JPanel {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				int i = table.getSelectedRow();
-				if (e.isPopupTrigger()&&(i>-1)) {
+				if (e.isPopupTrigger() && (i > -1)) {
 					popup = new TorrentPopupMenu(torrentlist.get(i));
-					popup.show(null, e.getXOnScreen(), e.getYOnScreen());
+					popup.show(getParent(),  e.getXOnScreen(), e.getYOnScreen());
 				}
 			}
 
@@ -48,7 +48,7 @@ public class TorrentTable extends JPanel {
 		removeAll();
 		tm = new TorrentTableModel(torrentlist);
 		table = new JTable(tm);
-		table.setPreferredScrollableViewportSize(new Dimension(900, 100));
+		table.setPreferredScrollableViewportSize(new Dimension(800, 100));
 		table.getColumnModel().getColumn(0).setPreferredWidth(500);
 		table.getColumnModel().getColumn(1).setPreferredWidth(300);
 		table.setDefaultRenderer(Component.class, new TableCellRenderer() {
@@ -60,11 +60,11 @@ public class TorrentTable extends JPanel {
 			}
 		});
 		new Thread(new Runnable() {
-			
+
 			@Override
 			public void run() {
-				
-				while(true){
+
+				while (true) {
 					try {
 						Thread.sleep(100);
 						updateProgressBar();
@@ -80,15 +80,18 @@ public class TorrentTable extends JPanel {
 	public int getSelectedRow() {
 		return table.getSelectedRow();
 	}
-	public void updateProgressBar(){
-		for(int i = 0; i<torrentlist.size();i++){
-			table.setValueAt(torrentlist.get(i).getProgressBar(),i, 1);
+
+	public void updateProgressBar() {
+		for (int i = 0; i < torrentlist.size(); i++) {
+			table.setValueAt(torrentlist.get(i).getProgressBar(), i, 1);
 			tm.fireTableCellUpdated(i, 1);
 		}
 	}
+
 	public JTable getTable() {
 		table.revalidate();
 		return table;
+
 	}
 }
 
