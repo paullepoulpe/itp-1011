@@ -69,3 +69,8 @@
 17.04.2011
 -Le rendu intermediaire approche, notre code est encore très brouillon,(désolé pour les assistant qui vont devoir lire tout ca, mais comme il y a aussi l'examen intermediaire de DS on a pas vraiment eu le temps de le retravailler correctement!
 -On a essaye de commenter au mieux toutes les parties du code pour que la lecture ne soit pas (trop) fatigante!
+16.05.2011
+- Eh oui, ça fait un mois qu'on a pas bossé le projet :P
+- Pendant les vacances, le code a ete ameliore, les methodes optimisees etc...
+La gui avance de plus en plus (cela faisait une semaine que je beugait sur le fonctionnement des JTables, maintenant j'ai enfin compris comment utiliser un TableModel (or whatever it's called)
+- La semaine suivant j'étais (je = Maarten) occupé à comprendre comment afficher les Components dans cette JTable, et comment updater ma Progressbar (tout fonctionne maintenant) reste plus qu'à coder les autres parties de la GUI (esperons qu'elles soient moins foireuses ^^)
