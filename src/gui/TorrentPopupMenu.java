@@ -11,13 +11,13 @@ import javax.swing.*;
 import torrent.Torrent;
 
 public class TorrentPopupMenu extends JPopupMenu {
-	private JButton announce, stop;
+	private JMenuItem announce, stop;
 	private Torrent t;
 
 	public TorrentPopupMenu(Torrent torrent) {
 		this.t = torrent;
-		stop = new JButton("Stop Downloading");
-		announce = new JButton("Start Downloading");
+		stop = new JMenuItem("Stop Downloading");
+		announce = new JMenuItem("Start Downloading");
 		announce.setToolTipText("Torrent : "
 				+ torrent.getMetainfo().getFileName());
 		add(announce);
