@@ -3,11 +3,8 @@ package torrent;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.swing.JProgressBar;
-
-import IO.TorrentFileWriter;
 
 import torrent.peer.*;
 import torrent.piece.*;
@@ -16,16 +13,13 @@ import torrent.tracker.TrackerInfo;
 /*
  * IMPLEMENTER LA METHODE Torrent.stop() !!!!!!*/
 public class Torrent {
-	private ArrayList<Peer> peerList;
 	private PeerManager peerManager;
-	private Piece[] pieces;
+	// private Piece[] pieces;
 	private ArrayList<TrackerInfo> trackers;
 	private Metainfo metainfo;
 	private int numPort;
 	private PieceManager pieceManager;
 	public static String PEER_ID = PeerIDGenerator.generateID();
-	private boolean isComplete;
-	private TorrentFileWriter writer;
 	private long lastBlockReceived, downloadSpeed, uploadSpeed;
 	private JProgressBar progressBar;
 
@@ -41,10 +35,7 @@ public class Torrent {
 	public Torrent(File metainfoFile, int numPort) {
 		this.metainfo = new Metainfo(metainfoFile);
 		this.numPort = numPort;
-		this.peerList = new ArrayList<Peer>();
-		this.initPieces();
 		this.pieceManager = new PieceManager(this);
-		this.writer = new TorrentFileWriter(this, metainfo);
 		peerManager = new PeerManager(this);
 		peerManager.start();
 		progressBar = new JProgressBar(0, 100);
@@ -80,51 +71,6 @@ public class Torrent {
 	}
 
 	/**
-	 * retourne la completion du telechargement
-	 * 
-	 * @return le pourcentage d'avancement du telechargement (un double)
-	 */
-	public double getDownloadedCompleteness() {
-		double downloadedCompleteness = 0;
-		for (int i = 0; i < this.pieces.length; i++) {
-			downloadedCompleteness += this.pieces[i].getDownloadCompleteness();
-		}
-		return downloadedCompleteness / this.pieces.length;
-	}
-
-	/**
-	 * verifie si on a au moins une piece!
-	 * 
-	 * @return true si on a aucune piece de complete
-	 */
-	public boolean isEmpty() {
-		boolean vide = true;
-		for (int i = 0; i < this.pieces.length && vide; i++) {
-			vide = vide && !this.pieces[i].isChecked();
-		}
-		return vide;
-	}
-
-	/**
-	 * teste si le torrent est complet ou non
-	 * 
-	 * @return true si toutes les pieces sont completes et verfifiees
-	 */
-	public boolean isComplete() {
-		if (isComplete) {
-			return true;
-		} else {
-			boolean complet = true;
-			for (int i = 0; i < this.pieces.length && complet; i++) {
-				complet = complet && this.pieces[i].isChecked();
-			}
-			this.isComplete = complet;
-			return complet;
-		}
-
-	}
-
-	/**
 	 * Permet d'ajouter un peer au torrent
 	 * 
 	 * @param peer
@@ -135,103 +81,8 @@ public class Torrent {
 		peerManager.addPeer(peer);
 	}
 
-	/**
-	 * Cette methode permet d'initialiser les pieces d'un torrent depuis un
-	 * fichier. Elle regarde dans le dossier Downloads/ si un fichier contient
-	 * le nom du fichier contenu dans metainfo, il le lit et essaye
-	 * d'initialiser les pieces avec. La piece s'occupe de verifier qu'elle soit
-	 * correcte. Si le fichier n'est pas trouve cette methode retourne false
-	 * 
-	 * 
-	 * @return true si le fichier a ete trouve, false sinon
-	 */
-	public boolean readFromFile() {
-		// TODO gerer le multifile! // TODO Choisir le fichier de depart
-		File folder = new File(System.getProperty("user.home"), "Downloads"
-				+ File.separator);
-		String[] liste = folder.list();
-		boolean trouve = false;
-		int indexFichier = -1;
-		for (int i = 0; i < liste.length && !trouve; i++) {
-			System.out.println(liste[i]);
-			if (liste[i].contains(metainfo.getFileName())) {
-				trouve = true;
-				indexFichier = i;
-			}
-		}
-		if (trouve) {
-			File file = new File(System.getProperty("user.home"), "Downloads"
-					+ File.separator + liste[indexFichier]);
-			DataInputStream lecteur = null;
-			try {
-				lecteur = new DataInputStream(new FileInputStream(file));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			byte[] read;
-			for (int i = 0; i < pieces.length; i++) {
-
-				read = new byte[this.pieces[i].getSizeTab()];
-
-				try {
-					lecteur.read(read);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				this.pieces[i].setData(read);
-			}
-			try {
-				lecteur.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return true;
-
-		} else {
-			System.out.println("File not found!");
-			return false;
-		}
-	}
-
-	/**
-	 * ecris les fichiers sur le disque grace au delimiteurss
-	 * 
-	 * @return true si tout a été ecris correctement
-	 */
-	public boolean writeToFile() {
-		System.out.println("Writing");
-		return writer.writeAll();
-	}
-
-	/**
-	 * initialise le tableau des pieces a la bonne taille, et initialise chaque
-	 * piece avec son index et sa somme de controle
-	 */
-	private void initPieces() {
-		this.pieces = new Piece[(int) (Math.ceil(((double) this.metainfo
-				.getSize()) / ((double) this.metainfo.getPieceLength())))];
-
-		for (int i = 0; i < this.pieces.length; i++) {
-			byte[] pieceHash = Arrays.copyOfRange(
-					this.metainfo.getPiecesHash(), 20 * i, 20 * (i + 1));
-			if (i == pieces.length - 1) {
-				int length = this.metainfo.getSize()
-						- ((pieces.length - 1) * this.metainfo.getPieceLength());
-				pieces[i] = new Piece(i, length, pieceHash, this);
-			} else {
-				pieces[i] = new Piece(i, this.metainfo.getPieceLength(),
-						pieceHash, this);
-			}
-		}
-
-	}
-
 	public int getNumPort() {
 		return numPort;
-	}
-
-	public Piece[] getPieces() {
-		return pieces;
 	}
 
 	public Metainfo getMetainfo() {
@@ -242,16 +93,8 @@ public class Torrent {
 		return trackers;
 	}
 
-	public ArrayList<Peer> getPeerList() {
-		return peerList;
-	}
-
 	public PieceManager getPieceManager() {
 		return pieceManager;
-	}
-
-	public TorrentFileWriter getWriter() {
-		return writer;
 	}
 
 	public void addPeer(Socket socket) {
@@ -274,7 +117,7 @@ public class Torrent {
 	}
 
 	public JProgressBar getProgressBar() {
-		progressBar.setValue((int)getDownloadedCompleteness());
+		progressBar.setValue((int) pieceManager.getDownloadedCompleteness());
 		return progressBar;
 	}
 

@@ -4,7 +4,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
-import torrent.Torrent;
 import torrent.messages.Request;
 import torrent.peer.PeerHandler;
 
@@ -26,7 +25,6 @@ public class Piece {
 	private boolean isChecked = false;
 	static public int BLOCK_SIZE = 1 << 14;
 	private ArrayList<ArrayList<PeerHandler>> peerHandlers;
-	private Torrent torrent;
 
 	/**
 	 * Constructeur
@@ -38,7 +36,7 @@ public class Piece {
 	 * @param hash
 	 *            Somme de controle SHA-1
 	 */
-	public Piece(int index, int sizeTab, byte[] hash, Torrent torrent) {
+	public Piece(int index, int sizeTab, byte[] hash) {
 		this.index = index;
 		this.sizeTab = sizeTab;
 		this.hash = hash;
@@ -49,7 +47,6 @@ public class Piece {
 		for (int i = 0; i < nbBlocs; i++) {
 			peerHandlers.add(new ArrayList<PeerHandler>());
 		}
-		this.torrent = torrent;
 	}
 
 	/**
@@ -73,6 +70,9 @@ public class Piece {
 	 */
 	public double getDownloadCompleteness() {
 		int received = 0;
+		if (isChecked) {
+			return 100;
+		}
 		for (int i = 0; i < nbBlocs; i++) {
 			if (receipt[i]) {
 				received++;
@@ -117,8 +117,8 @@ public class Piece {
 
 			for (int i = 0; i < peerHandlers.get(begin / BLOCK_SIZE).size(); i++) {
 
-				peerHandlers.get(begin / BLOCK_SIZE).get(i).removeRequest(
-						new Request(index, begin, bloc.length));
+				peerHandlers.get(begin / BLOCK_SIZE).get(i)
+						.removeRequest(new Request(index, begin, bloc.length));
 
 			}
 
@@ -289,5 +289,10 @@ public class Piece {
 
 	public boolean isChecked() {
 		return isChecked;
+	}
+
+	@Override
+	public String toString() {
+		return index + "";
 	}
 }
