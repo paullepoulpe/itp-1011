@@ -55,7 +55,7 @@ public class SendRSAKey extends Message {
 	@Override
 	public void send(DataOutputStream output) throws IOException {
 		int n = eKey.toByteArray().length;
-		int m = eKey.toByteArray().length;
+		int m = mod.toByteArray().length;
 		output.writeInt(1 + 4 + 4 + 4 + n + m);
 		output.writeByte(id);
 		output.writeInt(modLength);
@@ -63,6 +63,7 @@ public class SendRSAKey extends Message {
 		output.write(eKey.toByteArray());
 		output.writeInt(m);
 		output.write(mod.toByteArray());
+		output.flush();
 	}
 
 	public KeyPair getKeyPair() {
@@ -75,6 +76,9 @@ public class SendRSAKey extends Message {
 
 	@Override
 	public String toString() {
-		return "Mod = " + mod.toString() + ", eKey = " + eKey.toString();
+		return "Mod = " + mod.toString() + ", eKey = " + eKey.toString()
+				+ " , N = " + modLength + " , eKeylength = "
+				+ eKey.toByteArray().length + " , modlength = "
+				+ mod.toByteArray().length;
 	}
 }

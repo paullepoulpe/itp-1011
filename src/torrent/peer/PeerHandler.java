@@ -187,13 +187,13 @@ public class PeerHandler extends Thread {
 
 		while (requetes.contains(requete)) {
 			boolean b = requetes.remove(requete);
-			System.out.println("J'enleve une requete de requetes : " + b);
+			// System.out.println("J'enleve une requete de requetes : " + b);
 		}
 
 		while (requetesEnvoyee.contains(requete)) {
 			boolean b = requetesEnvoyee.remove(requete);
-			System.out.println("J'enleve une requete de requetesEnvoyées : "
-					+ b);
+			// System.out.println("J'enleve une requete de requetesEnvoyées : "
+			// + b);
 		}
 
 	}
@@ -268,7 +268,6 @@ public class PeerHandler extends Thread {
 			if (encryptionEnabled) {
 				ourHS.setEncryptionEnabled();
 			}
-
 			ourHS.send(output);
 			System.out.println("Handshake envoyé");
 			Handshake theirHS = new Handshake(input);
@@ -289,25 +288,21 @@ public class PeerHandler extends Thread {
 
 		SendRSAKey ourRSA = new SendRSAKey(myKey);
 		ourRSA.send(output);
+		System.out.println(ourRSA);
 		SendRSAKey theirRSA = new SendRSAKey(input);
 		System.out.println(theirRSA);
 
 		input = new DataInputStream(new RSAInputStream(myKey, input));
-		output = new DataOutputStream(new RSAOutputStream(myKey, output));
-
-		if (ourRSA.getId() != theirRSA.getId())
-			return false;
 		output = new DataOutputStream(new RSAOutputStream(
 				theirRSA.getKeyPair(), output));
-		input = new DataInputStream(new RSAInputStream(ourRSA.getKeyPair(),
-				input));
+
 		SendSymmetricKey ourSym = new SendSymmetricKey();
 		ourSym.send(output);
 		SendSymmetricKey theirSym = new SendSymmetricKey(input);
 		if (ourSym.getId() != theirSym.getId())
 			return false;
-		output = new DataOutputStream(new SymmetricOutputStream(theirSym
-				.getXORKey(), output));
+		output = new DataOutputStream(new SymmetricOutputStream(
+				theirSym.getXORKey(), output));
 		input = new DataInputStream(new SymmetricInputStream(
 				ourSym.getXORKey(), input));
 		return true;
@@ -321,7 +316,8 @@ public class PeerHandler extends Thread {
 
 			Message message = messageReader.readMessage();
 			if (message != null) {
-				System.out.println("Je Lis des Messages" + message.getClass());
+				// System.out.println("Je Lis des Messages" +
+				// message.getClass());
 				// accept: on traite le message
 				message.accept(messageHandler);
 			}
@@ -338,7 +334,7 @@ public class PeerHandler extends Thread {
 				&& !hasNoPieces() && !finished) {
 			int index = -1;
 			index = pieceMgr.getPieceOfInterest(peerPiecesIndex);
-			System.out.println("Je prepare requete :" + index);
+			// System.out.println("Je prepare requete :" + index);
 			if (index != -1) {
 				Piece wanted = pieceMgr.getPiece(index);
 				requetes.add(wanted.getBlockOfInterest(this));
@@ -366,14 +362,14 @@ public class PeerHandler extends Thread {
 		if (!aEnvoyer.isEmpty() && !finished) {
 			synchronized (output) {
 				aEnvoyer.removeFirst().send(output);
-				System.out.println("J'envoie un message");
+				// System.out.println("J'envoie un message");
 			}
 		}
 
 		if (!isChocking && !requetes.isEmpty() && !finished) {
 			synchronized (output) {
 				requetes.getFirst().send(output);
-				System.out.println("J'envoie une requete");
+				// System.out.println("J'envoie une requete");
 			}
 			requetesEnvoyee.addLast(requetes.removeFirst());
 		}
