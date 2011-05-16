@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -85,7 +86,11 @@ public class TorrentFileWriter {
 
 				writtenOnFile = true;
 				System.out.println("Fichiers ecrit dans " + dossier);
-				System.exit(0);
+				JOptionPane
+						.showMessageDialog(
+								null,
+								"IL faudrait implementer la methode Stop dans torrent, et l'apeller des que le fichier est ecrit sur le disque...");
+				 System.exit(0);
 			} catch (IOException e) {
 				e.printStackTrace();
 				return false;
@@ -171,7 +176,7 @@ public class TorrentFileWriter {
 		try {
 			dossier = choisir.getSelectedFile().getAbsolutePath();
 		} catch (NullPointerException e) {
-			System.err.println("Vous avez annul� le choix de dossier");
+			System.err.println("Vous avez annule le choix de dossier");
 			System.exit(0);
 		}
 		return dossier;

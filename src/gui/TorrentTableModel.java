@@ -14,8 +14,7 @@ import javax.swing.table.TableCellRenderer;
 
 import torrent.Torrent;
 
-public class TorrentTableModel extends AbstractTableModel implements
-		PropertyChangeListener {
+public class TorrentTableModel extends AbstractTableModel {
 	private Object[][] to;
 	static final String[] colNames = { "Filename", "Progress", "Size",
 			"Upload", "Download" };
@@ -52,15 +51,15 @@ public class TorrentTableModel extends AbstractTableModel implements
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		System.err.println("Value read in TableModel at row " + rowIndex
-				+ " col " + columnIndex);
+		// System.err.println("Value read in TableModel at row " + rowIndex
+		// + " col " + columnIndex);
 		return to[rowIndex][columnIndex];
 	}
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		System.err.println("Value set in TableModel at row " + rowIndex
-				+ " col " + columnIndex);
+		// System.err.println("Value set in TableModel at row " + rowIndex
+		// + " col " + columnIndex);
 		to[rowIndex][columnIndex] = aValue;
 	}
 
@@ -68,15 +67,4 @@ public class TorrentTableModel extends AbstractTableModel implements
 		return colNames[col];
 	}
 
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-
-		for (int i = 0; i < to.length; i++) {
-			System.err.println("NEW VALUE @ " + System.currentTimeMillis()
-					+ " --> " + evt.getNewValue());
-			// int progress = (Integer) evt.getNewValue();
-			// ((JProgressBar) to[i][1]).setValue(progress);
-
-		}
-	}
 }
