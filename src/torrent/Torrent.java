@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import javax.swing.JProgressBar;
 
+import settings.GeneralSettings;
 import torrent.peer.*;
 import torrent.piece.*;
 import torrent.tracker.TrackerInfo;
@@ -40,6 +41,7 @@ public class Torrent {
 		peerManager.start();
 		progressBar = new JProgressBar(0, 100);
 		progressBar.setStringPainted(true);
+		progressBar.setForeground(GeneralSettings.PROGRESS_COLOR);
 
 		System.out.println(this.metainfo);
 	}

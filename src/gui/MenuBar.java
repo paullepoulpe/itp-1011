@@ -7,16 +7,16 @@ import java.awt.event.ActionListener;
 
 public class MenuBar extends JMenuBar {
 	private JMenu file, options, help;
-	private JMenuItem add, exit;
+	private JMenuItem add, exit, settings;
 
 	public MenuBar() {
 		super();
 		file = new JMenu("File");
 		options = new JMenu("Options");
-		options.add(new JMenuItem("Nothing Yet... try again later ;)"));
 		help = new JMenu("Help");
 		add = new JMenuItem("Add Torrent");
 		exit = new JMenuItem("Exit");
+		settings = new JMenuItem("Preferences");
 		file.add(add);
 		file.addSeparator();
 		exit.addActionListener(new ActionListener() {
@@ -35,6 +35,7 @@ public class MenuBar extends JMenuBar {
 		});
 		file.add(exit);
 		help.add(new AboutAction());
+		options.add(settings);
 		add(file);
 		add(options);
 		add(help);
@@ -56,4 +57,7 @@ public class MenuBar extends JMenuBar {
 		return exit;
 	}
 
+	public JMenuItem getSettings() {
+		return settings;
+	}
 }
