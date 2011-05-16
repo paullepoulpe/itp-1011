@@ -21,7 +21,7 @@ public class RSAOutputStream extends OutputStream {
 
 	@Override
 	public void write(int b) throws IOException {
-		out.write(keyPair.encrypt(BigInteger.valueOf(b)).intValue());
+		out.write(keyPair.encrypt(BigInteger.valueOf(b & 0xff)).toByteArray());
 	}
 
 	public void flush() throws IOException {
