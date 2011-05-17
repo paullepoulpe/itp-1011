@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
-import javax.swing.JOptionPane;
-
 import torrent.Torrent;
 
 /**
