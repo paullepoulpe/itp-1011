@@ -1,9 +1,10 @@
 package torrent;
 
+import gui.DynamicFlowLabel;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.ListIterator;
 
 import javax.swing.JProgressBar;
 
@@ -20,6 +21,7 @@ public class Torrent {
 	private PieceManager pieceManager;
 	public static String PEER_ID = PeerIDGenerator.generateID();
 	private JProgressBar progressBar;
+	private DynamicFlowLabel upload, download;
 
 	/**
 	 * comstructeur avec numero de port
@@ -112,4 +114,21 @@ public class Torrent {
 	public void stop() {
 		peerManager.finish();
 	}
+
+	public void receivedBlock() {
+		download.add(Piece.BLOCK_SIZE);
+	}
+
+	public void sentBlock() {
+		upload.add(Piece.BLOCK_SIZE);
+	}
+
+	public DynamicFlowLabel getDownload() {
+		return download;
+	}
+
+	public DynamicFlowLabel getUpload() {
+		return upload;
+	}
+
 }

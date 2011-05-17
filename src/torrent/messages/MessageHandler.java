@@ -41,7 +41,11 @@ public class MessageHandler implements MessageVisitor {
 				.getPieceManager().getPiece(r.getIndex())
 				.getBlock(r.getBegin()));
 		peerHandler.addAEnvoyer(sendBlock);
+
+		// Pour le debit de upload
 		peerHandler.sentBlock();
+		torrent.sentBlock();
+
 		System.out.println("Recu un request pour piece : " + r.getIndex()
 				+ ", bloc : " + r.getBegin());
 		peerHandler.multiplyNotation(1.001);
@@ -105,7 +109,10 @@ public class MessageHandler implements MessageVisitor {
 		 */
 		Piece entering = null;
 		entering = torrent.getPieceManager().getPiece(s.getPieceIndex());
+
+		// pour le debit de download
 		peerHandler.receivedBlock();
+		torrent.receivedBlock();
 
 		entering.feed(s.getBlocIndex(), s.getBloc());
 		peerHandler.removeRequest(new Request(s.getPieceIndex(), s
