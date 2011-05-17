@@ -10,24 +10,16 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Label;
-import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.util.Arrays;
-import java.util.Comparator;
-
 import javax.swing.*;
-
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
-
 import settings.GeneralSettings;
 
 public class FenetreSettings extends JDialog implements ActionListener,
 		WindowListener {
-	private GeneralSettings settings = new GeneralSettings();
 	private JTextField numwant = new JTextField(),
 			nbMaxPeerHandler = new JTextField(),
 			nbMaxRequests = new JTextField(),
@@ -61,7 +53,7 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		JPanel principal = new JPanel(new BorderLayout(20, 0));
 		this.setContentPane(principal);
 
-		JPanel param = new JPanel(new GridLayout(0, 2));
+		JPanel param = new JPanel(new GridLayout(0, 2, 5, 5));
 
 		param.add(new Label("Choisir le dossier de telechargement par default"));
 		JPanel choixDossier = new JPanel(new BorderLayout());
@@ -120,17 +112,16 @@ public class FenetreSettings extends JDialog implements ActionListener,
 			}
 		}
 		if (source == restoreDefault) {
-			settings.restoreDefaultValues();
+			GeneralSettings.restoreDefaultValues();
 		}
-		if (source == valider) {
-			getValues();
+		if (source == valider && getValues()) {
 			close();
 		}
 
 		setVisual();
 	}
 
-	private void getValues() {
+	private boolean getValues() {
 		boolean probleme = false;
 
 		try {
@@ -178,6 +169,7 @@ public class FenetreSettings extends JDialog implements ActionListener,
 					"Plusieurs champs ont ete mal remplis", "Attention",
 					JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 		}
+		return !probleme;
 
 	}
 
