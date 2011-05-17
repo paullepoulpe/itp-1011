@@ -46,10 +46,12 @@ public class DynamicFlowLabel extends JLabel implements Runnable {
 			case (3):
 				s = n / (1 << 30) + " G" + s;
 				break;
+			default:
+				s = 0 + " " + s;
 
 			}
 			this.setText(s);
-			// System.err.println(s);
+			this.revalidate();
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
