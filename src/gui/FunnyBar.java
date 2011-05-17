@@ -43,12 +43,12 @@ public class FunnyBar extends JPanel {
 		Graphics2D g2 = img.createGraphics();
 		super.paint(g2);
 		g2.drawRect(0, 0, w - 1, h - 1);
-		g2.setColor(Color.CYAN);
+		g2.setColor(Color.CYAN.darker().darker());
 		for (int i = 0; i < nbBarres; i++) {
 			if (barresDessinees[i]) {
-				int debut = (int) Math.round(i * intervalle) + 1;
+				int debut = (int) Math.ceil(i * intervalle) + 1;
 				g2.fillRect(debut, 1,
-						Math.min((int) Math.round(intervalle), w - debut - 1),
+						Math.min((int) Math.ceil(intervalle), w - debut - 1),
 						h - 2);
 			}
 		}
