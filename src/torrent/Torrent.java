@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 import javax.swing.JProgressBar;
 
+import com.sun.org.apache.bcel.internal.generic.NEW;
+
 import settings.GeneralSettings;
 import torrent.peer.*;
 import torrent.piece.*;
@@ -21,7 +23,8 @@ public class Torrent {
 	private PieceManager pieceManager;
 	public static String PEER_ID = PeerIDGenerator.generateID();
 	private JProgressBar progressBar;
-	private DynamicFlowLabel upload, download;
+	private DynamicFlowLabel upload = new DynamicFlowLabel(),
+			download = new DynamicFlowLabel();
 
 	/**
 	 * comstructeur avec numero de port
@@ -41,7 +44,6 @@ public class Torrent {
 		progressBar = new JProgressBar(0, 100);
 		progressBar.setStringPainted(true);
 		progressBar.setForeground(GeneralSettings.PROGRESS_COLOR);
-
 		System.out.println(this.metainfo);
 	}
 

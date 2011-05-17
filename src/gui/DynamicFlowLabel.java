@@ -14,7 +14,7 @@ public class DynamicFlowLabel extends JLabel implements Runnable {
 	private boolean finished = false;
 
 	public DynamicFlowLabel() {
-		new Thread(this).run();
+		new Thread(this).start();
 	}
 
 	public void add(int amount) {
@@ -31,7 +31,25 @@ public class DynamicFlowLabel extends JLabel implements Runnable {
 			for (int i = 0; i < lastAmounts.length; i++) {
 				n += lastAmounts[i];
 			}
-			this.setText(n / lastAmounts.length + " bytes/sec");
+			n /= lastAmounts.length;
+			String s = "bytes/sec";
+			switch ((int) (Math.log(n) / Math.log(2) / 10)) {
+			case (0):
+				s = n + " " + s;
+				break;
+			case (1):
+				s = n / (1 << 10) + " K" + s;
+				break;
+			case (2):
+				s = n / (1 << 20) + " M" + s;
+				break;
+			case (3):
+				s = n / (1 << 30) + " G" + s;
+				break;
+
+			}
+			this.setText(s);
+			// System.err.println(s);
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
