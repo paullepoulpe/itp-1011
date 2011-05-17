@@ -9,6 +9,7 @@ import java.util.ListIterator;
 
 import IO.TorrentFileWriter;
 
+import settings.GeneralSettings;
 import torrent.Metainfo;
 import torrent.Torrent;
 
@@ -21,7 +22,6 @@ import torrent.Torrent;
 public class PieceManager {
 	private ArrayList<Piece> allPieces;
 	private LinkedList<Piece> piecesOfInterest, leftPieces;
-	final static int MAX_NUM_OF_PIECES = 50;
 	private Torrent torrent;
 	private TorrentFileWriter writer;
 
@@ -35,7 +35,8 @@ public class PieceManager {
 		leftPieces.addAll(allPieces);
 		// On melange toutes les pieces
 		Collections.shuffle(this.leftPieces);
-		for (int i = 0; i < MAX_NUM_OF_PIECES && i < leftPieces.size(); i++) {
+		for (int i = 0; i < GeneralSettings.MAX_NUM_OF_CURRENT_PIECES
+				&& i < leftPieces.size(); i++) {
 			piecesOfInterest.add(leftPieces.get(i));
 		}
 		leftPieces.removeAll(piecesOfInterest);
@@ -178,5 +179,9 @@ public class PieceManager {
 
 	public Piece getPiece(int index) {
 		return allPieces.get(index);
+	}
+
+	public Piece[] getCurrentPieces() {
+		return piecesOfInterest.toArray(new Piece[piecesOfInterest.size()]);
 	}
 }
