@@ -9,6 +9,13 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import torrent.Torrent;
 
@@ -17,27 +24,14 @@ public class MainFrame extends JFrame implements Runnable {
 	private TorrentTable tableTorrent;
 	private MenuBar menu;
 	private Container c;
-	private JTabbedPane torrentInfo;
+	private TorrentTabPane torrentInfo;
 
 	public MainFrame(ArrayList<Torrent> torrents) {
 		super("MAARTENTORRENT ;P hihihi ^^");
 		this.torrentz = torrents;
 		c = getContentPane();
 		c.setLayout(new BorderLayout());
-
-		try {
-			if (System.getProperty("os.name").equals("Linux")) {
-				UIManager
-						.setLookAndFeel(UIManager.getInstalledLookAndFeels()[1]
-								.getClassName());
-			} else {
-				UIManager
-						.setLookAndFeel(UIManager.getInstalledLookAndFeels()[3]
-								.getClassName());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		setUI();
 		menu = new MenuBar();
 		menu.getAdd().addActionListener(new ActionListener() {
 			@Override
@@ -52,20 +46,19 @@ public class MainFrame extends JFrame implements Runnable {
 			}
 		});
 		c.add(menu, BorderLayout.NORTH);
-
+		
 		tableTorrent = new TorrentTable(torrentz);
-		/*
-		 * torrentInfo = new JTabbedPane(); TorrentInfoTab tInfo = new
-		 * TorrentInfoTab("Info"); torrentInfo.add(tInfo.getName(), tInfo);
-		 * c.add(torrentInfo, BorderLayout.CENTER);
-		 */
-
 		c.add(tableTorrent, BorderLayout.SOUTH);
+		
+		torrentInfo = new TorrentTabPane();
+		tableTorrent.getTable().addMouseListener(torrentInfo);
+		c.add(torrentInfo, BorderLayout.CENTER);
+		
 		setExtendedState(MAXIMIZED_BOTH);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setIconImage(Toolkit.getDefaultToolkit().getImage("src/gui/ico1.png"));
 
-		setSize(new Dimension(800, 500));
+		setSize(new Dimension(1000, 700));
 		setVisible(true);
 		if (torrentz.size() == 0)
 			addTorrent();
@@ -98,6 +91,7 @@ public class MainFrame extends JFrame implements Runnable {
 		remove(tableTorrent);
 		torrentz.add(t);
 		tableTorrent = new TorrentTable(torrentz);
+		tableTorrent.getTable().addMouseListener(torrentInfo);
 		c.add(tableTorrent, BorderLayout.SOUTH);
 		if (JOptionPane.YES_OPTION == JOptionPane
 				.showConfirmDialog(
@@ -109,6 +103,23 @@ public class MainFrame extends JFrame implements Runnable {
 		}
 		validate();
 		tableTorrent.revalidate();
+	}
+
+	public void setUI() {
+		try {
+			if (System.getProperty("os.name").equals("Linux")) {
+				UIManager
+						.setLookAndFeel(UIManager.getInstalledLookAndFeels()[1]
+								.getClassName());
+			} else {
+				UIManager
+						.setLookAndFeel(UIManager.getInstalledLookAndFeels()[3]
+								.getClassName());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+//		setResizable(false);
 	}
 
 	public Torrent selectedTorrent() {

@@ -25,9 +25,6 @@ public class TorrentTableModel extends AbstractTableModel {
 			Torrent ti = t.get(i);
 			to[i][0] = ti.getMetainfo().getFileName();
 			to[i][1] = ti.getProgressBar();
-			// UpdateProgressBar updater = new UpdateProgressBar(ti, i);
-			// updater.addPropertyChangeListener(this);
-			// updater.execute();
 			to[i][2] = t.get(i).getMetainfo().getSize() + " Bytes";
 			to[i][3] = ti.getUpload();
 			to[i][4] = ti.getDownload();
@@ -51,16 +48,18 @@ public class TorrentTableModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		// System.err.println("Value read in TableModel at row " + rowIndex
-		// + " col " + columnIndex);
 		return to[rowIndex][columnIndex];
 	}
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		// System.err.println("Value set in TableModel at row " + rowIndex
-		// + " col " + columnIndex);
-		to[rowIndex][columnIndex] = aValue;
+		try {
+			to[rowIndex][columnIndex] = aValue;
+		} catch (ArrayIndexOutOfBoundsException e) {
+			throw new ArrayIndexOutOfBoundsException("Tried updating value at "
+					+ rowIndex + " " + columnIndex + "which is object : "
+					+ to[rowIndex][columnIndex]);
+		}
 	}
 
 	public String getColumnName(int col) {
