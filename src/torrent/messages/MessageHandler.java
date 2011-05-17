@@ -37,10 +37,11 @@ public class MessageHandler implements MessageVisitor {
 		// si on recoit cela, on doit idealement preparer un message
 		// SendBloc dans notre queue de messages avec les attributs de request
 
-		SendBlock sendBlock = new SendBlock(r.getIndex(), r.getBegin(),
-				torrent.getPieceManager().getPiece(r.getIndex()).getBlock(r.getBegin()));
+		SendBlock sendBlock = new SendBlock(r.getIndex(), r.getBegin(), torrent
+				.getPieceManager().getPiece(r.getIndex())
+				.getBlock(r.getBegin()));
 		peerHandler.addAEnvoyer(sendBlock);
-
+		peerHandler.sentBlock();
 		System.out.println("Recu un request pour piece : " + r.getIndex()
 				+ ", bloc : " + r.getBegin());
 		peerHandler.multiplyNotation(1.001);
@@ -104,7 +105,7 @@ public class MessageHandler implements MessageVisitor {
 		 */
 		Piece entering = null;
 		entering = torrent.getPieceManager().getPiece(s.getPieceIndex());
-		// torrent.setBlocsReceived();
+		peerHandler.receivedBlock();
 
 		entering.feed(s.getBlocIndex(), s.getBloc());
 		peerHandler.removeRequest(new Request(s.getPieceIndex(), s

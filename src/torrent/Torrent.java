@@ -19,7 +19,6 @@ public class Torrent {
 	private int numPort;
 	private PieceManager pieceManager;
 	public static String PEER_ID = PeerIDGenerator.generateID();
-	private long lastBlockReceived, downloadSpeed, uploadSpeed;
 	private JProgressBar progressBar;
 
 	/**
@@ -101,21 +100,6 @@ public class Torrent {
 		peerManager.addPeer(socket);
 	}
 
-	public long getUpload() {
-		return this.uploadSpeed;
-	}
-
-	public void setBlocsReceived() {
-		long currentTime = System.currentTimeMillis();
-		this.downloadSpeed = (Piece.BLOCK_SIZE)
-				/ ((currentTime - lastBlockReceived) * 1000);
-		this.lastBlockReceived = System.currentTimeMillis();
-	}
-
-	public long getDownload() {
-		return downloadSpeed;
-	}
-
 	public JProgressBar getProgressBar() {
 		progressBar.setValue((int) pieceManager.getDownloadedCompleteness());
 		return progressBar;
@@ -123,7 +107,6 @@ public class Torrent {
 
 	public void notifyPeerHandlers(int index) {
 		peerManager.notifyPeerHandlers(index);
-
 	}
 
 	public void stop() {
