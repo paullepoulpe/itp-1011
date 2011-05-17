@@ -5,30 +5,30 @@ import javax.swing.border.TitledBorder;
 
 import torrent.*;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.*;
 import java.util.ArrayList;
 
 public class TorrentInfoTab extends JPanel {
-	private String name;
 	private Torrent torrent;
 
-	public TorrentInfoTab(String name) {
-		this.name = name;
-		add(new JButton("TEST"));
+	public TorrentInfoTab(Torrent t) {
+		torrent = t;
+		add(new JButton("TEST"+torrent.getMetainfo().getFileName()));
 		setBorder(new TitledBorder("INFO TAB"));
-		torrent = ((MainFrame)getParent()).selectedTorrent();
 		System.out.println(torrent.getMetainfo().getFileName());
 	}
-	public String getName() {
-		return name;
-	}
+
 }
 
 class TorrentInfoTabtest {
 	public static void main(String[] args) {
-		ArrayList<Torrent> tor = new ArrayList<Torrent>();
-//		tor.add(new Torrent(new File("data/glee.torrent")));
-		tor.add(new Torrent(new File("data/BEP.torrent")));
-		new Thread( new MainFrame(tor)).start();
+		JFrame fen = new JFrame ("Test TOrrentInfoTab");
+		Torrent t = new Torrent(new File("data/glee.torrent"));
+		TorrentInfoTab tab = new TorrentInfoTab(t);
+		fen.getContentPane().add(tab);
+		fen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		fen.setVisible(true);
 	}
 }

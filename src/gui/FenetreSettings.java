@@ -225,7 +225,7 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		int n = JOptionPane
 				.showConfirmDialog(
 						this,
-						"Si vous fermez cette fenetre, les paramètres ne seronts pas sauvegardés !",
+						"Si vous fermez cette fenetre, les parametres ne seront pas sauvegardes !",
 						"Attention", JOptionPane.OK_CANCEL_OPTION);
 		if (n == JOptionPane.OK_OPTION) {
 			close();

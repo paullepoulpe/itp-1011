@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
@@ -23,16 +24,16 @@ public class TorrentTable extends JPanel {
 	public TorrentTable(ArrayList<Torrent> t) {
 		torrentlist = t;
 		setLayout(new FlowLayout());
+		setBorder(new TitledBorder("Torrent list"));
 		table = constructTable();
 		popup = new JPopupMenu();
-
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				int i = table.getSelectedRow();
 				if (e.isPopupTrigger() && (i > -1)) {
 					popup = new TorrentPopupMenu(torrentlist.get(i));
-					popup.show(TorrentTable.this.getTable(),  e.getX(), e.getY());
+					popup.show(TorrentTable.this.getTable(), e.getX(), e.getY());
 				}
 			}
 
@@ -44,11 +45,12 @@ public class TorrentTable extends JPanel {
 		add(new JScrollPane(table));
 	}
 
-	public JTable constructTable() {
+	public synchronized JTable constructTable() {
 		removeAll();
 		tm = new TorrentTableModel(torrentlist);
 		table = new JTable(tm);
-		table.setPreferredScrollableViewportSize(new Dimension(800, 100));
+		table.setPreferredScrollableViewportSize(new Dimension(950, 100));
+
 		table.getColumnModel().getColumn(0).setPreferredWidth(500);
 		table.getColumnModel().getColumn(1).setPreferredWidth(300);
 		table.setDefaultRenderer(Component.class, new TableCellRenderer() {
@@ -79,6 +81,9 @@ public class TorrentTable extends JPanel {
 
 	public int getSelectedRow() {
 		return table.getSelectedRow();
+	}
+	public Torrent getSelectedTorrent(){
+		return torrentlist.get(getSelectedRow());
 	}
 
 	public void updateProgressBar() {
