@@ -1,5 +1,7 @@
 package torrent.piece;
 
+import gui.FunnyBar;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ public class Piece {
 	private boolean isChecked = false;
 	static public int BLOCK_SIZE = 1 << 14;
 	private ArrayList<ArrayList<PeerHandler>> peerHandlers;
+	private FunnyBar funnyBar;
 
 	/**
 	 * Constructeur
@@ -47,6 +50,7 @@ public class Piece {
 		for (int i = 0; i < nbBlocs; i++) {
 			peerHandlers.add(new ArrayList<PeerHandler>());
 		}
+		funnyBar = new FunnyBar(sizeTab);
 	}
 
 	/**
@@ -100,6 +104,7 @@ public class Piece {
 				throw new IllegalArgumentException(
 						"Mauvais index de début de bloc");
 			}
+			funnyBar.add(begin / BLOCK_SIZE);
 			/*
 			 * la taille du bloc doit etre egale a BLOCK_SIZE exepte pour le
 			 * dernier bloc et le dernier bloc doit tenir dans le tableau
@@ -196,6 +201,7 @@ public class Piece {
 	 * Remet a zero la piece
 	 */
 	private void reset() {
+		funnyBar.removeAll();
 		for (int i = 0; i < this.nbBlocs; i++) {
 			this.receipt[i] = false;
 		}
@@ -294,5 +300,9 @@ public class Piece {
 	@Override
 	public String toString() {
 		return index + "";
+	}
+
+	public FunnyBar getFunnyBar() {
+		return funnyBar;
 	}
 }

@@ -1,5 +1,7 @@
 package torrent.piece;
 
+import gui.FunnyBar;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,6 +26,7 @@ public class PieceManager {
 	private LinkedList<Piece> piecesOfInterest, leftPieces;
 	private Torrent torrent;
 	private TorrentFileWriter writer;
+	private FunnyBar funnyBar;
 
 	public PieceManager(Torrent torrent) {
 		this.torrent = torrent;
@@ -40,6 +43,8 @@ public class PieceManager {
 			piecesOfInterest.add(leftPieces.get(i));
 		}
 		leftPieces.removeAll(piecesOfInterest);
+		funnyBar = new FunnyBar((int) Math.ceil((double) torrent.getMetainfo()
+				.getSize() / (double) Piece.BLOCK_SIZE));
 
 	}
 
@@ -183,5 +188,9 @@ public class PieceManager {
 
 	public Piece[] getCurrentPieces() {
 		return piecesOfInterest.toArray(new Piece[piecesOfInterest.size()]);
+	}
+
+	public FunnyBar getFunnyBar() {
+		return funnyBar;
 	}
 }
