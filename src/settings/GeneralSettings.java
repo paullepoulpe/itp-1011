@@ -6,7 +6,7 @@ import java.io.File;
 public class GeneralSettings {
 	public static int NUMWANT = 50;
 	public static boolean ENCRYPTION_ENABLED = false;
-	public static int NB_MAX_PEERHANDLERS = 150;
+	public static int NB_MAX_PEERHANDLERS = 100;
 	public static int NB_MAX_REQUESTS = 25;
 	public static int MAX_NUM_OF_CURRENT_PIECES = 50;
 	public static long PEER_RESPONSE_DELAY = 100;
@@ -21,7 +21,7 @@ public class GeneralSettings {
 	public static void restoreDefaultValues() {
 		NUMWANT = 50;
 		ENCRYPTION_ENABLED = false;
-		NB_MAX_PEERHANDLERS = 150;
+		NB_MAX_PEERHANDLERS = 100;
 		NB_MAX_REQUESTS = 15;
 		MAX_NUM_OF_CURRENT_PIECES = 50;
 		PEER_RESPONSE_DELAY = 100;
