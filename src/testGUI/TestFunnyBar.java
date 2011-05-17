@@ -18,7 +18,7 @@ public class TestFunnyBar {
 		f.setVisible(true);
 		f.add(fb);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 20; i = (((i + 1) * (int) (Math.random() * 13))) % 20) {
 			fb.add(i);
 			try {
 				Thread.sleep(1000);

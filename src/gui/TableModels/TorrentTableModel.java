@@ -26,8 +26,8 @@ public class TorrentTableModel extends AbstractTableModel {
 			to[i][0] = ti.getMetainfo().getFileName();
 			to[i][1] = ti.getProgressBar();
 			to[i][2] = t.get(i).getMetainfo().getSizeString();
-			to[i][3] = /* ti.getUpload() */456;
-			to[i][4] = /* ti.getDownload() */234;
+			to[i][3] = ti.getUpload();
+			to[i][4] = ti.getDownload();
 		}
 
 	}
@@ -61,6 +61,7 @@ public class TorrentTableModel extends AbstractTableModel {
 	public String getColumnName(int col) {
 		return colNames[col];
 	}
+
 	@Override
 	public Class getColumnClass(int columnIndex) {
 		return getValueAt(0, columnIndex).getClass();
