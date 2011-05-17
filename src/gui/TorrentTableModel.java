@@ -42,10 +42,6 @@ public class TorrentTableModel extends AbstractTableModel {
 		return to.length;
 	}
 
-	public Class getColumnClass(int c) {
-		return getValueAt(0, c).getClass();
-	}
-
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		return to[rowIndex][columnIndex];
