@@ -1,5 +1,7 @@
 package gui;
 
+import gui.TableModels.TorrentTableModel;
+
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -14,6 +16,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 
 import torrent.Torrent;
+import src.gui.TableModels.*;
 
 public class TorrentTable extends JPanel {
 	private JTable table;

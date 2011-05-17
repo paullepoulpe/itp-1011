@@ -194,6 +194,26 @@ public class Metainfo {
 	public int getSize() {
 		return size;
 	}
+	public String getSizeString(){
+		int power = (int) Math.floor(Math.log(size)/(10*Math.log(2)));
+		int div = (int) Math.pow(2, 10 * power);
+		String s = Math.floor((100*(long)size)/div)/100+" ";
+		switch (power){
+			case 0:
+				s+= "Bytes";
+				break;
+			case 1:
+				s+="kB";
+				break;
+			case 2:
+				s+="MB";
+				break;
+			case 3:
+				s+="GB";
+				break;
+				}
+		return s;
+	}
 
 	public Date getCreationDate() {
 		return creationDate;
