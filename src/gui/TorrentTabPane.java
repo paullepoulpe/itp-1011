@@ -1,5 +1,7 @@
 package gui;
 
+import gui.TorrentTabs.*;
+
 import java.awt.event.*;
 
 import javax.swing.*;
@@ -48,7 +50,7 @@ public class TorrentTabPane extends JTabbedPane implements MouseListener {
 	private void contructAllTabs() {
 		removeAll();
 		info = new TorrentInfoTab(currentTorrent);
-//		peers = new TorrentPeersTab(currentTorrent);
+		peers = new TorrentPeersTab(currentTorrent);
 		pieces = new TorrentPiecesTab(currentTorrent);
 		addTabs();
 	}
