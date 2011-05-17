@@ -1,5 +1,7 @@
 package torrent.peer;
 
+import gui.DynamicFlowLabel;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.Arrays;
@@ -40,11 +42,8 @@ public class PeerHandler extends Thread {
 	private boolean encryptionEnabled = false;
 	private long lastTimeFlush;
 	private PeerSettings settings;
-	private int instantBlockSent = 0;
-	private int[] lastUploadRates = new int[4];
-	private int instantBlockReceived = 0;
-	private int[] lastDownloadRates = new int[4];
-	private int indexDebit = 0;
+	private DynamicFlowLabel upload = new DynamicFlowLabel(),
+			download = new DynamicFlowLabel();
 
 	public PeerHandler(Peer peer, Torrent torrent, boolean encryptionEnabled) {
 		this(torrent, encryptionEnabled);
@@ -139,7 +138,6 @@ public class PeerHandler extends Thread {
 
 	public void setChocking(boolean isChocking) {
 		this.isChocking = isChocking;
-		System.err.println(this.getId());
 	}
 
 	/**
@@ -301,8 +299,8 @@ public class PeerHandler extends Thread {
 		SendSymmetricKey theirSym = new SendSymmetricKey(input);
 		if (ourSym.getId() != theirSym.getId())
 			return false;
-		output = new DataOutputStream(new SymmetricOutputStream(theirSym
-				.getXORKey(), output));
+		output = new DataOutputStream(new SymmetricOutputStream(
+				theirSym.getXORKey(), output));
 		input = new DataInputStream(new SymmetricInputStream(
 				ourSym.getXORKey(), input));
 		return true;
@@ -439,30 +437,20 @@ public class PeerHandler extends Thread {
 		peer.multiplyNotation(d);
 	}
 
-	public int[] getDebit() {
-		int n = 0;
-		int m = 0;
-		lastDownloadRates[indexDebit] = instantBlockReceived * Piece.BLOCK_SIZE;
-		lastUploadRates[indexDebit] = instantBlockSent * Piece.BLOCK_SIZE;
-		instantBlockReceived = 0;
-		instantBlockSent = 0;
-		indexDebit = (indexDebit + 1) % lastDownloadRates.length;
-
-		for (int i = 0; i < lastDownloadRates.length; i++) {
-			n += lastDownloadRates[i];
-			m += lastUploadRates[i];
-		}
-		int[] retour = { n / lastDownloadRates.length,
-				m / lastDownloadRates.length };
-		return retour;
-	}
-
 	public void receivedBlock() {
-		instantBlockReceived++;
+		download.add(Piece.BLOCK_SIZE);
 	}
 
 	public void sentBlock() {
-		instantBlockSent++;
+		upload.add(Piece.BLOCK_SIZE);
+	}
+
+	public DynamicFlowLabel getDownload() {
+		return download;
+	}
+
+	public DynamicFlowLabel getUpload() {
+		return upload;
 	}
 
 }
