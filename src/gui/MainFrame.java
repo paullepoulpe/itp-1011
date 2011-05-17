@@ -27,7 +27,7 @@ public class MainFrame extends JFrame implements Runnable {
 	private TorrentTabPane torrentInfo;
 
 	public MainFrame(ArrayList<Torrent> torrents) {
-		super("MAARTENTORRENT ;P hihihi ^^");
+		super("DART");
 		this.torrentz = torrents;
 		c = getContentPane();
 		c.setLayout(new BorderLayout());

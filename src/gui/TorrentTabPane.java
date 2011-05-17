@@ -11,8 +11,7 @@ public class TorrentTabPane extends JTabbedPane implements MouseListener {
 	private Torrent currentTorrent;
 
 	public TorrentTabPane() {
-//		setTabLayoutPolicy(VERTICAL); Mettre les noms en vertical???
-		setTabPlacement(LEFT);
+		setTabPlacement(BOTTOM);
 		info = new JPanel();
 		peers = new JPanel();
 		pieces = new JPanel();
