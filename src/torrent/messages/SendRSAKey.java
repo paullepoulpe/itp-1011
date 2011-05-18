@@ -42,6 +42,8 @@ public class SendRSAKey extends Message {
 
 		int m = in.readInt();
 		byte[] modBytes = new byte[m];
+		while (in.available() < m) {
+		}
 		in.readFully(modBytes);
 		mod = new BigInteger(modBytes);
 
