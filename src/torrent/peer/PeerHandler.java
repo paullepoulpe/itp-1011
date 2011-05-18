@@ -9,6 +9,7 @@ import java.util.LinkedList;
 
 import crypto.KeyGenerator;
 import crypto.RSA.*;
+import crypto.XOR.*;
 
 import torrent.Torrent;
 import torrent.messages.*;
@@ -294,15 +295,16 @@ public class PeerHandler extends Thread {
 		output = new DataOutputStream(new RSAOutputStream(
 				theirRSA.getKeyPair(), output));
 
-		SendSymmetricKey ourSym = new SendSymmetricKey();
-		ourSym.send(output);
+		// SendSymmetricKey ourSym = new SendSymmetricKey();
+		// ourSym.send(output);
 		SendSymmetricKey theirSym = new SendSymmetricKey(input);
-		if (ourSym.getId() != theirSym.getId())
-			return false;
-		output = new DataOutputStream(new SymmetricOutputStream(
-				theirSym.getXORKey(), output));
-		input = new DataInputStream(new SymmetricInputStream(
-				ourSym.getXORKey(), input));
+		System.out.println(theirSym);
+		// if (ourSym.getId() != theirSym.getId())
+		// return false;
+		// output = new DataOutputStream(new SymmetricOutputStream(
+		// theirSym.getXORKey(), output));
+		// input = new DataInputStream(new SymmetricInputStream(
+		// ourSym.getXORKey(), input));
 		return true;
 	}
 

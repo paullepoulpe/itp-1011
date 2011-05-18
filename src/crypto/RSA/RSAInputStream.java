@@ -21,21 +21,50 @@ public class RSAInputStream extends InputStream {
 
 	@Override
 	public int read() throws IOException {
+		System.out.println("Je Lis dans le rsaStream");
 		byte[] bytes = new byte[keyPair.getModLength() / 8 + 1];
-		if (in.available() < bytes.length) {
-			return -1;
-		}
+		// if (available() <= 0) {
+		// return -1;
+		// }
 		in.readFully(bytes);
 		BigInteger read = new BigInteger(bytes);
 		int n = keyPair.decrypt(read).intValue();
 		if (n < 0 || n > 255) {
-			throw new IOException();
+			System.err.println("InvalidByteRead");
 		}
-		return n;
+		System.out.println("Lu : " + n);
+		return n & 0xff;
 	}
 
+	@Override
+	public int available() throws IOException {
+		return in.available() / (keyPair.getModLength() / 8 + 1);
+	}
+
+	@Override
 	public void close() throws IOException {
 		in.close();
+		super.close();
+	}
+
+	@Override
+	public boolean markSupported() {
+		return false;
+	}
+
+	@Override
+	public int read(byte[] b) throws IOException {
+		int n = 0;
+		boolean stop = false;
+		for (int i = 0; i < b.length && !stop; i++) {
+			if (available() > 0) {
+				b[i] = (byte) (0xff & read());
+				n++;
+			} else {
+				stop = true;
+			}
+		}
+		return n;
 	}
 
 }
