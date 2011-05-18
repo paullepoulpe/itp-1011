@@ -29,7 +29,6 @@ public class TorrentTableModel extends AbstractTableModel {
 			to[i][3] = ti.getUpload();
 			to[i][4] = ti.getDownload();
 		}
-
 	}
 
 	@Override
