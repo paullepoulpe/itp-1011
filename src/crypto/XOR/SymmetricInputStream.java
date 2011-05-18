@@ -11,20 +11,37 @@ import java.math.BigInteger;
  * 
  */
 public class SymmetricInputStream extends InputStream {
-	private byte[] XORKey;
+	private SymetricKey XORKey;
 	private DataInputStream in;
 
-	public SymmetricInputStream(byte[] key, DataInputStream in) {
+	public SymmetricInputStream(SymetricKey key, DataInputStream in) {
+		System.out.println("Nouveau XORInputStream!");
 		this.XORKey = key;
-		this.in=in;
+		this.in = in;
 	}
 
 	@Override
 	public int read() throws IOException {
-		int messageLength = in.readInt();
-		int read = in.read();
-		int key = (XORKey[3]<<12)+(XORKey[2]<<8)+(XORKey[1]<<4)+XORKey[0];
-		int decrypt = read^key;
-		return decrypt;
+		System.out.println("Je lis dans le symStream");
+		int n = in.read();
+		if (n < 0 || n > 255) {
+			return -1;
+		} else {
+			int b = (n & 0xff) ^ XORKey.getNext();
+			System.out.println("Lu : " + b);
+			return b;
+
+		}
+	}
+
+	@Override
+	public void close() throws IOException {
+		in.close();
+		super.close();
+	}
+
+	@Override
+	public int available() throws IOException {
+		return in.available();
 	}
 }
