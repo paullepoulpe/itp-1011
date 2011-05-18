@@ -93,6 +93,8 @@ public class TorrentTable extends JPanel {
 		for (int i = 0; i < torrentlist.size(); i++) {
 			table.setValueAt(torrentlist.get(i).getProgressBar(), i, 1);
 			tm.fireTableCellUpdated(i, 1);
+			tm.fireTableCellUpdated(i, 3);
+			tm.fireTableCellUpdated(i, 4);
 		}
 	}
 
