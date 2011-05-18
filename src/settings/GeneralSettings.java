@@ -5,7 +5,7 @@ import java.io.File;
 
 public class GeneralSettings {
 	public static int NUMWANT = 50;
-	public static boolean ENCRYPTION_ENABLED = true;
+	public static boolean ENCRYPTION_ENABLED = false;
 	public static int NB_MAX_PEERHANDLERS = 100;
 	public static int NB_MAX_REQUESTS = 25;
 	public static int MAX_NUM_OF_CURRENT_PIECES = 50;
