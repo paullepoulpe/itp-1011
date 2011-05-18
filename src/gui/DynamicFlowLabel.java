@@ -6,6 +6,8 @@
 package gui;
 
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 public class DynamicFlowLabel extends JLabel implements Runnable {
 	private int instantAmount = 0;
@@ -14,6 +16,20 @@ public class DynamicFlowLabel extends JLabel implements Runnable {
 	private boolean finished = false;
 
 	public DynamicFlowLabel() {
+		try {
+			if (System.getProperty("os.name").equals("Linux")) {
+				UIManager
+						.setLookAndFeel(UIManager.getInstalledLookAndFeels()[1]
+								.getClassName());
+			} else {
+				UIManager
+						.setLookAndFeel(UIManager.getInstalledLookAndFeels()[3]
+								.getClassName());
+			}
+			SwingUtilities.updateComponentTreeUI(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		new Thread(this).start();
 	}
 
