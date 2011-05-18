@@ -1,4 +1,4 @@
-package crypto.RSA;
+package crypto.XOR;
 
 import java.io.*;
 import java.math.BigInteger;
@@ -21,6 +21,6 @@ public class SymmetricOutputStream extends OutputStream {
 
 	@Override
 	public void write(int b) throws IOException {
-		
+
 	}
 }

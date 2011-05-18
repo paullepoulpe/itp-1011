@@ -1,4 +1,4 @@
-package crypto.RSA;
+package crypto.XOR;
 
 import java.io.*;
 import java.math.BigInteger;
