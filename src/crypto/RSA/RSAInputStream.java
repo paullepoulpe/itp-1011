@@ -2,6 +2,7 @@ package crypto.RSA;
 
 import java.io.*;
 import java.math.BigInteger;
+import java.util.Arrays;
 
 /**
  * Cette classe represente le canal securise a travers lequel le pair pourra
@@ -26,7 +27,12 @@ public class RSAInputStream extends InputStream {
 		// if (available() <= 0) {
 		// return -1;
 		// }
+		System.out.println("Taille du tableau a lire: " + bytes.length);
+		while (available() <= 0) {
+		}
 		in.readFully(bytes);
+		System.out.println("Tableau lu : " + Arrays.toString(bytes));
+
 		BigInteger read = new BigInteger(bytes);
 		int n = keyPair.decrypt(read).intValue();
 		if (n < 0 || n > 255) {

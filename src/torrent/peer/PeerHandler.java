@@ -262,16 +262,11 @@ public class PeerHandler extends Thread {
 	private boolean shakeHands() throws IOException {
 		if (!finished) {
 			Handshake ourHS = new Handshake(torrent);
-			System.out
-					.println(socket.getInetAddress() + "/" + socket.getPort());
 			if (encryptionEnabled) {
 				ourHS.setEncryptionEnabled();
 			}
 			ourHS.send(output);
-			System.out.println("Handshake envoyé");
 			Handshake theirHS = new Handshake(input);
-			System.out.println("Handshake recu");
-			System.out.println(Arrays.toString(theirHS.getReserved()));
 			this.peer.setId(theirHS.getPeerID());
 
 			return theirHS.isCompatible(ourHS);
@@ -281,30 +276,35 @@ public class PeerHandler extends Thread {
 	}
 
 	private boolean shareKeys() throws IOException {
-		System.out.println("Encryption supportée, echange de clés");
-		KeyPair myKey = KeyGenerator.generateRSAKeyPair(settings
-				.getPrivateRSAModLength());
+		try {
 
-		SendRSAKey ourRSA = new SendRSAKey(myKey);
-		ourRSA.send(output);
-		System.out.println(ourRSA);
-		SendRSAKey theirRSA = new SendRSAKey(input);
-		System.out.println(theirRSA);
+			System.out.println("Encryption supportée, echange de clés");
+			KeyPair myKey = KeyGenerator.generateRSAKeyPair(settings
+					.getPrivateRSAModLength());
 
-		input = new DataInputStream(new RSAInputStream(myKey, input));
-		output = new DataOutputStream(new RSAOutputStream(
-				theirRSA.getKeyPair(), output));
+			SendRSAKey ourRSA = new SendRSAKey(myKey);
+			ourRSA.send(output);
+			SendRSAKey theirRSA = new SendRSAKey(input);
+			System.out.println("Ma clé : " + ourRSA);
+			System.out.println("Sa clé : " + theirRSA);
 
-		// SendSymmetricKey ourSym = new SendSymmetricKey();
-		// ourSym.send(output);
-		SendSymmetricKey theirSym = new SendSymmetricKey(input);
-		System.out.println(theirSym);
-		// if (ourSym.getId() != theirSym.getId())
-		// return false;
-		// output = new DataOutputStream(new SymmetricOutputStream(
-		// theirSym.getXORKey(), output));
-		// input = new DataInputStream(new SymmetricInputStream(
-		// ourSym.getXORKey(), input));
+			input = new DataInputStream(new RSAInputStream(myKey, input));
+			output = new DataOutputStream(new RSAOutputStream(
+					theirRSA.getKeyPair(), output));
+
+			// SendSymmetricKey ourSym = new SendSymmetricKey();
+			// ourSym.send(output);
+			SendSymmetricKey theirSym = new SendSymmetricKey(input);
+			System.out.println(theirSym);
+			// if (ourSym.getId() != theirSym.getId())
+			// return false;
+			// output = new DataOutputStream(new SymmetricOutputStream(
+			// theirSym.getXORKey(), output));
+			// input = new DataInputStream(new SymmetricInputStream(
+			// ourSym.getXORKey(), input));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return true;
 	}
 
