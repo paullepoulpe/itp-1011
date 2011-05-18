@@ -3,6 +3,7 @@ package torrent.messages;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import crypto.KeyGenerator;
 
@@ -23,9 +24,10 @@ public class SendSymmetricKey extends Message {
 
 	public SendSymmetricKey(DataInputStream in) throws IOException {
 		int messageLength = in.readInt();
+		System.out.println("Longueur : " + messageLength);
 		this.id = in.read();
 		this.XORKey = new byte[messageLength - 1];
-		in.read(XORKey);
+		in.readFully(XORKey);
 	}
 
 	@Override
@@ -47,5 +49,10 @@ public class SendSymmetricKey extends Message {
 
 	public int getId() {
 		return id;
+	}
+
+	@Override
+	public String toString() {
+		return id + " : " + Arrays.toString(XORKey);
 	}
 }
