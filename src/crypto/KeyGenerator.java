@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Random;
 import crypto.RSA.*;
+import crypto.XOR.SymetricKey;
 
 public class KeyGenerator {
 
@@ -47,10 +48,10 @@ public class KeyGenerator {
 	 *            la longueur de la cle
 	 * @return Une cle sous forme de byte[] de longueur length
 	 */
-	public static byte[] generateSymmetricKey(int length) {
+	public static SymetricKey generateSymmetricKey(int length) {
 		SecureRandom rd = new SecureRandom();
 		byte[] key = new byte[length];
 		rd.nextBytes(key);
-		return key;
+		return new SymetricKey(key);
 	}
 }

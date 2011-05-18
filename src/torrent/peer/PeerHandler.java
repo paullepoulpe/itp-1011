@@ -42,7 +42,6 @@ public class PeerHandler extends Thread {
 	private boolean connecte = false;
 	private boolean encryptionEnabled = false;
 	private long lastTimeFlush;
-	private PeerSettings settings;
 	private DynamicFlowLabel upload = new DynamicFlowLabel(),
 			download = new DynamicFlowLabel();
 
@@ -60,7 +59,6 @@ public class PeerHandler extends Thread {
 	}
 
 	private PeerHandler(Torrent torrent, boolean encryptionEnabled) {
-		this.settings = new PeerSettings();
 		this.encryptionEnabled = encryptionEnabled;
 		this.messageHandler = new MessageHandler(this, torrent);
 		this.pieceMgr = torrent.getPieceManager();
@@ -118,6 +116,7 @@ public class PeerHandler extends Thread {
 			}
 
 		} catch (IOException e) {
+			e.printStackTrace();
 			System.out.println("Peer deconnecte");
 			peer.multiplyNotation(0.1);
 			this.finish();
@@ -279,29 +278,34 @@ public class PeerHandler extends Thread {
 		try {
 
 			System.out.println("Encryption supportée, echange de clés");
-			KeyPair myKey = KeyGenerator.generateRSAKeyPair(settings
-					.getPrivateRSAModLength());
+			KeyPair myKey = KeyGenerator
+					.generateRSAKeyPair(CryptoSettings.RSAKeySize);
 
 			SendRSAKey ourRSA = new SendRSAKey(myKey);
 			ourRSA.send(output);
 			SendRSAKey theirRSA = new SendRSAKey(input);
-			System.out.println("Ma clé : " + ourRSA);
-			System.out.println("Sa clé : " + theirRSA);
+			System.out.println("Ma cleRSA : " + ourRSA);
+			System.out.println("Sa cleRSA : " + theirRSA);
 
-			input = new DataInputStream(new RSAInputStream(myKey, input));
-			output = new DataOutputStream(new RSAOutputStream(
+			DataInputStream in = new DataInputStream(new RSAInputStream(myKey,
+					input));
+			DataOutputStream out = new DataOutputStream(new RSAOutputStream(
 					theirRSA.getKeyPair(), output));
 
-			// SendSymmetricKey ourSym = new SendSymmetricKey();
-			// ourSym.send(output);
-			SendSymmetricKey theirSym = new SendSymmetricKey(input);
-			System.out.println(theirSym);
-			// if (ourSym.getId() != theirSym.getId())
-			// return false;
-			// output = new DataOutputStream(new SymmetricOutputStream(
-			// theirSym.getXORKey(), output));
-			// input = new DataInputStream(new SymmetricInputStream(
-			// ourSym.getXORKey(), input));
+			SendSymmetricKey ourSym = new SendSymmetricKey();
+			System.out.println("Ma cle XOR" + ourSym);
+			ourSym.send(out);
+			SendSymmetricKey theirSym = new SendSymmetricKey(in);
+			System.out.println("Sa cle XOR" + theirSym);
+			if (ourSym.getId() != theirSym.getId()) {
+				System.err.println("Identifiants de symKey faux");
+				return false;
+			}
+
+			output = new DataOutputStream(new SymmetricOutputStream(theirSym
+					.getXORKey(), output));
+			input = new DataInputStream(new SymmetricInputStream(ourSym
+					.getXORKey(), input));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -367,11 +371,12 @@ public class PeerHandler extends Thread {
 		}
 
 		if (!isChocking && !requetes.isEmpty() && !finished) {
+			Request requete = requetes.removeFirst();
 			synchronized (output) {
-				requetes.getFirst().send(output);
+				requete.send(output);
 				// System.out.println("J'envoie une requete");
 			}
-			requetesEnvoyee.addLast(requetes.removeFirst());
+			requetesEnvoyee.addLast(requete);
 		}
 	}
 

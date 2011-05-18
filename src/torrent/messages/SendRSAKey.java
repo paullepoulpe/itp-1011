@@ -23,7 +23,7 @@ public class SendRSAKey extends Message {
 	private KeyPair keyPair;
 
 	public SendRSAKey(KeyPair key) {
-		id = 11;
+		id = ID.sendRSAkey.ordinal();
 		eKey = key.getEKey();
 		modLength = key.getModLength();
 		mod = key.getMod();
@@ -42,8 +42,6 @@ public class SendRSAKey extends Message {
 
 		int m = in.readInt();
 		byte[] modBytes = new byte[m];
-		while (in.available() < m) {
-		}
 		in.readFully(modBytes);
 		mod = new BigInteger(modBytes);
 

@@ -5,7 +5,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import settings.CryptoSettings;
+
 import crypto.KeyGenerator;
+import crypto.XOR.SymetricKey;
 
 /**
  * Cette classe represente un message d'echange de cle symetrique avec le pair.
@@ -14,20 +17,23 @@ import crypto.KeyGenerator;
  * 
  */
 public class SendSymmetricKey extends Message {
-	private byte[] XORKey;
+	private SymetricKey XORKey;
 	private int id;
 
 	public SendSymmetricKey() {
-		this.XORKey = KeyGenerator.generateSymmetricKey(128);
-		this.id = 12;
+		this.XORKey = KeyGenerator
+				.generateSymmetricKey(CryptoSettings.SymetricKeySize);
+		this.id = ID.sendSymmetricKey.ordinal();
+		;
 	}
 
 	public SendSymmetricKey(DataInputStream in) throws IOException {
 		int messageLength = in.readInt();
-		System.out.println("Longueur : " + messageLength);
-		this.id = in.read();
-		this.XORKey = new byte[messageLength - 1];
-		in.readFully(XORKey);
+		this.id = in.readByte();
+		byte[] key = new byte[messageLength - 1];
+		in.readFully(key);
+		this.XORKey = new SymetricKey(key);
+
 	}
 
 	@Override
@@ -37,13 +43,14 @@ public class SendSymmetricKey extends Message {
 
 	@Override
 	public void send(DataOutputStream output) throws IOException {
-		output.writeInt(XORKey.length + 1);
+		output.writeInt(XORKey.getBytes().length + 1);
 		output.writeByte(id);
-		output.write(XORKey);
+		output.write(XORKey.getBytes());
+		;
 		output.flush();
 	}
 
-	public byte[] getXORKey() {
+	public SymetricKey getXORKey() {
 		return XORKey;
 	}
 
@@ -53,6 +60,6 @@ public class SendSymmetricKey extends Message {
 
 	@Override
 	public String toString() {
-		return id + " : " + Arrays.toString(XORKey);
+		return id + " : " + Arrays.toString(XORKey.getBytes());
 	}
 }

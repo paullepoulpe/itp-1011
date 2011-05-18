@@ -97,7 +97,7 @@ public class MessageHandler implements MessageVisitor {
 
 		peerHandler.setPeerPiecesIndex(b.getPosessedPieces());
 		peerHandler.multiplyNotation(Math.pow(1.0001, b.getNbPiece()));
-		// System.out.println("Recu bitfield");
+		System.out.println("Recu bitfield");
 	}
 
 	@Override
@@ -115,12 +115,10 @@ public class MessageHandler implements MessageVisitor {
 		torrent.receivedBlock();
 
 		// pour la FunnyBar
-		peerHandler
-				.getPieceMgr()
-				.getFunnyBar()
-				.add((s.getPieceIndex()
-						* torrent.getMetainfo().getPieceLength() + s
-						.getBlocIndex()) / Piece.BLOCK_SIZE);
+		peerHandler.getPieceMgr().getFunnyBar().add(
+				(s.getPieceIndex() * torrent.getMetainfo().getPieceLength() + s
+						.getBlocIndex())
+						/ Piece.BLOCK_SIZE);
 
 		entering.feed(s.getBlocIndex(), s.getBloc());
 		peerHandler.removeRequest(new Request(s.getPieceIndex(), s
