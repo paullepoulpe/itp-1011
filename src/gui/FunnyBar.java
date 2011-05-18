@@ -35,7 +35,8 @@ public class FunnyBar extends JPanel {
 
 	@Override
 	public void paint(Graphics g) {
-		this.setSize(parent.getWidth() - 80, 60);
+		// this.setSize(parent.getWidth() - 80, 60);
+		setSize(50, 20);
 		int w = getWidth();
 		int h = getHeight();
 		double intervalle = (double) w / (double) nbBarres;
@@ -47,11 +48,11 @@ public class FunnyBar extends JPanel {
 		for (int i = 0; i < nbBarres; i++) {
 			if (barresDessinees[i]) {
 				int debut = (int) Math.ceil(i * intervalle) + 1;
-				g2.fillRect(debut, 1,
-						Math.min((int) Math.ceil(intervalle), w - debut - 1),
-						h - 2);
+				g2.fillRect(debut, 1, Math.min((int) Math.ceil(intervalle), w
+						- debut - 1), h - 2);
 			}
 		}
+		g.drawString("Test", 30, 10);
 		g.drawImage(img, 0, 0, w, h, null);
 	}
 

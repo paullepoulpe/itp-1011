@@ -305,4 +305,7 @@ public class Piece {
 	public FunnyBar getFunnyBar() {
 		return funnyBar;
 	}
+	public int getNbBlocs() {
+		return nbBlocs;
+	}
 }
