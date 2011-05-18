@@ -27,7 +27,7 @@ public class MainFrame extends JFrame implements Runnable {
 	private TorrentTabPane torrentInfo;
 
 	public MainFrame(ArrayList<Torrent> torrents) {
-		super("DART");
+		super("DAART");
 		this.torrentz = torrents;
 		c = getContentPane();
 		c.setLayout(new BorderLayout());
@@ -46,14 +46,14 @@ public class MainFrame extends JFrame implements Runnable {
 			}
 		});
 		c.add(menu, BorderLayout.NORTH);
-		
+
 		tableTorrent = new TorrentTable(torrentz);
 		c.add(tableTorrent, BorderLayout.SOUTH);
-		
+
 		torrentInfo = new TorrentTabPane();
 		tableTorrent.getTable().addMouseListener(torrentInfo);
 		c.add(torrentInfo, BorderLayout.CENTER);
-		
+
 		setExtendedState(MAXIMIZED_BOTH);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setIconImage(Toolkit.getDefaultToolkit().getImage("src/gui/ico1.png"));
@@ -119,7 +119,7 @@ public class MainFrame extends JFrame implements Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-//		setResizable(false);
+		// setResizable(false);
 	}
 
 	public Torrent selectedTorrent() {
