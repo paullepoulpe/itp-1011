@@ -92,8 +92,6 @@ public class Peer {
 		} else if (notation > 10) {
 			notation = 10;
 		}
-		// System.err.println("Notation :" + notation);
-
 	}
 
 }

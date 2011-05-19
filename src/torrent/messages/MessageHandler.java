@@ -97,7 +97,7 @@ public class MessageHandler implements MessageVisitor {
 
 		peerHandler.setPeerPiecesIndex(b.getPosessedPieces());
 		peerHandler.multiplyNotation(Math.pow(1.0001, b.getNbPiece()));
-		System.out.println("Recu bitfield");
+		// System.out.println("Recu bitfield");
 	}
 
 	@Override

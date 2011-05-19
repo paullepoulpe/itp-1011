@@ -2,6 +2,7 @@ package torrent.piece;
 
 import gui.FunnyBar;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,7 +45,8 @@ public class PieceManager {
 		}
 		leftPieces.removeAll(piecesOfInterest);
 		funnyBar = new FunnyBar((int) Math.ceil((double) torrent.getMetainfo()
-				.getSize() / (double) Piece.BLOCK_SIZE));
+				.getSize()
+				/ (double) Piece.BLOCK_SIZE), new Dimension(600, 80));
 
 	}
 
@@ -74,8 +76,7 @@ public class PieceManager {
 			}
 			System.out.println((int) Math
 					.round(getDownloadedCompleteness() * 100)
-					/ 100.0
-					+ " %....................");
+					/ 100.0 + " %....................");
 			// System.err.println("Nombre de pieces :" + getNbPieces());
 			// System.err.println(piecesOfInterest.toString());
 			// System.err.println(leftPieces.toString());

@@ -1,7 +1,6 @@
 package crypto.XOR;
 
 import java.io.*;
-import java.math.BigInteger;
 
 /**
  * Cette classe est un flux de sortie qui nous permet d'envoyer des messages
@@ -22,9 +21,7 @@ public class SymmetricOutputStream extends OutputStream {
 
 	@Override
 	public void write(int b) throws IOException {
-		System.out.println("J'ecris dans le symStream");
-		byte n = (byte) ((b & 0xff) ^ XORKey.getNext());
-		System.out.println("Ecris : " + b);
+		int n = ((b & 0xff) ^ (XORKey.getNext() & 0xff));
 		out.writeByte(n);
 	}
 
