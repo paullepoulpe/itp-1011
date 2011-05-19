@@ -2,7 +2,6 @@ package torrent.tracker;
 
 import http.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 
 import settings.GeneralSettings;
@@ -55,7 +54,9 @@ public class TrackerInfo extends Thread {
 	public void announce() throws FailureReasonExeption {
 		System.out.println("\nRequete a " + urlAnnounce + "...");
 		HTTPGet query = new HTTPGet(urlAnnounce);
-		query.add("info_hash", torrent.getMetainfo().getInfoHash().urlEncoded());
+		query
+				.add("info_hash", torrent.getMetainfo().getInfoHash()
+						.urlEncoded());
 		query.add("peer_id", Torrent.PEER_ID);
 		query.add("port", torrent.getNumPort() + "");
 		query.add("uploaded", "0");
