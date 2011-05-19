@@ -1,37 +1,20 @@
 package IO;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-
-import settings.GeneralSettings;
-import torrent.Metainfo;
+import java.io.RandomAccessFile;
 import torrent.Torrent;
 import torrent.piece.Piece;
 
-public class TorrentFileWriter extends Thread {
-	private Torrent torrent;
-	private Metainfo metainfo;
+public class TorrentFileWriter extends TorrentIO implements Runnable {
 	private boolean[] piecesWritten;
-	private ArrayList<String[]> filesPaths;
-	private int[] filesLength;
 	private boolean writtenOnFile;
-	private File dossier = GeneralSettings.DOWNLOADING_FOLDER;
 
 	public TorrentFileWriter(Torrent torrent) {
-		this.torrent = torrent;
-		this.metainfo = torrent.getMetainfo();
-		piecesWritten = new boolean[torrent.getMetainfo().getSize()
-				/ torrent.getMetainfo().getPieceLength()];
-		filesPaths = metainfo.getFilesPath();
-		this.start();
+		super(torrent);
+		piecesWritten = new boolean[metainfo.getNbPieces()];
+		new Thread(this).start();
 	}
 
 	@Override
@@ -39,146 +22,93 @@ public class TorrentFileWriter extends Thread {
 		buildFiles();
 	}
 
-	public boolean writePiece(Piece piece) {
+	public boolean writePiece(Piece piece) throws FileNotFoundException {
 		if (piecesWritten[piece.getIndex()] || piece.isChecked()) {
+			byte[] data = piece.getData();
+			int toWrite = data.length;
+			int positionWritten = 0;
+			int beginPosition = piece.getIndex() * metainfo.getPieceLength();
+			boolean stop = false;
+			int fileIndex = 0;
+			// je trouve dans quel fichier ma piece commence
+			while (fileIndex < filesLength.length && !stop) {
+				if (beginPosition < filesLength[fileIndex]) {
+					stop = true;
+				} else {
+					beginPosition -= filesLength[fileIndex];
+					fileIndex++;
+				}
+			}
+			// tant qu'il me reste quelquechose a ecrire
+			while (toWrite > 0) {
+				RandomAccessFile raf = null;
+				// j'initialise le stream du fichier courant
+				if (!allFiles[fileIndex].exists()) {
+					throw new FileNotFoundException();
+				}
+				raf = new RandomAccessFile(allFiles[fileIndex], "rw");
+
+				try {
+					// je me positionne a l'endroit ou je vais commencer a
+					// ecrire
+					raf.seek(beginPosition);
+					// je regarde combien on peut encore ecrire dans ce fichier
+					int writable = filesLength[fileIndex] - beginPosition;
+
+					// si on peut tou ecrire dans le fichier
+					if (writable >= toWrite) {
+						// on ecris tout ce qu'il reste
+						raf.write(data, positionWritten, toWrite);
+						toWrite = -1;
+					} else {
+						// sinon on ecris ce qu'on peut et on passe au debut de
+						// la piece suivante
+						raf.write(data, positionWritten, writable);
+						toWrite -= writable;
+						positionWritten = +writable;
+						fileIndex++;
+						beginPosition = 0;
+					}
+					raf.close();
+				} catch (IOException e) {
+					System.err.println("Probleme d'ecriture de Piece");
+					try {
+						raf.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+
+			}
+			piece.setWritten(true);
+			piece.releaseMemory();
 			piecesWritten[piece.getIndex()] = true;
 		}
 		return false;
 
 	}
 
-	private void buildFiles() {
-		if (!dossier.exists()) {
-			dossier.mkdirs();
-		}
-		if (metainfo.isMultifile()) {
-
-		} else {
-			File file = new File(dossier, metainfo.getFileName());
-			try {
-				file.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
+	public void terminate() {
+		if (!writtenOnFile) {
+			writtenOnFile = true;
+			for (boolean b : piecesWritten) {
+				if (!b) {
+					writtenOnFile = false;
+					break;
+				}
+			}
+			if (writtenOnFile) {
+				for (File file : allFiles) {
+					String name = file.getAbsolutePath();
+					boolean b = file.renameTo(new File(name.substring(0, name
+							.length()
+							- ".temp".length())));
+					if (!b) {
+						System.err.println("Fichier non-renommé");
+					}
+				}
 			}
 		}
+
 	}
-
-	// private void computePaths() {
-	// if (metainfo.isMultifile()) {
-	//
-	// ArrayList<String[]> filesPathArray = metainfo.getFilesPath();
-	// filesPath = new String[filesPathArray.size()][2];
-	// // (chemin, nom du fichier)
-	// // on construit le chemin et le nom de chaque fichier
-	// for (int i = 0; i < filesPath.length; i++) {
-	// StringBuilder folder = new StringBuilder();
-	// for (int j = 0; j < filesPathArray.get(i).length - 1; j++) {
-	// folder.append(filesPathArray.get(i)[j] + File.separator);
-	// }
-	// filesPath[i][0] = folder.toString();
-	// filesPath[i][1] = filesPathArray.get(i)[filesPathArray.get(i).length -
-	// 1];
-	// }
-	// } else {
-	// filesPath = new String[1][2];
-	// filesPath[0][0] = "/";
-	// filesPath[0][1] = metainfo.getFileName();
-	// }
-	// }
-	/**
-	 * calcule les limites des fichiers, debut(quelle piece et ou) et fin
-	 * (quelle piece et ou) le debut et la fin sont compris dans le fichier!
-	 */
-	// private void computeDelimiters() {
-	// int[] filesLength = metainfo.getFilesLength();
-	//
-	// if (metainfo.isMultifile()) {
-	// this.fileDelimiters = new int[metainfo.getFilesLength().length][4];
-	// /*
-	// * forme : (debut (inclus) [Piece][Indice]; fin
-	// * (inclus)[Piece][Indice])
-	// */
-	//
-	// fileDelimiters[0][0] = 0;
-	// fileDelimiters[0][1] = 0;
-	// for (int i = 0; i < filesLength.length - 1; i++) {
-	// fileDelimiters[i][3] = (fileDelimiters[i][0] + filesLength[i] - 1)
-	// % pieces.get(0).getSizeTab();
-	// fileDelimiters[i][2] = fileDelimiters[i][0]
-	// + (fileDelimiters[i][0] + filesLength[i] - fileDelimiters[i][3])
-	// / pieces.get(0).getSizeTab();
-	//
-	// fileDelimiters[i + 1][1] = (fileDelimiters[i][3] + 1)
-	// % pieces.get(0).getSizeTab();
-	// fileDelimiters[i + 1][0] = fileDelimiters[i][2];
-	// if (fileDelimiters[i + 1][1] == 0) {
-	// fileDelimiters[i + 1][0]++;
-	// }
-	//
-	// }
-	// fileDelimiters[filesLength.length - 1][2] = pieces.size() - 1;
-	// fileDelimiters[filesLength.length - 1][3] = pieces.get(
-	// pieces.size() - 1).getSizeTab() - 1;
-	// } else {
-	// this.fileDelimiters = new int[1][4];
-	//
-	// fileDelimiters[0][0] = 0;
-	// fileDelimiters[0][1] = 0;
-	// fileDelimiters[0][2] = pieces.size() - 1;
-	// fileDelimiters[0][3] = pieces.get(pieces.size() - 1).getSizeTab() - 1;
-	//
-	// }
-	//
-	// }
-	//
-
-	// public boolean writeAll() {
-	// if (torrent.getPieceManager().isComplete() && !writtenOnFile) {
-	// try {
-	// FileOutputStream fileStream = null;
-	// for (int i = 0; i < filesPath.length; i++) {
-	// System.out.println("Fichier " + (i + 1) + " : ");
-	// System.out.println("Debut : ( " + fileDelimiters[i][0]
-	// + "; " + fileDelimiters[i][1] + " )" + "  Fin : ( "
-	// + fileDelimiters[i][2] + "; "
-	// + fileDelimiters[i][3] + " )");
-	//
-	// new File(dossier, filesPath[i][0]).mkdirs();
-	// File file = new File(dossier, filesPath[i][0]
-	// + filesPath[i][1]);
-	// file.createNewFile();
-	// fileStream = new FileOutputStream(file);
-	//
-	// for (int j = fileDelimiters[i][0]; j <= fileDelimiters[i][2]; j++) {
-	//
-	// // System.out.println("Piece " + (j) + " ok!");
-	//
-	// byte[] currentData = pieces.get(j).getData();
-	//
-	// if (j == fileDelimiters[i][0]) {
-	// currentData = Arrays.copyOfRange(currentData,
-	// fileDelimiters[i][1], currentData.length);
-	// }
-	// if (j == fileDelimiters[i][2]) {
-	// currentData = Arrays.copyOfRange(currentData, 0,
-	// fileDelimiters[i][1] + 1);
-	// }
-	//
-	// fileStream.write(currentData);
-	// }
-	// fileStream.flush();
-	// fileStream.close();
-	//
-	// }
-	//
-	// writtenOnFile = true;
-	// System.out.println("Fichiers ecrit dans " + dossier);
-	// torrent.stop();
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// return false;
-	// }
-	// }
-	// return false;
-	// }
 }

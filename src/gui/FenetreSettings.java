@@ -55,7 +55,9 @@ public class FenetreSettings extends JDialog implements ActionListener,
 
 		JPanel param = new JPanel(new GridLayout(0, 2, 5, 5));
 
-		param.add(new Label("Choisir le dossier de telechargement par default"));
+		param
+				.add(new Label(
+						"Choisir le dossier de telechargement par default"));
 		JPanel choixDossier = new JPanel(new BorderLayout());
 		choixDossier.add(downloadFolderPath, BorderLayout.WEST);
 		choixDossier.add(browse, BorderLayout.EAST);
@@ -70,7 +72,9 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		param.add(new Label("Nombre maximum de requetes de blocs simultanees"));
 		param.add(nbMaxRequests);
 
-		param.add(new Label("Delai avant de couper la connection avec un pair"));
+		param
+				.add(new Label(
+						"Delai avant de couper la connection avec un pair"));
 		param.add(peerResponseDelay);
 
 		param.add(new Label("Enclencher l'encryption"));
@@ -153,8 +157,8 @@ public class FenetreSettings extends JDialog implements ActionListener,
 			probleme = true;
 		}
 		try {
-			GeneralSettings.PEER_RESPONSE_DELAY = Integer
-					.parseInt(peerResponseDelay.getText());
+			GeneralSettings.PEER_RESPONSE_DELAY = Long
+					.parseLong(peerResponseDelay.getText());
 		} catch (Exception e) {
 			probleme = true;
 		}
@@ -163,6 +167,8 @@ public class FenetreSettings extends JDialog implements ActionListener,
 
 		GeneralSettings.PROGRESS_COLOR = couleursValues[couleurs
 				.getSelectedIndex()];
+
+		GeneralSettings.writeOnFile();
 
 		if (probleme) {
 			JOptionPane.showConfirmDialog(this,

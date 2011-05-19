@@ -36,7 +36,7 @@ public class Peer {
 		} catch (UnknownHostException e) {
 			System.out.println(e.getLocalizedMessage());
 		}
-		port = (int) (((data[4] & 0xff) << 8) + (data[5] & 0xff));
+		port = ((data[4] & 0xff) << 8) + (data[5] & 0xff);
 	}
 
 	public Peer(InetAddress ipAdress, int port) {
