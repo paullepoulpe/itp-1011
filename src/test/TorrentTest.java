@@ -16,7 +16,7 @@ public class TorrentTest extends Thread {
 
 	public void run() {
 
-		Torrent myTorrent = new Torrent(new File("data/himym.torrent"));
+		Torrent myTorrent = new Torrent(new File("data/unixsoft.torrent"));
 
 		while (true) {
 			myTorrent.massAnnounce();

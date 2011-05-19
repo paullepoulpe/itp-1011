@@ -313,8 +313,9 @@ public class PeerHandler extends Thread {
 	 * lis tous les messages entrants et les traite
 	 */
 	private void readMessages() throws IOException {
-		while (input.available() > 0 && !finished) {
-
+		int nbRead = 0;
+		while (input.available() > 0 && !finished && nbRead <= 10) {
+			nbRead++;
 			Message message = messageReader.readMessage();
 			if (message != null) {
 				// System.out.println("Je Lis des Messages" +

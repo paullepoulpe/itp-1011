@@ -14,6 +14,7 @@ public class DynamicFlowLabel extends JLabel implements Runnable {
 	private int[] lastAmounts = new int[4];
 	private int indexFlow = 0;
 	private boolean finished = false;
+	private long lastTimeUpdate = System.currentTimeMillis();
 
 	public DynamicFlowLabel() {
 		try {
@@ -30,6 +31,7 @@ public class DynamicFlowLabel extends JLabel implements Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		new Thread(this).start();
 	}
 
@@ -40,36 +42,40 @@ public class DynamicFlowLabel extends JLabel implements Runnable {
 	@Override
 	public void run() {
 		while (!finished) {
-			int n = 0;
-			lastAmounts[indexFlow] = instantAmount;
-			instantAmount = 0;
-			indexFlow = (indexFlow + 1) % lastAmounts.length;
-			for (int i = 0; i < lastAmounts.length; i++) {
-				n += lastAmounts[i];
-			}
-			n /= lastAmounts.length;
-			String s = "bytes/sec";
-			switch ((int) (Math.log(n) / Math.log(2) / 10)) {
-			case (0):
-				s = n + " " + s;
-				break;
-			case (1):
-				s = n / (1 << 10) + " K" + s;
-				break;
-			case (2):
-				s = n / (1 << 20) + " M" + s;
-				break;
-			case (3):
-				s = n / (1 << 30) + " G" + s;
-				break;
-			default:
-				s = 0 + " " + s;
+			if (lastTimeUpdate - System.currentTimeMillis() > 500) {
+				lastTimeUpdate = lastTimeUpdate - 500;
+				int n = 0;
+				lastAmounts[indexFlow] = instantAmount;
+				instantAmount = 0;
+				indexFlow = (indexFlow + 1) % lastAmounts.length;
+				for (int i = 0; i < lastAmounts.length; i++) {
+					n += lastAmounts[i];
+				}
+				n /= lastAmounts.length;
+				n *= 2;
+				String s = "bytes/sec";
+				switch ((int) (Math.log(n) / Math.log(2) / 10)) {
+				case (0):
+					s = n + " " + s;
+					break;
+				case (1):
+					s = n / (1 << 10) + " K" + s;
+					break;
+				case (2):
+					s = n / (1 << 20) + " M" + s;
+					break;
+				case (3):
+					s = n / (1 << 30) + " G" + s;
+					break;
+				default:
+					s = 0 + " " + s;
 
+				}
+				this.setText(s);
+				this.revalidate();
 			}
-			this.setText(s);
-			this.revalidate();
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(200);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

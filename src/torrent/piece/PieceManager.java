@@ -34,16 +34,20 @@ public class PieceManager {
 		this.leftPieces = new LinkedList<Piece>();
 		this.piecesOfInterest = new LinkedList<Piece>();
 		initPieces();
-		this.writer = new TorrentFileWriter(torrent, allPieces);
+		this.writer = new TorrentFileWriter(torrent);
 		// on met les pieces dans la liste de pieces
 		leftPieces.addAll(allPieces);
 		// On melange toutes les pieces
 		Collections.shuffle(this.leftPieces);
-		for (int i = 0; i < GeneralSettings.MAX_NUM_OF_CURRENT_PIECES
-				&& i < leftPieces.size(); i++) {
-			piecesOfInterest.add(leftPieces.get(i));
+
+		ListIterator<Piece> iterator = leftPieces.listIterator();
+		while (iterator.hasNext()
+				&& piecesOfInterest.size() < GeneralSettings.MAX_NUM_OF_CURRENT_PIECES) {
+			Piece piece = iterator.next();
+			iterator.remove();
+			piece.allocateMemory();
+			piecesOfInterest.addLast(piece);
 		}
-		leftPieces.removeAll(piecesOfInterest);
 		funnyBar = new FunnyBar((int) Math.ceil((double) torrent.getMetainfo()
 				.getSize()
 				/ (double) Piece.BLOCK_SIZE), new Dimension(600, 80));
@@ -60,16 +64,18 @@ public class PieceManager {
 	public void updatePriorities() {
 		if (!isComplete()) {
 			synchronized (piecesOfInterest) {
-
 				ListIterator<Piece> iterator = piecesOfInterest.listIterator();
 				while (iterator.hasNext()) {
 					Piece piece = iterator.next();
 					if (piece.isChecked()) {
 						iterator.remove();
+						writer.writePiece(piece);
+						piece.releaseMemory();
 						torrent.notifyPeerHandlers(piece.getIndex());
 						if (!leftPieces.isEmpty()) {
-							iterator.add(leftPieces.getFirst());
-							leftPieces.removeFirst();
+							Piece newPiece = leftPieces.removeFirst();
+							newPiece.allocateMemory();
+							iterator.add(newPiece);
 						}
 					}
 				}
@@ -81,9 +87,9 @@ public class PieceManager {
 			// System.err.println(piecesOfInterest.toString());
 			// System.err.println(leftPieces.toString());
 		} else {
-			synchronized (System.out) {
-				writer.writeAll();
-			}
+			// synchronized (System.out) {
+			// writer.writeAll();
+			// }
 
 		}
 
@@ -156,8 +162,7 @@ public class PieceManager {
 	 */
 	private void initPieces() {
 		Metainfo metainfo = torrent.getMetainfo();
-		int nbPieces = (int) (Math.ceil(((double) metainfo.getSize())
-				/ ((double) metainfo.getPieceLength())));
+		int nbPieces = metainfo.getNbPieces();
 		allPieces = new ArrayList<Piece>(nbPieces);
 
 		for (int i = 0; i < nbPieces; i++) {
@@ -180,7 +185,7 @@ public class PieceManager {
 	}
 
 	public int getNbPieces() {
-		return allPieces.size();
+		return torrent.getMetainfo().getNbPieces();
 	}
 
 	public Piece getPiece(int index) {

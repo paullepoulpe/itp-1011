@@ -29,6 +29,7 @@ public class Piece {
 	static public int BLOCK_SIZE = 1 << 14;
 	private ArrayList<ArrayList<PeerHandler>> peerHandlers;
 	private FunnyBar funnyBar;
+	private boolean isWritten = false;
 
 	/**
 	 * Constructeur
@@ -44,14 +45,27 @@ public class Piece {
 		this.index = index;
 		this.sizeTab = sizeTab;
 		this.hash = hash;
-		this.data = new byte[sizeTab];
 		this.nbBlocs = (int) Math.ceil((double) sizeTab / (double) BLOCK_SIZE);
 		this.receipt = new boolean[nbBlocs];
 		this.peerHandlers = new ArrayList<ArrayList<PeerHandler>>(nbBlocs);
 		for (int i = 0; i < nbBlocs; i++) {
 			peerHandlers.add(new ArrayList<PeerHandler>());
 		}
-		funnyBar = new FunnyBar(sizeTab, new Dimension(0, 0));
+		funnyBar = new FunnyBar(nbBlocs, new Dimension(0, 0));
+	}
+
+	public void allocateMemory() {
+		this.data = new byte[sizeTab];
+	}
+
+	public void releaseMemory() {
+		if (this.isWritten) {
+			data = null;
+		}
+	}
+
+	public void setWritten(boolean isWritten) {
+		this.isWritten = isWritten;
 	}
 
 	/**
@@ -105,7 +119,6 @@ public class Piece {
 				throw new IllegalArgumentException(
 						"Mauvais index de début de bloc");
 			}
-			funnyBar.add(begin / BLOCK_SIZE);
 			/*
 			 * la taille du bloc doit etre egale a BLOCK_SIZE exepte pour le
 			 * dernier bloc et le dernier bloc doit tenir dans le tableau
@@ -131,6 +144,8 @@ public class Piece {
 			peerHandlers.get(begin / BLOCK_SIZE).clear();
 
 			receipt[begin / BLOCK_SIZE] = true;
+
+			funnyBar.add(begin / BLOCK_SIZE);
 
 			for (int i = 0; i < bloc.length; i++, begin++) {
 				this.data[begin] = bloc[i];

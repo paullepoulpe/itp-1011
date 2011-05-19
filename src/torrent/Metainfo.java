@@ -34,6 +34,7 @@ public class Metainfo {
 	private boolean isMultifile;
 	private ArrayList<String[]> FilesPath;
 	private int[] filesLength;
+	private int nbPieces;
 
 	/**
 	 * Ce constructeur initialise tous les parametres en les extrayants du
@@ -75,6 +76,7 @@ public class Metainfo {
 			this.piecesHash = infoMap.get("pieces").getBytes();
 			this.pieceLength = infoMap.get("piece length").getInt();
 			this.fileName = infoMap.get("name").getString();
+			this.nbPieces = piecesHash.length / 20;
 
 			if (infoMap.get("length") != null) {
 				this.size = infoMap.get("length").getInt();
@@ -194,24 +196,25 @@ public class Metainfo {
 	public int getSize() {
 		return size;
 	}
-	public String getSizeString(){
-		int power = (int) Math.floor(Math.log(size)/(10*Math.log(2)));
+
+	public String getSizeString() {
+		int power = (int) Math.floor(Math.log(size) / (10 * Math.log(2)));
 		int div = (int) Math.pow(2, 10 * power);
-		String s = Math.floor((100*(long)size)/div)/100+" ";
-		switch (power){
-			case 0:
-				s+= "Bytes";
-				break;
-			case 1:
-				s+="kB";
-				break;
-			case 2:
-				s+="MB";
-				break;
-			case 3:
-				s+="GB";
-				break;
-				}
+		String s = Math.floor((100 * (long) size) / div) / 100 + " ";
+		switch (power) {
+		case 0:
+			s += "Bytes";
+			break;
+		case 1:
+			s += "kB";
+			break;
+		case 2:
+			s += "MB";
+			break;
+		case 3:
+			s += "GB";
+			break;
+		}
 		return s;
 	}
 
@@ -245,6 +248,10 @@ public class Metainfo {
 
 	public ArrayList<String[]> getFilesPath() {
 		return FilesPath;
+	}
+
+	public int getNbPieces() {
+		return nbPieces;
 	}
 
 }
