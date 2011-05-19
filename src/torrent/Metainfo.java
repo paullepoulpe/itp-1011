@@ -156,6 +156,7 @@ public class Metainfo {
 		} else {
 			s += "\nTaille totale des fichiers :\t" + size + " Bytes";
 		}
+		s += "\nNombre de Pieces :\t" + nbPieces;
 		s += "\n\nList des trackers : \n\n" + printTrackerList();
 		if (isMultifile) {
 			s += "\n\nListe des fichiers :\n\n";

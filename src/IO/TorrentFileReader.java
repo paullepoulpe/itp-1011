@@ -5,7 +5,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class TorrentFileReader {
+import settings.GeneralSettings;
+import torrent.Metainfo;
+import torrent.Torrent;
+
+public class TorrentFileReader extends TorrentIO {
+	private Metainfo metainfo;
+	private boolean[] piecesWritten;
+	private int[] filesLength;
+	private File[] allFiles;
+	private boolean writtenOnFile;
+	private File dossier = GeneralSettings.DOWNLOADING_FOLDER;
+
+	public TorrentFileReader(Torrent torrent) {
+		super(torrent);
+		buildFiles();
+	}
+
 	/**
 	 * Cette methode permet d'initialiser les pieces d'un torrent depuis un
 	 * fichier. Elle regarde dans le dossier Downloads/ si un fichier contient

@@ -25,7 +25,8 @@ public class PeerManager extends Thread {
 		boolean started = false;
 		// System.out.println("PeerAjouté :" + peer);
 		synchronized (peerHandlers) {
-			if (peerHandlers.size() < GeneralSettings.NB_MAX_PEERHANDLERS) {
+			if (peerHandlers.size() < GeneralSettings.NB_MAX_PEERHANDLERS
+					&& !finished) {
 				PeerHandler peerHandler = new PeerHandler(peer, torrent,
 						encrytionEnabled);
 				peerHandler.start();
@@ -46,7 +47,7 @@ public class PeerManager extends Thread {
 		PeerHandler peerHandler = new PeerHandler(s, torrent, encrytionEnabled);
 		Peer peer = peerHandler.getPeer();
 		PeerHandler lazyOne = getTheLazyOne();
-		if (lazyOne.getNotation() < 5) {
+		if (lazyOne.getNotation() < 5 && !finished) {
 
 			synchronized (peerList) {
 				if (peerList.contains(peer)) {
@@ -92,7 +93,7 @@ public class PeerManager extends Thread {
 			Peer youngPeer = null;
 			synchronized (peerList) {
 				for (Peer peer : peerList) {
-					if (peer.getNotation() > minActivePeerNotation) {
+					if (peer.getNotation() > minActivePeerNotation && !finished) {
 						Peer lazyPeer = lazyPeerHandler.getPeer();
 						peerList.remove(peer);
 						peerList.add(lazyPeer);
@@ -102,7 +103,7 @@ public class PeerManager extends Thread {
 					}
 				}
 			}
-			if (trouve) {
+			if (trouve && !finished) {
 				PeerHandler youngPeerHandler = new PeerHandler(youngPeer,
 						torrent, encrytionEnabled);
 				synchronized (peerHandlers) {
@@ -126,24 +127,30 @@ public class PeerManager extends Thread {
 	}
 
 	private PeerHandler getTheLazyOne() {
-		double minActivePeerNotation = 10;
-		PeerHandler lazyPeerHandler = null;
-		synchronized (peerHandlers) {
-			for (PeerHandler ph : peerHandlers) {
-				double notation = ph.getNotation();
-				if (notation < minActivePeerNotation) {
-					minActivePeerNotation = notation;
-					lazyPeerHandler = ph;
+		if (!finished) {
+			double minActivePeerNotation = 10;
+			PeerHandler lazyPeerHandler = null;
+			synchronized (peerHandlers) {
+				for (PeerHandler ph : peerHandlers) {
+					double notation = ph.getNotation();
+					if (notation < minActivePeerNotation && !finished) {
+						minActivePeerNotation = notation;
+						lazyPeerHandler = ph;
+					}
 				}
 			}
+
+			return lazyPeerHandler;
 		}
-		return lazyPeerHandler;
+		return null;
 	}
 
 	public void notifyPeerHandlers(int index) {
-		synchronized (peerHandlers) {
-			for (PeerHandler ph : peerHandlers) {
-				ph.newPieceHave(index);
+		if (!finished) {
+			synchronized (peerHandlers) {
+				for (PeerHandler ph : peerHandlers) {
+					ph.newPieceHave(index);
+				}
 			}
 		}
 

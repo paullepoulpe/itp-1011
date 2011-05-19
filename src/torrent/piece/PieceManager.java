@@ -3,6 +3,7 @@ package torrent.piece;
 import gui.FunnyBar;
 
 import java.awt.Dimension;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -69,8 +70,13 @@ public class PieceManager {
 					Piece piece = iterator.next();
 					if (piece.isChecked()) {
 						iterator.remove();
-						writer.writePiece(piece);
-						piece.releaseMemory();
+						try {
+							writer.writePiece(piece);
+						} catch (FileNotFoundException e) {
+							torrent.stop();
+							System.out
+									.println("Le Fichier de destination a disparu, veuillez le remettre dans le dossier de telechargement et redemarrer le telechargement");
+						}
 						torrent.notifyPeerHandlers(piece.getIndex());
 						if (!leftPieces.isEmpty()) {
 							Piece newPiece = leftPieces.removeFirst();
@@ -87,9 +93,7 @@ public class PieceManager {
 			// System.err.println(piecesOfInterest.toString());
 			// System.err.println(leftPieces.toString());
 		} else {
-			// synchronized (System.out) {
-			// writer.writeAll();
-			// }
+			writer.terminate();
 
 		}
 
