@@ -4,7 +4,6 @@ import gui.DynamicFlowLabel;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.LinkedList;
 
 import crypto.KeyGenerator;
@@ -116,7 +115,6 @@ public class PeerHandler extends Thread {
 			}
 
 		} catch (IOException e) {
-			e.printStackTrace();
 			System.out.println("Peer deconnecte");
 			peer.multiplyNotation(0.1);
 			this.finish();
@@ -267,7 +265,6 @@ public class PeerHandler extends Thread {
 			ourHS.send(output);
 			Handshake theirHS = new Handshake(input);
 			this.peer.setId(theirHS.getPeerID());
-
 			return theirHS.isCompatible(ourHS);
 		}
 		return false;

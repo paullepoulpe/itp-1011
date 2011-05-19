@@ -1,7 +1,6 @@
 package crypto.XOR;
 
 import java.io.*;
-import java.math.BigInteger;
 
 /**
  * Cette classe est une flux d'entree a travers lequel le pair peut nous envoyer
@@ -22,16 +21,10 @@ public class SymmetricInputStream extends InputStream {
 
 	@Override
 	public int read() throws IOException {
-		System.out.println("Je lis dans le symStream");
-		int n = in.read();
-		if (n < 0 || n > 255) {
-			return -1;
-		} else {
-			int b = (n & 0xff) ^ XORKey.getNext();
-			System.out.println("Lu : " + b);
-			return b;
+		int n = in.readByte();
+		int b = (n & 0xff) ^ (XORKey.getNext() & 0xff);
+		return b & 0xff;
 
-		}
 	}
 
 	@Override

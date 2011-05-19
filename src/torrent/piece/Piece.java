@@ -2,6 +2,7 @@ package torrent.piece;
 
 import gui.FunnyBar;
 
+import java.awt.Dimension;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class Piece {
 		for (int i = 0; i < nbBlocs; i++) {
 			peerHandlers.add(new ArrayList<PeerHandler>());
 		}
-		funnyBar = new FunnyBar(sizeTab);
+		funnyBar = new FunnyBar(sizeTab, new Dimension(0, 0));
 	}
 
 	/**
@@ -122,8 +123,8 @@ public class Piece {
 
 			for (int i = 0; i < peerHandlers.get(begin / BLOCK_SIZE).size(); i++) {
 
-				peerHandlers.get(begin / BLOCK_SIZE).get(i)
-						.removeRequest(new Request(index, begin, bloc.length));
+				peerHandlers.get(begin / BLOCK_SIZE).get(i).removeRequest(
+						new Request(index, begin, bloc.length));
 
 			}
 
@@ -305,6 +306,7 @@ public class Piece {
 	public FunnyBar getFunnyBar() {
 		return funnyBar;
 	}
+
 	public int getNbBlocs() {
 		return nbBlocs;
 	}

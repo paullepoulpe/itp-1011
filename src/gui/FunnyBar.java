@@ -7,6 +7,7 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -14,19 +15,24 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 
 public class FunnyBar extends JPanel {
-	private boolean[] barresDessinees;
+	private byte[] barresDessinees;
 	private int nbBarres;
-	private Component parent = null;
+	private Component parent;
 
-	public FunnyBar(int nbBarres) {
+	public FunnyBar(int nbBarres, Dimension d) {
+		this(nbBarres, d, null);
+	}
+
+	public FunnyBar(int nbBarres, Dimension initialDim, Component parent) {
 		setBackground(Color.WHITE);
 		this.nbBarres = nbBarres;
-		barresDessinees = new boolean[nbBarres];
+		barresDessinees = new byte[(int) Math.ceil((double) nbBarres / 8)];
+		this.parent = parent;
 	}
 
 	public void add(int elementIndex) throws IndexOutOfBoundsException {
 		if (elementIndex < nbBarres && elementIndex > -1) {
-			barresDessinees[elementIndex] = true;
+			barresDessinees[elementIndex / 8] |= (byte) (1 << (7 - elementIndex % 8));
 			repaint();
 		} else {
 			throw new IndexOutOfBoundsException();
@@ -35,8 +41,11 @@ public class FunnyBar extends JPanel {
 
 	@Override
 	public void paint(Graphics g) {
-		// this.setSize(parent.getWidth() - 80, 60);
-		setSize(50, 20);
+		if (parent != null) {
+			this.setSize(parent.getWidth() - 80, 60);
+		}
+
+		// setSize(50, 20);
 		int w = getWidth();
 		int h = getHeight();
 		double intervalle = (double) w / (double) nbBarres;
@@ -46,7 +55,7 @@ public class FunnyBar extends JPanel {
 		g2.drawRect(0, 0, w - 1, h - 1);
 		g2.setColor(Color.CYAN.darker().darker());
 		for (int i = 0; i < nbBarres; i++) {
-			if (barresDessinees[i]) {
+			if ((barresDessinees[i / 8] & (byte) (1 << (7 - i % 8))) != 0) {
 				int debut = (int) Math.ceil(i * intervalle) + 1;
 				g2.fillRect(debut, 1, Math.min((int) Math.ceil(intervalle), w
 						- debut - 1), h - 2);
@@ -57,7 +66,7 @@ public class FunnyBar extends JPanel {
 	}
 
 	public void removeAll() {
-		barresDessinees = new boolean[nbBarres];
+		barresDessinees = new byte[(int) Math.ceil(nbBarres / 8)];
 		repaint();
 	}
 

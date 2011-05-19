@@ -8,8 +8,6 @@ import java.util.ArrayList;
 
 import javax.swing.JProgressBar;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
-
 import settings.GeneralSettings;
 import torrent.peer.*;
 import torrent.piece.*;

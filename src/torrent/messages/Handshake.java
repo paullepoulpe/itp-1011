@@ -44,29 +44,25 @@ public class Handshake {
 	 * 
 	 * @param input
 	 *            le Stream qui "contient" le handShake.
+	 * @throws IOException
 	 */
-	public Handshake(DataInputStream input) {
-		try {
-			boolean lu = false;
-			while (!lu) {
-				if (input.available() > 0) {
-					pstrLength = input.readByte();
-					lu = true;
-				}
+	public Handshake(DataInputStream input) throws IOException {
+		boolean lu = false;
+		while (!lu) {
+			if (input.available() > 0) {
+				pstrLength = input.readByte();
+				lu = true;
 			}
-
-			protocol = new byte[pstrLength];
-			input.readFully(protocol);
-			reserved = new byte[8];
-			input.readFully(reserved);
-			infoHash = new byte[20];
-			input.readFully(infoHash);
-			peerID = new byte[20];
-			input.readFully(peerID);
-
-		} catch (IOException e) {
-			System.err.println("Probleme Handshake envoyé!");
 		}
+
+		protocol = new byte[pstrLength];
+		input.readFully(protocol);
+		reserved = new byte[8];
+		input.readFully(reserved);
+		infoHash = new byte[20];
+		input.readFully(infoHash);
+		peerID = new byte[20];
+		input.readFully(peerID);
 
 	}
 

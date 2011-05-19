@@ -23,7 +23,7 @@ public class PeerManager extends Thread {
 
 	public void addPeer(Peer peer) {
 		boolean started = false;
-		System.out.println("PeerAjouté :" + peer);
+		// System.out.println("PeerAjouté :" + peer);
 		synchronized (peerHandlers) {
 			if (peerHandlers.size() < GeneralSettings.NB_MAX_PEERHANDLERS) {
 				PeerHandler peerHandler = new PeerHandler(peer, torrent,
