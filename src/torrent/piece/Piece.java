@@ -144,8 +144,16 @@ public class Piece {
 			peerHandlers.get(begin / BLOCK_SIZE).clear();
 
 			receipt[begin / BLOCK_SIZE] = true;
+			try {
+				funnyBar.add(begin / BLOCK_SIZE);
+			} catch (IndexOutOfBoundsException e) {
+				e.printStackTrace();
+				System.out.println(e.getCause());
+				System.out.println(e.getLocalizedMessage());
 
-			funnyBar.add(begin / BLOCK_SIZE);
+				System.err.println("Piece : " + index + ", Bloc : " + begin
+						+ ", Taillebloc : " + bloc.length);
+			}
 
 			for (int i = 0; i < bloc.length; i++, begin++) {
 				this.data[begin] = bloc[i];
@@ -258,7 +266,7 @@ public class Piece {
 	 * @return le bloc qu'on veut sous forme de byte[]
 	 */
 	public byte[] getBlock(int begin) {
-		byte[] bloc = new byte[BLOCK_SIZE];
+		byte[] bloc = new byte[Math.min(BLOCK_SIZE, sizeTab - begin)];
 		for (int i = 0; i < bloc.length; i++) {
 			bloc[i] = data[i + begin];
 		}

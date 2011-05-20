@@ -37,14 +37,14 @@
 28.03.2011
 -On a cree le squelette des principales classes pour itp-05, sans le contenu des methodes
 29.03.2011
--Recodé itp-03 et la requete HTTPGet en OO parce qu'elle n'etait absolument pas reutilisable
+-Recode itp-03 et la requete HTTPGet en OO parce qu'elle n'etait absolument pas reutilisable
 01.04.2011
--Le svn a legerement planté(aucune idée de la raison) on a perdu tout ce qu'on avait recodé de itp-03, heureusement on a pu recuperer certains des fichiers sur un des ordis ('ouf)
+-Le svn a legerement plante(aucune idee de la raison) on a perdu tout ce qu'on avait recode de itp-03, heureusement on a pu recuperer certains des fichiers sur un des ordis ('ouf)
 -On arrive pas a comprendre pourquoi on doit utiliser message visitor dans le projet, ainsi que comment les classes d'itp-05 interagissent entre elles.
 -On code tout de meme les squelette des classes d'itp-05;
--Comme on avance pas beaucoup sur itp-05 on code des supplements, gestion du multifile pour la lecture du metainfo et requetes simultanées aux trackers!
+-Comme on avance pas beaucoup sur itp-05 on code des supplements, gestion du multifile pour la lecture du metainfo et requetes simultanees aux trackers!
 05.04.2011
--On a demandé a un gentil assistant a propos du message visitor, ce qui nous permet de mieux comprendre ce qu'on doit faire pour itp-5, ca devrait aller plus vite maintenant.
+-On a demande a un gentil assistant a propos du message visitor, ce qui nous permet de mieux comprendre ce qu'on doit faire pour itp-5, ca devrait aller plus vite maintenant.
 06.04.2011
 -Presque tout est code pour itp-05 mais l'execution affiche une grande quantite d'erreur dans la console!
 07.04.2011
@@ -57,7 +57,7 @@
 -Petits problemes vers la fin du telechargement, il semblerait que les blocs synchronized soient places aux mauvais endroits
 10.04.2011
 -Premiers fichiers telecharges, gestion du multifile pour l'ecriture sur le disque codee, reste a la tester correctement. 
--L'ecriture multifile fonctionne bien, au début un peu lente, mais une fois que tous les write(byte) ont étés remplacés par des write(byte[]) ca fonctionne nickel!
+-L'ecriture multifile fonctionne bien, au debut un peu lente, mais une fois que tous les write(byte) ont etes remplaces par des write(byte[]) ca fonctionne nickel!
 13.04.2011
 -Le telechargement marche assez bien sur les ordis du CO, mais si on teste le programme sur un laptop, le telechargement n'aboutit jamais (et cela fait exploser la memoire)
 -La Javadoc est en cours de realisation, malheureusement il y a pas mal de classes et methodes a commenter... au boulot ;)
@@ -67,13 +67,25 @@
 -Comme on est tellement sous le charme de notre propre creation, on veut tout de suite avoir une interface graphique. On a donc deja discute du layout de notre fenetre pricipale.
 -On a meme essaye de faire un test GUI (a voir dans src/test/GuiAlphaTest.java) c'est encore tres moche, ne correspond pas encore du tout a ce qu'on veut, mais c'esrt un debut !
 17.04.2011
--Le rendu intermediaire approche, notre code est encore très brouillon,(désolé pour les assistant qui vont devoir lire tout ca, mais comme il y a aussi l'examen intermediaire de DS on a pas vraiment eu le temps de le retravailler correctement!
+-Le rendu intermediaire approche, notre code est encore très brouillon,(desole pour les assistant qui vont devoir lire tout ca, mais comme il y a aussi l'examen intermediaire de DS on a pas vraiment eu le temps de le retravailler correctement!
 -On a essaye de commenter au mieux toutes les parties du code pour que la lecture ne soit pas (trop) fatigante!
 16.05.2011
-- Eh oui, ça fait un mois qu'on a pas bossé le projet :P
+- Eh oui, ça fait un mois qu'on a pas bosse le projet :P
 - Pendant les vacances, le code a ete ameliore, les methodes optimisees etc...
 La gui avance de plus en plus (cela faisait une semaine que je beugait sur le fonctionnement des JTables, maintenant j'ai enfin compris comment utiliser un TableModel (or whatever it's called)
-- La semaine suivant j'étais (je = Maarten) occupé à comprendre comment afficher les Components dans cette JTable, et comment updater ma Progressbar (tout fonctionne maintenant) reste plus qu'à coder les autres parties de la GUI (esperons qu'elles soient moins foireuses ^^)
-- Nouvelles classes rajoutés, meilleurs distributions des fonctions entre les classe, classes d'entrées sortie sur fichier et de paramètres créés
+- La semaine suivant j'etais (je = Maarten) occupe à comprendre comment afficher les Components dans cette JTable, et comment updater ma Progressbar (tout fonctionne maintenant) reste plus qu'à coder les autres parties de la GUI (esperons qu'elles soient moins foireuses ^^)
+- Nouvelles classes rajoutes, meilleurs distributions des fonctions entre les classe, classes d'entrees sortie sur fichier et de paramètres crees
 17.05.2011
--Debits ajoutés, FunnyBar.class qui permet de mieux visualiser le telechargement d'une piece ou d'un torrent en entier a ete rajoutée :)
+-Debits ajoutes, FunnyBar.class qui permet de mieux visualiser le telechargement d'une piece ou d'un torrent en entier a ete rajoutee :)
+18.05.2011
+-ITP-06 fini, toutes les classe qui y sont relatives ont ete codees
+-L'implementation de la FunnyBar changee, (inspiree du bitfield) elle prends maintenant (au moins) 8 fois moins de place memoire :) (on avait un depassement de memoire rien qu'a cause de la barre, c'est dire..)
+-Le nom du programme sera DAART 
+19.05.2011
+-Ajout de la fonction d'ecriture en continu, de plus on alloue de la memoire seulement pour les pieces qu'on est en train de telecharger, ce qui permet de telecharger des fichiers bien plus gros sans avoir d'erreur de depassement de memoire vive!
+-Ajout de la fonctionalite qui permet d'ecrire les paramètres generaux sur le disk et de les y relire!
+20.05.2011
+-Ajout de la fonction de lecture du fichier deja telecharge ou a moitie telecharge
+-Tests sur le peeraccepter qui avait ete code il y a deja quelques semaines, qui nous a permis de corriger au passage des erreur dans l'envoi du bitfield et l'ajout d'un pair dans PeerManager
+-Ajout de la liste de pieces en cours de telechargement dans la gui 
+-Nouvel icone pour notre joli programme!

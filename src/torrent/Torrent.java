@@ -34,6 +34,7 @@ public class Torrent {
 	 *            le port sur lequel on accepte les connections
 	 */
 	public Torrent(File metainfoFile, int numPort) {
+		System.out.println("Notre Port : " + numPort);
 		this.metainfo = new Metainfo(metainfoFile);
 		this.numPort = numPort;
 		this.pieceManager = new PieceManager(this);
@@ -67,7 +68,7 @@ public class Torrent {
 			trackers.add(new TrackerInfo(trackersUrl.get(i), this));
 			trackers.get(i).start();
 		}
-		new PeerAccepter(this.numPort, this);
+		new PeerAccepter(this.numPort, this).start();
 
 	}
 

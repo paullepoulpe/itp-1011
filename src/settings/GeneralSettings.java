@@ -18,7 +18,7 @@ import java.util.HashMap;
  */
 public class GeneralSettings {
 	public static Integer NUMWANT = 50;
-	public static Boolean ENCRYPTION_ENABLED = false;
+	public static Boolean ENCRYPTION_ENABLED = true;
 	public static Integer NB_MAX_PEERHANDLERS = 100;
 	public static Integer NB_MAX_REQUESTS = 15;
 	public static Integer MAX_NUM_OF_CURRENT_PIECES = 15;

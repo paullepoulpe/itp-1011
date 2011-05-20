@@ -16,28 +16,27 @@ import javax.swing.JPanel;
 
 public class FunnyBar extends JPanel {
 	private byte[] barresDessinees;
-	private int nbBarres;
+	private int nbBarres = 0;
 	private Component parent;
 
-	public FunnyBar(int nbBarres, Dimension d) {
-		this(nbBarres, d, null);
+	public FunnyBar(int nbBarres, Dimension initialDim) {
+		this(nbBarres, initialDim, null);
 	}
 
 	public FunnyBar(int nbBarres, Dimension initialDim, Component parent) {
 		setBackground(Color.WHITE);
 		this.nbBarres = nbBarres;
-		barresDessinees = new byte[(int) Math.ceil((double) nbBarres / 8)];
+		barresDessinees = new byte[(int) Math.ceil((double) nbBarres / 8.0)];
 		this.parent = parent;
 	}
 
-	public void add(int elementIndex) throws IndexOutOfBoundsException {
+	public synchronized void add(int elementIndex)
+			throws IndexOutOfBoundsException {
 		if (elementIndex < nbBarres && elementIndex > -1) {
 			barresDessinees[elementIndex / 8] |= (byte) (1 << (7 - elementIndex % 8));
 			repaint();
 		} else {
-			System.err.println("elementIndex:"+elementIndex);
-			throw new IndexOutOfBoundsException(
-					"elementIndex:"+elementIndex);
+			throw new IndexOutOfBoundsException("elementIndex:" + elementIndex);
 		}
 	}
 
@@ -59,8 +58,9 @@ public class FunnyBar extends JPanel {
 		for (int i = 0; i < nbBarres; i++) {
 			if ((barresDessinees[i / 8] & (byte) (1 << (7 - i % 8))) != 0) {
 				int debut = (int) Math.ceil(i * intervalle) + 1;
-				g2.fillRect(debut, 1, Math.min((int) Math.ceil(intervalle), w
-						- debut - 1), h - 2);
+				g2.fillRect(debut, 1,
+						Math.min((int) Math.ceil(intervalle), w - debut - 1),
+						h - 2);
 			}
 		}
 		g.drawString("Test", 30, 10);
@@ -68,7 +68,7 @@ public class FunnyBar extends JPanel {
 	}
 
 	public void removeAll() {
-		barresDessinees = new byte[(int) Math.ceil(nbBarres / 8)];
+		barresDessinees = new byte[(int) Math.ceil((double) nbBarres / 8.0)];
 		repaint();
 	}
 

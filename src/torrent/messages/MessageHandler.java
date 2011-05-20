@@ -125,7 +125,7 @@ public class MessageHandler implements MessageVisitor {
 		entering.feed(s.getBlocIndex(), s.getBloc());
 		peerHandler.removeRequest(new Request(s.getPieceIndex(), s
 				.getBlocIndex(), s.getBloc().length));
-		peerHandler.getPieceMgr().updatePriorities(true);
+		peerHandler.getPieceMgr().updatePriorities();
 		peerHandler.multiplyNotation(1.01);
 		// System.out.println("Recu bloc : "
 		// + (s.getBlocIndex() / Piece.BLOCK_SIZE) + " de la Piece "
