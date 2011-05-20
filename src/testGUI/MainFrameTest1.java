@@ -17,6 +17,3 @@ public class MainFrameTest1 {
 		new Thread(new MainFrame(tor)).start();
 	}
 }
-/*
- * methode getSelectedRow dand TorrentTable
- */

@@ -9,6 +9,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 
+/**
+ * Cette classe encapsule les diverses "constantes" utilisees dans le
+ * telechargement des torrents ainsi que les differentes options visuelles.
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class GeneralSettings {
 	public static Integer NUMWANT = 50;
 	public static Boolean ENCRYPTION_ENABLED = false;
@@ -17,13 +24,16 @@ public class GeneralSettings {
 	public static Integer MAX_NUM_OF_CURRENT_PIECES = 15;
 	public static Long PEER_RESPONSE_DELAY = 100l;
 	public static Color PROGRESS_COLOR = Color.ORANGE;
-	public static File DOWNLOADING_FOLDER = new File(
-			System.getProperty("user.home"), "Downloads");
+	public static File DOWNLOADING_FOLDER = new File(System
+			.getProperty("user.home"), "Downloads");
 
 	public GeneralSettings() {
 		restoreDefaultValues();
 	}
 
+	/**
+	 * Methode permettant de mettre tous les champs a leur valeur par defaut
+	 */
 	public static void restoreDefaultValues() {
 		NUMWANT = 50;
 		ENCRYPTION_ENABLED = false;
@@ -36,6 +46,11 @@ public class GeneralSettings {
 				"Downloads");
 	}
 
+	/**
+	 * Cette methode permet de sauvegarder les parametres personalises sur le
+	 * disque dans un fichier "settings.dat". Les donnes sont stockees sous
+	 * forme de HashMap
+	 */
 	public static void writeOnFile() {
 		File settingsFile = new File("settings.dat");
 		if (settingsFile.exists()) {
@@ -70,6 +85,10 @@ public class GeneralSettings {
 
 	}
 
+	/**
+	 * Si un fichier de parametres personalises existe, cette methode va les
+	 * lire.
+	 */
 	public static void readFromFile() {
 		File settingsFile = new File("settings.dat");
 		if (!settingsFile.exists()) {
