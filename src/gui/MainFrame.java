@@ -56,9 +56,9 @@ public class MainFrame extends JFrame implements Runnable {
 
 		setExtendedState(MAXIMIZED_BOTH);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setIconImage(Toolkit.getDefaultToolkit().getImage("src/gui/ico1.png"));
+		setIconImage(Toolkit.getDefaultToolkit().getImage("src/gui/ico.jpg"));
 
-		setSize(new Dimension(1000, 700));
+		setSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width-100, Toolkit.getDefaultToolkit().getScreenSize().height-100));
 		setVisible(true);
 		if (torrentz.size() == 0)
 			addTorrent();

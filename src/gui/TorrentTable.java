@@ -52,8 +52,7 @@ public class TorrentTable extends JPanel {
 		removeAll();
 		tm = new TorrentTableModel(torrentlist);
 		table = new JTable(tm);
-		table.setPreferredScrollableViewportSize(new Dimension(950, 100));
-
+		table.setPreferredScrollableViewportSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width-150, 150));
 		table.getColumnModel().getColumn(0).setPreferredWidth(500);
 		table.getColumnModel().getColumn(1).setPreferredWidth(300);
 		table.setDefaultRenderer(Component.class, new TableCellRenderer() {

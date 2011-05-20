@@ -35,7 +35,8 @@ public class FunnyBar extends JPanel {
 			barresDessinees[elementIndex / 8] |= (byte) (1 << (7 - elementIndex % 8));
 			repaint();
 		} else {
-			throw new IndexOutOfBoundsException();
+			throw new IndexOutOfBoundsException(
+					"elementIndex:"+elementIndex);
 		}
 	}
 

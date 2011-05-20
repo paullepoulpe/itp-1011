@@ -5,19 +5,21 @@
 
 package gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.Label;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.File;
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
+
 import settings.GeneralSettings;
 
+/**
+ * Cette classe est une boite de dialogue permettant de changer les parametres
+ * de /src/settings/GeneralSettings.java
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class FenetreSettings extends JDialog implements ActionListener,
 		WindowListener {
 	private JTextField numwant = new JTextField(),
@@ -28,11 +30,11 @@ public class FenetreSettings extends JDialog implements ActionListener,
 	private JCheckBox encryptionEnabled = new JCheckBox();
 	private Color[] couleursValues = { Color.ORANGE, Color.BLUE, Color.RED,
 			Color.GRAY, Color.GREEN };
-	private String[] couleursNoms = { "Orange", "Bleu", "Rouge", "Gris", "Vert" };
+	private String[] couleursNoms = { "Orange", "Blue", "Red", "Gray", "Green" };
 	private JComboBox couleurs = new JComboBox(couleursNoms);
-	private JButton valider = new JButton("Valider"),
-			restoreDefault = new JButton("Valeurs par default"),
-			browse = new JButton("Choisir...");
+	private JButton valider = new JButton("Save"),
+			restoreDefault = new JButton("Default Values"),
+			browse = new JButton("Browse");
 
 	public FenetreSettings(JFrame f) {
 		super(f, "Parametres");
@@ -49,46 +51,60 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		arrange();
 	}
 
+	/**
+	 * Cette methode s'occupe de mettre en place tous les composants afin
+	 * d'avoir une certaine ergonomie
+	 */
 	private void arrange() {
 		JPanel principal = new JPanel(new BorderLayout(20, 0));
 		this.setContentPane(principal);
 
-		JPanel param = new JPanel(new GridLayout(0, 2, 5, 5));
-
-		param
-				.add(new Label(
-						"Choisir le dossier de telechargement par default"));
+		JPanel fields1 = new JPanel(new BorderLayout());
+		JPanel fields2 = new JPanel(new BorderLayout());
 		JPanel choixDossier = new JPanel(new BorderLayout());
-		choixDossier.add(downloadFolderPath, BorderLayout.WEST);
+		JPanel param = new JPanel(new GridLayout(0, 2, 5, 5));
+		JPanel encrypt = new JPanel(new GridLayout(0, 2, 5, 5));
+		JPanel visual = new JPanel(new GridLayout(0, 2, 5, 5));
+		// destination folder
+		choixDossier.setBorder(new TitledBorder(
+				"Choose default downloading folder"));
+		choixDossier.add(downloadFolderPath, BorderLayout.CENTER);
 		choixDossier.add(browse, BorderLayout.EAST);
-		param.add(choixDossier);
-
-		param.add(new Label("Parametre numwant pour les trackers"));
+		fields1.add(choixDossier);
+		// parameters
+		param.setBorder(new TitledBorder("Download settings"));
+		param.add(new Label("Requested number of peers for per tracker"));
 		param.add(numwant);
 
-		param.add(new Label("Nombre maximum de pairs actifs"));
+		param.add(new Label("Maximum number of active peers"));
 		param.add(nbMaxPeerHandler);
 
-		param.add(new Label("Nombre maximum de requetes de blocs simultanees"));
+		param.add(new Label("Maximum number of simultaneous bloc requests"));
 		param.add(nbMaxRequests);
 
-		param
-				.add(new Label(
-						"Delai avant de couper la connection avec un pair"));
+		param.add(new Label("Maximum connexion delay for a peer"));
 		param.add(peerResponseDelay);
-
-		param.add(new Label("Enclencher l'encryption"));
-		param.add(encryptionEnabled);
-
-		param.add(new Label("Couleur des barres de telechargement"));
-		param.add(couleurs);
-
+		// Encryption
+		encrypt.setBorder(new TitledBorder("Encryption parameters"));
+		encrypt.add(new Label("Encryption"));
+		encrypt.add(encryptionEnabled);
+		// visual
+		visual.setBorder(new TitledBorder("Interface parameters"));
+		visual.add(new Label("Downloadbar color"));
+		visual.add(couleurs);
+		// Buttons
 		JPanel boutons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-
 		boutons.add(restoreDefault);
 		boutons.add(valider);
 
-		principal.add(param, BorderLayout.NORTH);
+		fields1.add(choixDossier, BorderLayout.NORTH);
+		fields1.add(param, BorderLayout.CENTER);
+		fields1.add(encrypt, BorderLayout.SOUTH);
+		fields2.add(fields1,BorderLayout.CENTER);
+		fields2.add(visual, BorderLayout.SOUTH);
+	
+
+		principal.add(fields2, BorderLayout.CENTER);
 		principal.add(boutons, BorderLayout.SOUTH);
 
 		setVisual();
@@ -125,6 +141,14 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		setVisual();
 	}
 
+	/**
+	 * Cette methode s'occupe de lire les dopnnées dans les champs de texte et
+	 * autre composants tout en indiquant s'il y a un probleme de compatibilite
+	 * des valeurs
+	 * 
+	 * @return true si une ou plusieurs donnees ne sont pas dans le bon format,
+	 *         false sinon
+	 */
 	private boolean getValues() {
 		boolean probleme = false;
 
@@ -179,6 +203,10 @@ public class FenetreSettings extends JDialog implements ActionListener,
 
 	}
 
+	/**
+	 * Cette methode entre les donnes par defaut dans les champs de texte et les
+	 * composants, pour que l'utilisateur puisse voir ce qu'elles sont
+	 */
 	private void setVisual() {
 		downloadFolderPath.setText(GeneralSettings.DOWNLOADING_FOLDER
 				.getAbsolutePath());
