@@ -10,8 +10,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 public class DynamicFlowLabel extends JLabel implements Runnable {
-	private int instantAmount = 0;
-	private int[] lastAmounts = new int[4];
+	private long instantAmount = 0;
+	private long[] lastAmounts = new long[4];
 	private int indexFlow = 0;
 	private boolean finished = false;
 	private long lastTimeUpdate = System.currentTimeMillis();
@@ -35,24 +35,25 @@ public class DynamicFlowLabel extends JLabel implements Runnable {
 		new Thread(this).start();
 	}
 
-	public void add(int amount) {
+	public void add(long amount) {
 		instantAmount += amount;
 	}
 
 	@Override
 	public void run() {
 		while (!finished) {
-			if (System.currentTimeMillis() - lastTimeUpdate > (long) 500) {
-				lastTimeUpdate = lastTimeUpdate - 500;
+			long currentTime = System.currentTimeMillis();
+			if (currentTime - lastTimeUpdate > (long) 500) {
+				long timeElapsed = currentTime - lastTimeUpdate;
+				lastTimeUpdate = currentTime;
 				int n = 0;
-				lastAmounts[indexFlow] = instantAmount;
+				lastAmounts[indexFlow] = instantAmount * 1000 / timeElapsed;
 				instantAmount = 0;
 				indexFlow = (indexFlow + 1) % lastAmounts.length;
 				for (int i = 0; i < lastAmounts.length; i++) {
 					n += lastAmounts[i];
 				}
 				n /= lastAmounts.length;
-				n *= 2;
 				String s = "bytes/sec";
 				switch ((int) (Math.log(n) / Math.log(2) / 10)) {
 				case (0):

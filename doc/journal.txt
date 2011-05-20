@@ -76,7 +76,8 @@ La gui avance de plus en plus (cela faisait une semaine que je beugait sur le fo
 - La semaine suivant j'etais (je = Maarten) occupe à comprendre comment afficher les Components dans cette JTable, et comment updater ma Progressbar (tout fonctionne maintenant) reste plus qu'à coder les autres parties de la GUI (esperons qu'elles soient moins foireuses ^^)
 - Nouvelles classes rajoutes, meilleurs distributions des fonctions entre les classe, classes d'entrees sortie sur fichier et de paramètres crees
 17.05.2011
--Debits ajoutes, FunnyBar.class qui permet de mieux visualiser le telechargement d'une piece ou d'un torrent en entier a ete rajoutee :)
+-Debits ajoutes, on calcule un moyenne mobile sur 4 valeurs, pour que les debits fluctuent moins vite, j'espère que ce n'est pas trop.
+-FunnyBar.java qui permet de mieux visualiser le telechargement d'une piece ou d'un torrent en entier a ete rajoutee :)
 18.05.2011
 -ITP-06 fini, toutes les classe qui y sont relatives ont ete codees
 -L'implementation de la FunnyBar changee, (inspiree du bitfield) elle prends maintenant (au moins) 8 fois moins de place memoire :) (on avait un depassement de memoire rien qu'a cause de la barre, c'est dire..)

@@ -44,6 +44,7 @@ public class Torrent {
 		progressBar.setStringPainted(true);
 		progressBar.setForeground(GeneralSettings.PROGRESS_COLOR);
 		System.out.println(this.metainfo);
+		new PeerAccepter(this.numPort, this).start();
 	}
 
 	/**
@@ -68,8 +69,6 @@ public class Torrent {
 			trackers.add(new TrackerInfo(trackersUrl.get(i), this));
 			trackers.get(i).start();
 		}
-		new PeerAccepter(this.numPort, this).start();
-
 	}
 
 	/**
