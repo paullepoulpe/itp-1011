@@ -62,7 +62,6 @@ public class FunnyBar extends JPanel {
 						h - 2);
 			}
 		}
-		g.drawString("Test", 30, 10);
 		g.drawImage(img, 0, 0, w, h, null);
 	}
 

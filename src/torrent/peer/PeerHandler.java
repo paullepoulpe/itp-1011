@@ -42,26 +42,31 @@ public class PeerHandler extends Thread {
 	private long lastTimeFlush;
 	private DynamicFlowLabel upload = new DynamicFlowLabel(),
 			download = new DynamicFlowLabel();
+	private PeerManager peerManager;
 
-	public PeerHandler(Peer peer, Torrent torrent, boolean encryptionEnabled) {
-		this(torrent, encryptionEnabled);
+	public PeerHandler(Peer peer, Torrent torrent, boolean encryptionEnabled,
+			PeerManager peerManager) {
+		this(torrent, encryptionEnabled, peerManager);
 		this.peer = peer;
 
 	}
 
-	public PeerHandler(Socket socket, Torrent torrent, boolean encryptionEnabled) {
-		this(torrent, encryptionEnabled);
+	public PeerHandler(Socket socket, Torrent torrent,
+			boolean encryptionEnabled, PeerManager peerManager) {
+		this(torrent, encryptionEnabled, peerManager);
 		this.socket = socket;
 		this.peer = new Peer(socket.getInetAddress(), socket.getPort());
 
 	}
 
-	private PeerHandler(Torrent torrent, boolean encryptionEnabled) {
+	private PeerHandler(Torrent torrent, boolean encryptionEnabled,
+			PeerManager peerManager) {
 		this.encryptionEnabled = encryptionEnabled;
 		this.messageHandler = new MessageHandler(this, torrent);
 		this.pieceMgr = torrent.getPieceManager();
 		this.peerPiecesIndex = new boolean[pieceMgr.getNbPieces()];
 		this.torrent = torrent;
+		this.peerManager = peerManager;
 
 	}
 
@@ -77,6 +82,7 @@ public class PeerHandler extends Thread {
 
 			// test si le handshake est compatible
 			if (isCompatible) {
+				peerManager.connect(peer);
 				if (encryptionEnabled) {
 					shareKeys();
 				}
@@ -298,10 +304,10 @@ public class PeerHandler extends Thread {
 				return false;
 			}
 
-			output = new DataOutputStream(new SymmetricOutputStream(theirSym
-					.getXORKey(), output));
-			input = new DataInputStream(new SymmetricInputStream(ourSym
-					.getXORKey(), input));
+			output = new DataOutputStream(new SymmetricOutputStream(
+					theirSym.getXORKey(), output));
+			input = new DataInputStream(new SymmetricInputStream(
+					ourSym.getXORKey(), input));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -413,9 +419,9 @@ public class PeerHandler extends Thread {
 			}
 
 		} catch (IOException e) {
-			System.err.println("CHiééééééééééééééééééééééééé");
-			e.printStackTrace();
+			System.err.println("Probleme de fermeture de sockets");
 		}
+		peerManager.disConnect(peer);
 		super.interrupt();
 	}
 

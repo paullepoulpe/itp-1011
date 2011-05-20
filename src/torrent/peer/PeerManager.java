@@ -11,13 +11,13 @@ import torrent.Torrent;
 public class PeerManager extends Thread {
 	private boolean finished;
 	private Torrent torrent;
-	private ArrayList<Peer> peerList;
+	private ArrayList<Peer> peerList = new ArrayList<Peer>(),
+			connectedPeers = new ArrayList<Peer>();
 	private ArrayList<PeerHandler> peerHandlers;
 	private boolean encrytionEnabled = GeneralSettings.ENCRYPTION_ENABLED;
 
 	public PeerManager(Torrent torrent) {
 		this.torrent = torrent;
-		peerList = new ArrayList<Peer>();
 		peerHandlers = new ArrayList<PeerHandler>(
 				GeneralSettings.NB_MAX_PEERHANDLERS);
 	}
@@ -29,7 +29,7 @@ public class PeerManager extends Thread {
 			if (peerHandlers.size() < GeneralSettings.NB_MAX_PEERHANDLERS
 					&& !finished) {
 				PeerHandler peerHandler = new PeerHandler(peer, torrent,
-						encrytionEnabled);
+						encrytionEnabled, this);
 				peerHandler.start();
 				started = true;
 				peerHandlers.add(peerHandler);
@@ -45,7 +45,8 @@ public class PeerManager extends Thread {
 	}
 
 	public void addPeer(Socket s) {
-		PeerHandler peerHandler = new PeerHandler(s, torrent, encrytionEnabled);
+		PeerHandler peerHandler = new PeerHandler(s, torrent, encrytionEnabled,
+				this);
 		Peer peer = peerHandler.getPeer();
 		PeerHandler lazyOne = getTheLazyOne();
 		if ((lazyOne == null || lazyOne.getNotation() < 5) && !finished) {
@@ -111,7 +112,7 @@ public class PeerManager extends Thread {
 			}
 			if (trouve && !finished) {
 				PeerHandler youngPeerHandler = new PeerHandler(youngPeer,
-						torrent, encrytionEnabled);
+						torrent, encrytionEnabled, this);
 				synchronized (peerHandlers) {
 					peerHandlers.remove(lazyPeerHandler);
 
@@ -161,4 +162,21 @@ public class PeerManager extends Thread {
 		}
 
 	}
+
+	public ArrayList<Peer> getConnectedPeers() {
+		return connectedPeers;
+	}
+
+	public void connect(Peer peer) {
+		synchronized (connectedPeers) {
+			connectedPeers.add(peer);
+		}
+	}
+
+	public void disConnect(Peer peer) {
+		synchronized (connectedPeers) {
+			connectedPeers.remove(peer);
+		}
+	}
+
 }

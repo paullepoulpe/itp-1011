@@ -90,3 +90,5 @@ La gui avance de plus en plus (cela faisait une semaine que je beugait sur le fo
 -Tests sur le peeraccepter qui avait ete code il y a deja quelques semaines, qui nous a permis de corriger au passage des erreur dans l'envoi du bitfield et l'ajout d'un pair dans PeerManager
 -Ajout de la liste de pieces en cours de telechargement dans la gui 
 -Nouvel icone pour notre joli programme!
+21.05.2011
+-Ajout de graphiques de telechargement
