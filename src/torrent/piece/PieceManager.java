@@ -4,6 +4,7 @@ import gui.FunnyBar;
 
 import java.awt.Dimension;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,6 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import IO.TorrentFileReader;
 import IO.TorrentFileWriter;
 
 import settings.GeneralSettings;
@@ -35,6 +37,9 @@ public class PieceManager {
 		this.leftPieces = new LinkedList<Piece>();
 		this.piecesOfInterest = new LinkedList<Piece>();
 		initPieces();
+		TorrentFileReader reader = new TorrentFileReader(torrent);
+		reader.readFromFile(allPieces);
+		updatePriorities(false);
 		this.writer = new TorrentFileWriter(torrent);
 		// on met les pieces dans la liste de pieces
 		leftPieces.addAll(allPieces);
@@ -50,8 +55,7 @@ public class PieceManager {
 			piecesOfInterest.addLast(piece);
 		}
 		funnyBar = new FunnyBar((int) Math.ceil((double) torrent.getMetainfo()
-				.getSize()
-				/ (double) Piece.BLOCK_SIZE), new Dimension(600, 80));
+				.getSize() / (double) Piece.BLOCK_SIZE), new Dimension(600, 80));
 
 	}
 
@@ -62,7 +66,7 @@ public class PieceManager {
 	 * Cette methode est appelee dans la classe MessageHandler lors d'un
 	 * visit(SendBlock s).
 	 */
-	public void updatePriorities() {
+	public void updatePriorities(boolean started) {
 		if (!isComplete()) {
 			synchronized (piecesOfInterest) {
 				ListIterator<Piece> iterator = piecesOfInterest.listIterator();
@@ -70,14 +74,16 @@ public class PieceManager {
 					Piece piece = iterator.next();
 					if (piece.isChecked()) {
 						iterator.remove();
-						try {
-							writer.writePiece(piece);
-						} catch (FileNotFoundException e) {
-							torrent.stop();
-							System.out
-									.println("Le Fichier de destination a disparu, veuillez le remettre dans le dossier de telechargement et redemarrer le telechargement");
+						if (started) {
+							try {
+								writer.writePiece(piece);
+							} catch (FileNotFoundException e) {
+								torrent.stop();
+								System.out
+										.println("Le Fichier de destination a disparu, veuillez le remettre dans le dossier de telechargement et redemarrer le telechargement");
+							}
+							torrent.notifyPeerHandlers(piece.getIndex());
 						}
-						torrent.notifyPeerHandlers(piece.getIndex());
 						if (!leftPieces.isEmpty()) {
 							Piece newPiece = leftPieces.removeFirst();
 							newPiece.allocateMemory();
@@ -88,13 +94,13 @@ public class PieceManager {
 			}
 			System.out.println((int) Math
 					.round(getDownloadedCompleteness() * 100)
-					/ 100.0 + " %....................");
+					/ 100.0
+					+ " %....................");
 			// System.err.println("Nombre de pieces :" + getNbPieces());
 			// System.err.println(piecesOfInterest.toString());
 			// System.err.println(leftPieces.toString());
-		} else {
+		} else if (started) {
 			writer.terminate();
-
 		}
 
 	}

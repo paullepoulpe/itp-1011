@@ -1,15 +1,12 @@
 package settings;
 
 import java.awt.Color;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Field;
 import java.util.HashMap;
 
 public class GeneralSettings {
@@ -20,8 +17,8 @@ public class GeneralSettings {
 	public static Integer MAX_NUM_OF_CURRENT_PIECES = 15;
 	public static Long PEER_RESPONSE_DELAY = 100l;
 	public static Color PROGRESS_COLOR = Color.ORANGE;
-	public static File DOWNLOADING_FOLDER = new File(System
-			.getProperty("user.home"), "Downloads");
+	public static File DOWNLOADING_FOLDER = new File(
+			System.getProperty("user.home"), "Downloads");
 
 	public GeneralSettings() {
 		restoreDefaultValues();

@@ -1,24 +1,19 @@
 package IO;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.ArrayList;
 
-import settings.GeneralSettings;
-import torrent.Metainfo;
 import torrent.Torrent;
+import torrent.piece.Piece;
 
 public class TorrentFileReader extends TorrentIO {
-	private Metainfo metainfo;
-	private boolean[] piecesWritten;
-	private int[] filesLength;
-	private File[] allFiles;
-	private boolean writtenOnFile;
-	private File dossier = GeneralSettings.DOWNLOADING_FOLDER;
+	Torrent torrent;
 
 	public TorrentFileReader(Torrent torrent) {
 		super(torrent);
+		this.torrent = torrent;
 		buildFiles();
 	}
 
@@ -32,51 +27,77 @@ public class TorrentFileReader extends TorrentIO {
 	 * 
 	 * @return true si le fichier a ete trouve, false sinon
 	 */
-	public boolean readFromFile() {
-		// TODO gerer le multifile! // TODO Choisir le fichier de depart
-		File folder = new File(System.getProperty("user.home"), "Downloads"
-				+ File.separator);
-		String[] liste = folder.list();
-		boolean trouve = false;
-		int indexFichier = -1;
-		for (int i = 0; i < liste.length && !trouve; i++) {
-			System.out.println(liste[i]);
-			if (liste[i].contains(metainfo.getFileName())) {
-				trouve = true;
-				indexFichier = i;
-			}
-		}
-		if (trouve) {
-			File file = new File(System.getProperty("user.home"), "Downloads"
-					+ File.separator + liste[indexFichier]);
-			DataInputStream lecteur = null;
+	public void readFromFile(ArrayList<Piece> pieces) {
+		for (int i = 0; i < metainfo.getNbPieces(); i++) {
 			try {
-				lecteur = new DataInputStream(new FileInputStream(file));
-			} catch (IOException e) {
-				e.printStackTrace();
+				readPiece(pieces.get(i));
+			} catch (FileNotFoundException e) {
+				System.err.println("Piece " + i + " pas encore telechargée");
 			}
-			byte[] read;
-			for (int i = 0; i < pieces.length; i++) {
-
-				read = new byte[this.pieces[i].getSizeTab()];
-
-				try {
-					lecteur.read(read);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				this.pieces[i].setData(read);
-			}
-			try {
-				lecteur.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return true;
-
-		} else {
-			System.out.println("File not found!");
-			return false;
 		}
 	}
+
+	public void readPiece(Piece piece) throws FileNotFoundException {
+		int toRead = piece.getSizeTab();
+		byte[] data = new byte[toRead];
+		int positionReading = 0;
+		int beginPosition = piece.getIndex() * metainfo.getPieceLength();
+		boolean stop = false;
+		int fileIndex = 0;
+		// je trouve dans quel fichier ma piece commence
+		while (fileIndex < filesLength.length && !stop) {
+			if (beginPosition < filesLength[fileIndex]) {
+				stop = true;
+			} else {
+				beginPosition -= filesLength[fileIndex];
+				fileIndex++;
+			}
+		}
+		// tant qu'il me reste quelquechose a lire
+		while (toRead > 0) {
+			RandomAccessFile raf = null;
+			// j'initialise le stream du fichier courant
+			if (!allFiles[fileIndex].exists()) {
+				System.err.println("Ce fichier n'existe pas :"
+						+ allFiles[fileIndex].getAbsolutePath());
+				throw new FileNotFoundException();
+			}
+			raf = new RandomAccessFile(allFiles[fileIndex], "rw");
+			// System.out.println("New RAF sur "
+			// + allFiles[fileIndex].getAbsolutePath());
+
+			try {
+				// je me positionne a l'endroit ou je vais commencer a
+				// lire
+				raf.seek(beginPosition);
+				// je regarde combien on peut encore lire dans ce fichier
+				int available = filesLength[fileIndex] - beginPosition;
+
+				// si on peut tou lire dans le fichier
+				if (available >= toRead) {
+					// on lis tout ce qu'il reste
+					raf.read(data, positionReading, toRead);
+					toRead = -1;
+				} else {
+					// sinon on lis ce qu'on peut et on passe au debut de
+					// la piece suivante
+					raf.write(data, positionReading, available);
+					toRead -= available;
+					positionReading = +available;
+					fileIndex++;
+					beginPosition = 0;
+				}
+				raf.close();
+			} catch (IOException e) {
+				System.err.println("Probleme de lecture de Piece");
+				try {
+					raf.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		}
+
+	}
+
 }
