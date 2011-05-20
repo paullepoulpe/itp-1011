@@ -1,4 +1,4 @@
-package gui;
+package gui.Actions;
 
 import java.awt.event.ActionEvent;
 

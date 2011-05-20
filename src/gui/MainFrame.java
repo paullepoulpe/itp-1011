@@ -1,21 +1,19 @@
 package gui;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 
-import javax.swing.*;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import torrent.Torrent;
 
@@ -28,6 +26,7 @@ public class MainFrame extends JFrame implements Runnable {
 
 	public MainFrame(ArrayList<Torrent> torrents) {
 		super("DAART");
+		requestFocusInWindow();
 		this.torrentz = torrents;
 		c = getContentPane();
 		c.setLayout(new BorderLayout());
@@ -57,6 +56,9 @@ public class MainFrame extends JFrame implements Runnable {
 		setExtendedState(MAXIMIZED_BOTH);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setIconImage(Toolkit.getDefaultToolkit().getImage("src/gui/ico3.png"));
+		setSize(new Dimension(
+				Toolkit.getDefaultToolkit().getScreenSize().width - 100,
+				Toolkit.getDefaultToolkit().getScreenSize().height - 100));
 
 		setSize(new Dimension(
 				Toolkit.getDefaultToolkit().getScreenSize().width - 100,
