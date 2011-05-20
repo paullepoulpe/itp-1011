@@ -13,7 +13,7 @@ import gui.FenetreSettings;
 public class SettingsTest {
 	public static void main(String[] args) {
 		try{
-			UIManager.setLookAndFeel(UIManager.getInstalledLookAndFeels()[1].getClassName());
+			UIManager.setLookAndFeel(UIManager.getInstalledLookAndFeels()[4].getClassName());
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
