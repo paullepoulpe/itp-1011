@@ -2,6 +2,8 @@ package gui.TorrentTabs;
 
 import gui.TableModels.PeerTableModel;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -20,7 +22,9 @@ public class TorrentPeersTab extends JPanel {
 		
 /*		PeerTableModel tm = new PeerTableModel(Liste de pairs);*/
 		table = new JTable(/*tm*/);
-
+		table.setPreferredScrollableViewportSize(new Dimension(Toolkit
+					.getDefaultToolkit().getScreenSize().width - 150, Toolkit
+					.getDefaultToolkit().getScreenSize().height - 500));
 		add(new JScrollPane(table));
 		setBorder(new TitledBorder("Peer list"));
 	}

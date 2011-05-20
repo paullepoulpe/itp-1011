@@ -42,7 +42,7 @@ public class DynamicFlowLabel extends JLabel implements Runnable {
 	@Override
 	public void run() {
 		while (!finished) {
-			if (lastTimeUpdate - System.currentTimeMillis() > 500) {
+			if (System.currentTimeMillis() - lastTimeUpdate > (long) 500) {
 				lastTimeUpdate = lastTimeUpdate - 500;
 				int n = 0;
 				lastAmounts[indexFlow] = instantAmount;
@@ -71,11 +71,13 @@ public class DynamicFlowLabel extends JLabel implements Runnable {
 					s = 0 + " " + s;
 
 				}
+
 				this.setText(s);
 				this.revalidate();
 			}
+
 			try {
-				Thread.sleep(200);
+				Thread.sleep(300);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
