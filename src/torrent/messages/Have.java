@@ -26,7 +26,7 @@ public class Have extends Message {
 	public void send(DataOutputStream output) throws IOException {
 
 		output.writeInt(5);
-		output.writeByte(4);
+		output.writeByte(ID.have.ordinal());
 		output.writeInt(pieceIndex);
 
 	}

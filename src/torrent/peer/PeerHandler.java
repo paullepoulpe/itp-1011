@@ -21,7 +21,6 @@ import settings.*;
  * messages.
  */
 public class PeerHandler extends Thread {
-	private boolean finished;
 	private Socket socket;
 	private Peer peer;
 	private Torrent torrent;
@@ -98,7 +97,7 @@ public class PeerHandler extends Thread {
 				KeepAlive kA = new KeepAlive(output);
 				kA.start();
 				lastTimeFlush = System.currentTimeMillis();
-				while (!finished) {
+				while (!interrupted()) {
 					readMessages();
 					amMaybeInterested();
 					prepareRequest();
@@ -110,15 +109,13 @@ public class PeerHandler extends Thread {
 						e.printStackTrace();
 					}
 				}
-			} else {
-				this.finish();
 			}
 
 		} catch (IOException e) {
 			System.out.println("Peer deconnecte");
 			peer.multiplyNotation(0.1);
-			this.finish();
 		}
+		interrupt();
 
 	}
 
@@ -171,7 +168,7 @@ public class PeerHandler extends Thread {
 	 * @param message
 	 */
 	public void addAEnvoyer(Message message) {
-		if (!finished) {
+		if (!interrupted()) {
 			aEnvoyer.addLast(message);
 		}
 	}
@@ -184,11 +181,11 @@ public class PeerHandler extends Thread {
 	 */
 	public void removeRequest(Request requete) {
 
-		while (requetes.contains(requete)) {
+		while (requetes.contains(requete) && !interrupted()) {
 			requetes.remove(requete);
 		}
 
-		while (requetesEnvoyee.contains(requete)) {
+		while (requetesEnvoyee.contains(requete) && !interrupted()) {
 			requetesEnvoyee.remove(requete);
 		}
 
@@ -212,7 +209,7 @@ public class PeerHandler extends Thread {
 	 */
 	private void initStreams() {
 		long timeStarted = System.currentTimeMillis();
-		while (!connecte && !finished) {
+		while (!connecte && !interrupted()) {
 			if (socket == null) {
 				try {
 					socket = new Socket(peer.getIpAdress(), peer.getPort());
@@ -233,7 +230,7 @@ public class PeerHandler extends Thread {
 					socket = null;
 				}
 			}
-			if (!connecte && !finished) {
+			if (!connecte && !interrupted()) {
 				if (System.currentTimeMillis() - timeStarted > GeneralSettings.PEER_RESPONSE_DELAY) {
 					peer.multiplyNotation(1 / 3);
 				}
@@ -257,15 +254,17 @@ public class PeerHandler extends Thread {
 	 * @return true si le handshake a marche, false sinon
 	 */
 	private boolean shakeHands() throws IOException {
-		if (!finished) {
+		if (!interrupted()) {
 			Handshake ourHS = new Handshake(torrent);
 			if (encryptionEnabled) {
 				ourHS.setEncryptionEnabled();
 			}
 			ourHS.send(output);
-			Handshake theirHS = new Handshake(input);
-			this.peer.setId(theirHS.getPeerID());
-			return theirHS.isCompatible(ourHS);
+			if (!interrupted()) {
+				Handshake theirHS = new Handshake(input);
+				this.peer.setId(theirHS.getPeerID());
+				return theirHS.isCompatible(ourHS);
+			}
 		}
 		return false;
 
@@ -299,10 +298,10 @@ public class PeerHandler extends Thread {
 				return false;
 			}
 
-			output = new DataOutputStream(new SymmetricOutputStream(theirSym
-					.getXORKey(), output));
-			input = new DataInputStream(new SymmetricInputStream(ourSym
-					.getXORKey(), input));
+			output = new DataOutputStream(new SymmetricOutputStream(
+					theirSym.getXORKey(), output));
+			input = new DataInputStream(new SymmetricInputStream(
+					ourSym.getXORKey(), input));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -314,10 +313,10 @@ public class PeerHandler extends Thread {
 	 */
 	private void readMessages() throws IOException {
 		int nbRead = 0;
-		while (input.available() > 0 && !finished && nbRead <= 10) {
+		while (input.available() > 0 && !interrupted() && nbRead <= 10) {
 			nbRead++;
 			Message message = messageReader.readMessage();
-			if (message != null) {
+			if (message != null && !interrupted()) {
 				// System.out.println("Je Lis des Messages" +
 				// message.getClass());
 				// accept: on traite le message
@@ -333,7 +332,7 @@ public class PeerHandler extends Thread {
 	 */
 	private void prepareRequest() {
 		if (requetes.size() + requetesEnvoyee.size() < GeneralSettings.NB_MAX_REQUESTS
-				&& !hasNoPieces() && !finished) {
+				&& !hasNoPieces() && !interrupted()) {
 			int index = -1;
 			index = pieceMgr.getPieceOfInterest(peerPiecesIndex);
 			// System.out.println("Je prepare requete :" + index);
@@ -346,7 +345,7 @@ public class PeerHandler extends Thread {
 			}
 
 		} else if (requetesEnvoyee.size() >= GeneralSettings.NB_MAX_REQUESTS
-				&& !finished) {
+				&& !interrupted()) {
 			long thisTime = System.currentTimeMillis();
 			if ((thisTime - lastTimeFlush) > 10000) {
 				peer.multiplyNotation(1 / 1.2);
@@ -361,14 +360,14 @@ public class PeerHandler extends Thread {
 	 * request(s'il y en a)
 	 */
 	private void sendMessages() throws IOException {
-		if (!aEnvoyer.isEmpty() && !finished) {
+		if (!aEnvoyer.isEmpty() && !interrupted()) {
 			synchronized (output) {
 				aEnvoyer.removeFirst().send(output);
 				// System.out.println("J'envoie un message");
 			}
 		}
 
-		if (!isChocking && !requetes.isEmpty() && !finished) {
+		if (!isChocking && !requetes.isEmpty() && !interrupted()) {
 			Request requete = requetes.removeFirst();
 			synchronized (output) {
 				requete.send(output);
@@ -383,10 +382,10 @@ public class PeerHandler extends Thread {
 	 * qu'il nous choke
 	 */
 	private void amMaybeInterested() throws IOException {
-		if (isChocking && !amInterested && !finished) {
+		if (isChocking && !amInterested && !interrupted()) {
 			boolean interested;
 			interested = pieceMgr.getPieceOfInterest(peerPiecesIndex) != -1;
-			if (interested) {
+			if (interested && !interrupted()) {
 				synchronized (output) {
 					new Interested().send(output);
 					amInterested = true;
@@ -401,8 +400,8 @@ public class PeerHandler extends Thread {
 		return peer.getNotation();
 	}
 
-	public void finish() {
-		this.finished = true;
+	@Override
+	public void interrupt() {
 		connecte = false;
 		try {
 			if (this.output != null) {
@@ -417,7 +416,7 @@ public class PeerHandler extends Thread {
 			System.err.println("CHiééééééééééééééééééééééééé");
 			e.printStackTrace();
 		}
-
+		super.interrupt();
 	}
 
 	public Peer getPeer() {
@@ -433,7 +432,7 @@ public class PeerHandler extends Thread {
 	}
 
 	public void newPieceHave(int i) {
-		if (!finished) {
+		if (!interrupted()) {
 			aEnvoyer.addLast(new Have(i));
 		}
 	}
