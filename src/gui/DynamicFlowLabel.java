@@ -5,6 +5,8 @@
 
 package gui;
 
+import java.awt.Dimension;
+
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -15,6 +17,7 @@ public class DynamicFlowLabel extends JLabel implements Runnable {
 	private int indexFlow = 0;
 	private boolean finished = false;
 	private long lastTimeUpdate = System.currentTimeMillis();
+	private Graphic graph = new Graphic(new Dimension(400, 400), 100);
 
 	public DynamicFlowLabel() {
 		try {
@@ -54,6 +57,7 @@ public class DynamicFlowLabel extends JLabel implements Runnable {
 					n += lastAmounts[i];
 				}
 				n /= lastAmounts.length;
+				graph.put(n);
 				String s = "bytes/sec";
 				switch ((int) (Math.log(n) / Math.log(2) / 10)) {
 				case (0):
@@ -83,6 +87,10 @@ public class DynamicFlowLabel extends JLabel implements Runnable {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public Graphic getGraph() {
+		return graph;
 	}
 
 	@Override
