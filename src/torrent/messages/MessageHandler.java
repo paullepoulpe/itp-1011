@@ -115,15 +115,17 @@ public class MessageHandler implements MessageVisitor {
 		torrent.receivedBlock();
 
 		// pour la FunnyBar
-		peerHandler.getPieceMgr().getFunnyBar().add(
-				(s.getPieceIndex() * torrent.getMetainfo().getPieceLength() + s
-						.getBlocIndex())
-						/ Piece.BLOCK_SIZE);
+		peerHandler
+				.getPieceMgr()
+				.getFunnyBar()
+				.add((s.getPieceIndex()
+						* torrent.getMetainfo().getPieceLength() + s
+						.getBlocIndex()) / Piece.BLOCK_SIZE);
 
 		entering.feed(s.getBlocIndex(), s.getBloc());
 		peerHandler.removeRequest(new Request(s.getPieceIndex(), s
 				.getBlocIndex(), s.getBloc().length));
-		peerHandler.getPieceMgr().updatePriorities();
+		peerHandler.getPieceMgr().updatePriorities(true);
 		peerHandler.multiplyNotation(1.01);
 		// System.out.println("Recu bloc : "
 		// + (s.getBlocIndex() / Piece.BLOCK_SIZE) + " de la Piece "

@@ -136,8 +136,8 @@ public class Piece {
 
 			for (int i = 0; i < peerHandlers.get(begin / BLOCK_SIZE).size(); i++) {
 
-				peerHandlers.get(begin / BLOCK_SIZE).get(i).removeRequest(
-						new Request(index, begin, bloc.length));
+				peerHandlers.get(begin / BLOCK_SIZE).get(i)
+						.removeRequest(new Request(index, begin, bloc.length));
 
 			}
 
@@ -235,10 +235,10 @@ public class Piece {
 	 *            : le tableau de bytes contenant nos donnees
 	 */
 	public void setData(byte[] data) {
-		if (data.length != this.data.length) {
+		if (data.length != this.sizeTab) {
 			System.out.println("probleme de taille pour data");
 		} else {
-			this.data = data;
+			this.data = data.clone();
 			for (int i = 0; i < this.receipt.length; i++) {
 				this.receipt[i] = true;
 			}
@@ -324,5 +324,15 @@ public class Piece {
 
 	public int getNbBlocs() {
 		return nbBlocs;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Piece) {
+			return ((Piece) obj).index == index
+					&& ((Piece) obj).sizeTab == sizeTab;
+		} else {
+			return false;
+		}
 	}
 }

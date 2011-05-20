@@ -1,6 +1,5 @@
 package IO;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -47,6 +46,8 @@ public class TorrentFileWriter extends TorrentIO implements Runnable {
 					throw new FileNotFoundException();
 				}
 				raf = new RandomAccessFile(allFiles[fileIndex], "rw");
+				// System.out.println("New RAF sur "
+				// + allFiles[fileIndex].getAbsolutePath());
 
 				try {
 					// je me positionne a l'endroit ou je vais commencer a
@@ -97,18 +98,6 @@ public class TorrentFileWriter extends TorrentIO implements Runnable {
 					break;
 				}
 			}
-			if (writtenOnFile) {
-				for (File file : allFiles) {
-					String name = file.getAbsolutePath();
-					boolean b = file.renameTo(new File(name.substring(0, name
-							.length()
-							- ".temp".length())));
-					if (!b) {
-						System.err.println("Fichier non-renommé");
-					}
-				}
-			}
 		}
-
 	}
 }
