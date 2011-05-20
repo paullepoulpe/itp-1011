@@ -1,5 +1,6 @@
 package torrent.peer;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.ListIterator;
@@ -47,7 +48,7 @@ public class PeerManager extends Thread {
 		PeerHandler peerHandler = new PeerHandler(s, torrent, encrytionEnabled);
 		Peer peer = peerHandler.getPeer();
 		PeerHandler lazyOne = getTheLazyOne();
-		if (lazyOne.getNotation() < 5 && !finished) {
+		if ((lazyOne == null || lazyOne.getNotation() < 5) && !finished) {
 
 			synchronized (peerList) {
 				if (peerList.contains(peer)) {
@@ -55,12 +56,17 @@ public class PeerManager extends Thread {
 				}
 			}
 			synchronized (peerHandlers) {
-
+				peerHandler.start();
 				peerHandlers.add(peerHandler);
 
 			}
 		} else {
-
+			try {
+				s.close();
+			} catch (IOException e) {
+				System.err
+						.println("Un pair s'est conncté et ne nous interesse pas, il veut pas se deconnecter le voyou!");
+			}
 		}
 
 	}

@@ -30,7 +30,9 @@ public class TorrentFileReader extends TorrentIO {
 	public void readFromFile(ArrayList<Piece> pieces) {
 		for (int i = 0; i < metainfo.getNbPieces(); i++) {
 			try {
-				readPiece(pieces.get(i));
+				Piece piece = pieces.get(i);
+				readPiece(piece);
+				piece.releaseMemory();
 			} catch (FileNotFoundException e) {
 				System.err.println("Piece " + i + " pas encore telechargée");
 			}
@@ -63,8 +65,6 @@ public class TorrentFileReader extends TorrentIO {
 				throw new FileNotFoundException();
 			}
 			raf = new RandomAccessFile(allFiles[fileIndex], "rw");
-			// System.out.println("New RAF sur "
-			// + allFiles[fileIndex].getAbsolutePath());
 
 			try {
 				// je me positionne a l'endroit ou je vais commencer a
@@ -87,6 +87,7 @@ public class TorrentFileReader extends TorrentIO {
 					fileIndex++;
 					beginPosition = 0;
 				}
+				piece.setData(data);
 				raf.close();
 			} catch (IOException e) {
 				System.err.println("Probleme de lecture de Piece");

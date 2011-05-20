@@ -12,12 +12,13 @@ import torrent.Torrent;
 
 public class TorrentTest extends Thread {
 	public static void main(String[] args) {
-		GeneralSettings.readFromFile();
+		// GeneralSettings.readFromFile();
 		new TorrentTest().start();
 	}
 
 	public void run() {
-		Torrent myTorrent = new Torrent(new File("data/kesako.torrent"));
+		Torrent myTorrent = new Torrent(new File(
+				"data/LePetitPrince-local.torrent"));
 
 		while (true) {
 			myTorrent.massAnnounce();

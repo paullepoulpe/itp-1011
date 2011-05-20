@@ -37,25 +37,38 @@ public class PieceManager {
 		this.leftPieces = new LinkedList<Piece>();
 		this.piecesOfInterest = new LinkedList<Piece>();
 		initPieces();
+		funnyBar = new FunnyBar((int) Math.ceil((double) torrent.getMetainfo()
+				.getSize() / (double) Piece.BLOCK_SIZE), new Dimension(600, 80));
 		TorrentFileReader reader = new TorrentFileReader(torrent);
 		reader.readFromFile(allPieces);
-		updatePriorities(false);
 		this.writer = new TorrentFileWriter(torrent);
-		// on met les pieces dans la liste de pieces
+		// on met les pieces dans la liste de pieces a telecharger
 		leftPieces.addAll(allPieces);
+		ListIterator<Piece> iterator = leftPieces.listIterator();
+		while (iterator.hasNext()) {
+			Piece piece = iterator.next();
+			if (piece.isChecked()) {
+				iterator.remove();
+				for (int i = 0; i < piece.getNbBlocs(); i++) {
+					funnyBar.add((piece.getIndex() * torrent.getMetainfo()
+							.getPieceLength()) / Piece.BLOCK_SIZE + i);
+				}
+
+			}
+		}
+
 		// On melange toutes les pieces
 		Collections.shuffle(this.leftPieces);
 
-		ListIterator<Piece> iterator = leftPieces.listIterator();
+		iterator = leftPieces.listIterator();
 		while (iterator.hasNext()
 				&& piecesOfInterest.size() < GeneralSettings.MAX_NUM_OF_CURRENT_PIECES) {
 			Piece piece = iterator.next();
 			iterator.remove();
 			piece.allocateMemory();
 			piecesOfInterest.addLast(piece);
+
 		}
-		funnyBar = new FunnyBar((int) Math.ceil((double) torrent.getMetainfo()
-				.getSize() / (double) Piece.BLOCK_SIZE), new Dimension(600, 80));
 
 	}
 
@@ -66,7 +79,7 @@ public class PieceManager {
 	 * Cette methode est appelee dans la classe MessageHandler lors d'un
 	 * visit(SendBlock s).
 	 */
-	public void updatePriorities(boolean started) {
+	public void updatePriorities() {
 		if (!isComplete()) {
 			synchronized (piecesOfInterest) {
 				ListIterator<Piece> iterator = piecesOfInterest.listIterator();
@@ -74,16 +87,15 @@ public class PieceManager {
 					Piece piece = iterator.next();
 					if (piece.isChecked()) {
 						iterator.remove();
-						if (started) {
-							try {
-								writer.writePiece(piece);
-							} catch (FileNotFoundException e) {
-								torrent.stop();
-								System.out
-										.println("Le Fichier de destination a disparu, veuillez le remettre dans le dossier de telechargement et redemarrer le telechargement");
-							}
-							torrent.notifyPeerHandlers(piece.getIndex());
+
+						try {
+							writer.writePiece(piece);
+						} catch (FileNotFoundException e) {
+							torrent.stop();
+							System.err
+									.println("Le Fichier de destination a disparu, veuillez le remettre dans le dossier de telechargement et redemarrer le telechargement");
 						}
+						torrent.notifyPeerHandlers(piece.getIndex());
 						if (!leftPieces.isEmpty()) {
 							Piece newPiece = leftPieces.removeFirst();
 							newPiece.allocateMemory();
@@ -99,7 +111,7 @@ public class PieceManager {
 			// System.err.println("Nombre de pieces :" + getNbPieces());
 			// System.err.println(piecesOfInterest.toString());
 			// System.err.println(leftPieces.toString());
-		} else if (started) {
+		} else {
 			writer.terminate();
 		}
 

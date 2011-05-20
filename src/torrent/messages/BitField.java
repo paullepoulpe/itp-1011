@@ -56,17 +56,19 @@ public class BitField extends Message {
 
 	public void send(DataOutputStream output) throws IOException {
 		if (!noPieces) {
+			System.out.println("Envoi Bitfield");
 			output.writeInt(1 + (int) Math.ceil(posessedPieces.length / 8.0));
-
+			output.writeByte(ID.bitField.ordinal());
 			for (int i = 0; i < Math.ceil(posessedPieces.length / 8.0); i++) {
 				byte bits = 0;
 				for (int j = 0; j < 8; j++) {
+					bits <<= 1;
 					if (((i * 8) + j < posessedPieces.length)
 							&& (posessedPieces[(i * 8) + j])) {
 						bits |= 1;
 					}
-					bits <<= 1;
 				}
+				System.out.print(bits + " ");
 				output.writeByte(bits);
 			}
 			output.flush();
