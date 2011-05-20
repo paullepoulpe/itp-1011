@@ -19,7 +19,7 @@ public class NotInterested extends Message {
 	public void send(DataOutputStream output) throws IOException {
 
 		output.writeInt(1);
-		output.writeByte(3);
+		output.writeByte(ID.notInterested.ordinal());
 		System.out.println("Sent NotInterested");
 
 	}

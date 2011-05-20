@@ -19,7 +19,7 @@ public class Interested extends Message {
 	public void send(DataOutputStream output) throws IOException {
 
 		output.writeInt(1);
-		output.writeByte(2);
+		output.writeByte(ID.interested.ordinal());
 
 	}
 

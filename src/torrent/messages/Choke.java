@@ -22,7 +22,7 @@ public class Choke extends Message {
 	public void send(DataOutputStream output) throws IOException {
 
 		output.writeInt(1);
-		output.writeByte(0);
+		output.writeByte(ID.choke.ordinal());
 		System.out.println("Sent Choke");
 
 	}

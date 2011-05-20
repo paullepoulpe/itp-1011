@@ -56,7 +56,6 @@ public class BitField extends Message {
 
 	public void send(DataOutputStream output) throws IOException {
 		if (!noPieces) {
-			System.out.println("Envoi Bitfield");
 			output.writeInt(1 + (int) Math.ceil(posessedPieces.length / 8.0));
 			output.writeByte(ID.bitField.ordinal());
 			for (int i = 0; i < Math.ceil(posessedPieces.length / 8.0); i++) {

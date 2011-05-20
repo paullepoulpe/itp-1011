@@ -85,7 +85,7 @@ public class PeerManager extends Thread {
 		}
 		ListIterator<PeerHandler> iterator = peerHandlers.listIterator();
 		while (iterator.hasNext()) {
-			iterator.next().finish();
+			iterator.next().interrupt();
 			iterator.remove();
 		}
 	}
@@ -118,7 +118,7 @@ public class PeerManager extends Thread {
 					peerHandlers.add(youngPeerHandler);
 
 				}
-				lazyPeerHandler.finish();
+				lazyPeerHandler.interrupt();
 				try {
 					lazyPeerHandler.join();
 				} catch (InterruptedException e) {

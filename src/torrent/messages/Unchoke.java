@@ -22,7 +22,7 @@ public class Unchoke extends Message {
 	public void send(DataOutputStream output) throws IOException {
 
 		output.writeInt(1);
-		output.writeByte(1);
+		output.writeByte(ID.unchoke.ordinal());
 		System.out.println("Sent Unchoke");
 
 	}

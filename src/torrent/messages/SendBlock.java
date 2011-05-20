@@ -41,7 +41,7 @@ public class SendBlock extends Message {
 	public void send(DataOutputStream output) throws IOException {
 
 		output.writeInt(9 + bloc.length);
-		output.writeByte(7);
+		output.writeByte(ID.piece.ordinal());
 		output.writeInt(pieceIndex);
 		output.writeInt(blocIndex);
 		output.write(bloc);

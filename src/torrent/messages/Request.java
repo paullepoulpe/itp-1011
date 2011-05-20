@@ -37,7 +37,7 @@ public class Request extends Message {
 	@Override
 	public void send(DataOutputStream output) throws IOException {
 		output.writeInt(13);
-		output.writeByte(6);
+		output.writeByte(ID.request.ordinal());
 		output.writeInt(index);
 		output.writeInt(begin);
 		output.writeInt(length);
