@@ -56,7 +56,7 @@ public class MainFrame extends JFrame implements Runnable {
 
 		setExtendedState(MAXIMIZED_BOTH);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setIconImage(Toolkit.getDefaultToolkit().getImage("src/gui/ico.png"));
+		setIconImage(Toolkit.getDefaultToolkit().getImage("src/gui/ico3.png"));
 
 		setSize(new Dimension(
 				Toolkit.getDefaultToolkit().getScreenSize().width - 100,
