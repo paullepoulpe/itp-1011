@@ -10,7 +10,7 @@ import torrent.Torrent;
 
 public class MainFrameTest1 {
 	public static void main(String[] args) {
-		GeneralSettings.readFromFile();
+		// GeneralSettings.readFromFile();
 		ArrayList<Torrent> tor = new ArrayList<Torrent>();
 		// tor.add(new Torrent(new File("data/LePetitPrince-local.torrent")));
 		tor.add(new Torrent(new File("data/glee.torrent")));

@@ -112,9 +112,9 @@ public class PeerHandler extends Thread {
 			}
 
 		} catch (IOException e) {
-			System.out.println("Peer deconnecte");
 			peer.multiplyNotation(0.1);
 		}
+		System.out.println("Peer deconnecte");
 		interrupt();
 
 	}
@@ -298,10 +298,10 @@ public class PeerHandler extends Thread {
 				return false;
 			}
 
-			output = new DataOutputStream(new SymmetricOutputStream(
-					theirSym.getXORKey(), output));
-			input = new DataInputStream(new SymmetricInputStream(
-					ourSym.getXORKey(), input));
+			output = new DataOutputStream(new SymmetricOutputStream(theirSym
+					.getXORKey(), output));
+			input = new DataInputStream(new SymmetricInputStream(ourSym
+					.getXORKey(), input));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

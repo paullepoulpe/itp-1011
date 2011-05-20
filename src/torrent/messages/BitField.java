@@ -67,7 +67,6 @@ public class BitField extends Message {
 						bits |= 1;
 					}
 				}
-				System.out.print(bits + " ");
 				output.writeByte(bits);
 			}
 			output.flush();
