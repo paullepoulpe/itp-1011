@@ -89,7 +89,8 @@ public class DynamicFlowLabel extends JLabel implements Runnable {
 		}
 	}
 
-	public Graphic getGraph() {
+	public Graphic getGraph(Dimension d) {
+		graph.setSize(d);
 		return graph;
 	}
 
