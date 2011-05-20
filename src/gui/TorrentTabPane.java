@@ -2,22 +2,39 @@ package gui;
 
 import gui.TorrentTabs.*;
 
+import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.event.*;
 
 import javax.swing.*;
 
 import torrent.Torrent;
 
-public class TorrentTabPane extends JTabbedPane implements MouseListener {
+public class TorrentTabPane extends JPanel implements MouseListener {
 	private JPanel info, peers, pieces;
+	private JTabbedPane tabs;
+	private JToolBar buttons;
+	private JButton play, stop;
 	private Torrent currentTorrent;
 
 	public TorrentTabPane() {
-		setTabPlacement(BOTTOM);
-		info = new JPanel();
+		tabs = new JTabbedPane(JTabbedPane.BOTTOM);
+		info = new JPanel(){
+			public void paintComponent(java.awt.Graphics g) {
+				g.translate(getSize().width/4, 200);
+				g.setFont(new Font(g.getFont().getFontName(),g.getFont().getStyle() ,20));
+				g.drawString("Start downloading by clicking on the play button\n or by right-clicking the torrent. ", 0, 0);
+			}
+		};
 		peers = new JPanel();
 		pieces = new JPanel();
 		addTabs();
+		setLayout(new BorderLayout());
+		add(tabs, BorderLayout.CENTER);
+		
+		buttons = new JToolBar("Torrent Controls", JToolBar.HORIZONTAL);
+		
+		add(buttons, BorderLayout.SOUTH);
 	}
 
 	@Override
@@ -48,15 +65,16 @@ public class TorrentTabPane extends JTabbedPane implements MouseListener {
 	}
 
 	private void contructAllTabs() {
-		removeAll();
+		tabs.removeAll();
 		info = new TorrentInfoTab(currentTorrent);
 		peers = new TorrentPeersTab(currentTorrent);
 		pieces = new TorrentPiecesTab(currentTorrent);
 		addTabs();
 	}
-	private void addTabs(){
-		add("Information", info);
-		add("Peer List", peers);
-		add("Pieces", pieces);
+
+	private void addTabs() {
+		tabs.add("Information", info);
+		tabs.add("Peer List", peers);
+		tabs.add("Pieces", pieces);
 	}
 }

@@ -2,6 +2,7 @@ package torrent;
 
 import gui.DynamicFlowLabel;
 
+import java.awt.Color;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import torrent.piece.*;
 import torrent.tracker.TrackerInfo;
 
 public class Torrent {
+	public static final int STOPPED = 0, PAUSED = 1, STARTED = 2;
 	private PeerManager peerManager;
 	private ArrayList<TrackerInfo> trackers;
 	private Metainfo metainfo;
@@ -112,6 +114,7 @@ public class Torrent {
 	}
 
 	public void stop() {
+		System.err.println("Stopped");
 		peerManager.finish();
 	}
 
@@ -121,6 +124,32 @@ public class Torrent {
 
 	public void sentBlock() {
 		upload.add(Piece.BLOCK_SIZE);
+	}
+
+	public void pause() {
+		try {
+			peerManager.wait();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void unPause() {
+		peerManager.notify();
+	}
+
+	public int getDownloadingStatus() {
+		if(peerManager.isAlive()){
+			return STARTED;
+		}else {
+			switch (peerManager.getState()) {
+			case WAITING:
+				return PAUSED;
+			case TERMINATED:
+				return STOPPED;
+			}
+		}
+		return 0;
 	}
 
 	public DynamicFlowLabel getDownload() {

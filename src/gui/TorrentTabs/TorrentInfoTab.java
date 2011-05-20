@@ -13,6 +13,14 @@ import java.awt.event.MouseListener;
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * Cette classe est le paneau qui contient la plupart des informations présentes
+ * dans le torrent, ainsi qu'un jolie barre de téléchargement montrant
+ * visuellement quelles pieces sont deja telechargees.
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class TorrentInfoTab extends JPanel {
 	private Torrent torrent;
 	FunnyBar funnyBar;
@@ -20,13 +28,11 @@ public class TorrentInfoTab extends JPanel {
 	public TorrentInfoTab(Torrent t) {
 		torrent = t;
 		setLayout(new BorderLayout());
-		add(new JButton("TEST" + torrent.getMetainfo().getFileName()),
-				BorderLayout.NORTH);
+
 		funnyBar = torrent.getPieceManager().getFunnyBar();
 		funnyBar.setParent(this);
-		add(funnyBar, BorderLayout.CENTER);
-		setBorder(new TitledBorder("INFO TAB"));
-		System.out.println(torrent.getMetainfo().getFileName());
+		add(funnyBar, BorderLayout.NORTH);
+		setBorder(new TitledBorder("Informations about "+torrent.getMetainfo().getFileName()));
 	}
 
 }

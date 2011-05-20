@@ -36,6 +36,7 @@ public class FunnyBar extends JPanel {
 			barresDessinees[elementIndex / 8] |= (byte) (1 << (7 - elementIndex % 8));
 			repaint();
 		} else {
+			System.err.println("elementIndex:" + elementIndex);
 			throw new IndexOutOfBoundsException("elementIndex:" + elementIndex);
 		}
 	}
@@ -43,10 +44,8 @@ public class FunnyBar extends JPanel {
 	@Override
 	public void paint(Graphics g) {
 		if (parent != null) {
-			this.setSize(parent.getWidth() - 80, 60);
+			this.setSize(parent.getWidth()-10, 30);
 		}
-
-		// setSize(50, 20);
 		int w = getWidth();
 		int h = getHeight();
 		double intervalle = (double) w / (double) nbBarres;
@@ -54,7 +53,7 @@ public class FunnyBar extends JPanel {
 		Graphics2D g2 = img.createGraphics();
 		super.paint(g2);
 		g2.drawRect(0, 0, w - 1, h - 1);
-		g2.setColor(Color.CYAN.darker().darker());
+		g2.setColor(Color.CYAN.darker());
 		for (int i = 0; i < nbBarres; i++) {
 			if ((barresDessinees[i / 8] & (byte) (1 << (7 - i % 8))) != 0) {
 				int debut = (int) Math.ceil(i * intervalle) + 1;
