@@ -25,7 +25,7 @@ public class TorrentTableModel extends AbstractTableModel {
 			Torrent ti = t.get(i);
 			to[i][0] = ti.getMetainfo().getFileName();
 			to[i][1] = ti.getProgressBar();
-			to[i][2] = t.get(i).getMetainfo().getSizeString();
+			to[i][2] = ti.getMetainfo().getSizeString();
 			to[i][3] = ti.getUpload();
 			to[i][4] = ti.getDownload();
 		}

@@ -1,6 +1,8 @@
 package gui.TorrentTabs;
 
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.File;
 
 import gui.TableModels.PieceListModel;
@@ -22,11 +24,9 @@ public class TorrentPiecesTab extends JPanel {
 		torrent = t;
 		if (t.getPieceManager().getCurrentPieces().length == 0) {
 			System.out.println("getCurrentPieces si empty!");
-			add(new JButton("TEST : there are "
+			add(new JButton("there are "
 					+ torrent.getPieceManager().getNbPieces() + " pieces"));
 		} else {
-			System.out
-					.println(torrent.getPieceManager().getCurrentPieces().length);
 			tm = new PieceListModel(this, torrent.getPieceManager()
 					.getCurrentPieces());
 			pieceTable = new JTable(tm);
@@ -39,7 +39,11 @@ public class TorrentPiecesTab extends JPanel {
 							return (Component) table.getValueAt(row, column);
 						}
 					});
-			add(pieceTable);
+			pieceTable.setPreferredScrollableViewportSize(new Dimension(Toolkit
+					.getDefaultToolkit().getScreenSize().width - 150, Toolkit
+					.getDefaultToolkit().getScreenSize().height - 500));
+			JScrollPane pane = new JScrollPane(pieceTable);
+			add(pane);
 		}
 		new Thread(new Runnable() {
 
@@ -49,8 +53,10 @@ public class TorrentPiecesTab extends JPanel {
 				while (true) {
 					try {
 						Thread.sleep(500);
-						 tm.setData(torrent.getPieceManager().getCurrentPieces());
-						 tm.fireTableDataChanged();
+						tm
+								.setData(torrent.getPieceManager()
+										.getCurrentPieces());
+						tm.fireTableDataChanged();
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
