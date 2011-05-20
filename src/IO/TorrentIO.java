@@ -14,14 +14,14 @@ public class TorrentIO {
 	protected File[] allFiles;
 	protected int[] filesLength;
 	protected File mainFile;
-	protected File dossier = GeneralSettings.DOWNLOADING_FOLDER;
+	protected File dossier;
 
 	public TorrentIO(Torrent torrent) {
-		this.metainfo = torrent.getMetainfo();
+		this.dossier = new File(GeneralSettings.DOWNLOADING_FOLDER.getAbsolutePath());
+		this.metainfo = torrent.getMetainfo();	
 	}
 
 	protected void buildFiles() {
-
 		if (!dossier.exists()) {
 			dossier.mkdirs();
 		}
@@ -39,7 +39,8 @@ public class TorrentIO {
 				}
 				File dossierFinal = new File(s.toString());
 				dossierFinal.mkdirs();
-				File file = new File(dossierFinal, path[path.length - 1]);
+				File file = new File(dossierFinal, File.separator
+						+ path[path.length - 1]);
 				try {
 					file.createNewFile();
 					allFiles[iterator.nextIndex() - 1] = file;

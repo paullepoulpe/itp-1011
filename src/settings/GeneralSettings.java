@@ -24,8 +24,8 @@ public class GeneralSettings {
 	public static Integer MAX_NUM_OF_CURRENT_PIECES = 15;
 	public static Long PEER_RESPONSE_DELAY = 100l;
 	public static Color PROGRESS_COLOR = Color.ORANGE;
-	public static File DOWNLOADING_FOLDER = new File(System
-			.getProperty("user.home"), "Downloads");
+	public static File DOWNLOADING_FOLDER = new File(
+			System.getProperty("user.home"), "Downloads");
 
 	public GeneralSettings() {
 		restoreDefaultValues();
@@ -61,7 +61,7 @@ public class GeneralSettings {
 			settingsFile.createNewFile();
 		} catch (IOException e) {
 			System.err
-					.println("Probleme de sauvegarde des paramètres, le paramtètres par default seront chargés au prochain lancement du programme");
+					.println("Problem encountered while writing settings on disk. Default values will be used on startup.");
 		}
 
 		try {
@@ -93,7 +93,7 @@ public class GeneralSettings {
 		File settingsFile = new File("settings.dat");
 		if (!settingsFile.exists()) {
 			System.err
-					.println("Le fichier des parametres n'existe pas, les paramètres par defaut seront utilisés");
+					.println("There is no settings file, default values will be used");
 		} else {
 
 			try {
@@ -119,7 +119,7 @@ public class GeneralSettings {
 				}
 			} catch (Exception e) {
 				System.err
-						.println("Probleme lors de la lecture des anciens paramètres, les paramètres par defaut seront utilisés");
+						.println("Problem while reading settings file. Default values will be used.");
 			}
 		}
 	}
