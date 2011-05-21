@@ -19,7 +19,7 @@ public class Torrent {
 	private PeerManager peerManager;
 	private ArrayList<TrackerInfo> trackers;
 	private Metainfo metainfo;
-	private int numPort;
+	private int numPort, downloadingStatus;
 	private PieceManager pieceManager;
 	public static String PEER_ID = PeerIDGenerator.generateID();
 	private JProgressBar progressBar;
@@ -42,6 +42,7 @@ public class Torrent {
 		this.pieceManager = new PieceManager(this);
 		peerManager = new PeerManager(this);
 		peerManager.start();
+		this.downloadingStatus = STOPPED;
 		progressBar = new JProgressBar(0, 100);
 		progressBar.setStringPainted(true);
 		progressBar.setForeground(GeneralSettings.PROGRESS_COLOR);
@@ -65,6 +66,7 @@ public class Torrent {
 	 * fais les premieres requetes aux trackers et demarre le @PeerAccepter
 	 */
 	public void massAnnounce() {
+		this.downloadingStatus = STARTED;
 		ArrayList<String> trackersUrl = metainfo.getTrackerList();
 		this.trackers = new ArrayList<TrackerInfo>();
 		for (int i = 0; i < trackersUrl.size(); i++) {
@@ -114,7 +116,7 @@ public class Torrent {
 	}
 
 	public void stop() {
-		System.err.println("Stopped");
+		System.err.println("Stopped (TOrrent.stop())");
 		peerManager.finish();
 	}
 
@@ -127,6 +129,7 @@ public class Torrent {
 	}
 
 	public void pause() {
+		System.out.println("Torrent Paused (Torrent.pause())");
 		try {
 			peerManager.wait();
 		} catch (InterruptedException e) {
@@ -135,21 +138,12 @@ public class Torrent {
 	}
 
 	public void unPause() {
+		System.out.println("Torrent.unpause()");
 		peerManager.notify();
 	}
 
 	public int getDownloadingStatus() {
-		if(peerManager.isAlive()){
-			return STARTED;
-		}else {
-			switch (peerManager.getState()) {
-			case WAITING:
-				return PAUSED;
-			case TERMINATED:
-				return STOPPED;
-			}
-		}
-		return 0;
+		return downloadingStatus;
 	}
 
 	public DynamicFlowLabel getDownload() {

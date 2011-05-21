@@ -1,11 +1,19 @@
 package gui.Actions;
 
+import java.io.File;
+
 import javax.swing.AbstractAction;
 
+import settings.GeneralSettings;
 import torrent.Torrent;
 
 public abstract class IconActions extends AbstractAction {
-	private Torrent torrent;
+	protected Torrent torrent;
+
+	public IconActions(String s) {
+		super(s);
+		setEnabled(false);
+	}
 
 	public IconActions(Torrent t, String s) {
 		super(s);
@@ -18,14 +26,27 @@ public abstract class IconActions extends AbstractAction {
 	}
 
 	protected void start() {
-		if (torrent.getDownloadingStatus() == Torrent.STOPPED)
+		if (torrent.getDownloadingStatus() == Torrent.STOPPED) {
+			System.out.println("Start:  massannounce");
 			torrent.massAnnounce();
-		if (torrent.getDownloadingStatus() == Torrent.PAUSED)
+		}
+		if (torrent.getDownloadingStatus() == Torrent.PAUSED) {
+			System.out.println("Start: unpause");
 			torrent.unPause();
+		}
 	}
 
 	protected void pause() {
 		if (torrent.getDownloadingStatus() == Torrent.STARTED)
 			torrent.pause();
+	}
+
+	protected File getDownloadFile() {
+		String s = GeneralSettings.DOWNLOADING_FOLDER.getAbsolutePath();
+		return new File(s, torrent.getMetainfo().getFileName());
+	}
+
+	protected boolean isDownloading() {
+		return (torrent.getDownloadingStatus() == Torrent.STARTED);
 	}
 }

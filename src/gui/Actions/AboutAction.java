@@ -7,6 +7,7 @@ import javax.swing.*;
 public class AboutAction extends AbstractAction {
 	public AboutAction() {
 		super("About");
+		putValue(SHORT_DESCRIPTION, "Shows a Dialog with some information about the program.");
 	}
 
 	@Override
