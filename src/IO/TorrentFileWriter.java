@@ -98,6 +98,10 @@ public class TorrentFileWriter extends TorrentIO implements Runnable {
 					break;
 				}
 			}
+			if (writtenOnFile) {
+				System.out.println("Fichier ecris dans : "
+						+ dossier.getAbsolutePath());
+			}
 		}
 	}
 }

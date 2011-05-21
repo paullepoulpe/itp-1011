@@ -9,7 +9,6 @@ import settings.GeneralSettings;
 import torrent.Torrent;
 
 public class PeerManager extends Thread {
-	private boolean finished;
 	private Torrent torrent;
 	private ArrayList<Peer> peerList = new ArrayList<Peer>(),
 			connectedPeers = new ArrayList<Peer>();
@@ -27,7 +26,7 @@ public class PeerManager extends Thread {
 		// System.out.println("PeerAjoute :" + peer);
 		synchronized (peerHandlers) {
 			if (peerHandlers.size() < GeneralSettings.NB_MAX_PEERHANDLERS
-					&& !finished) {
+					&& !interrupted()) {
 				PeerHandler peerHandler = new PeerHandler(peer, torrent,
 						encrytionEnabled, this);
 				peerHandler.start();
@@ -49,7 +48,7 @@ public class PeerManager extends Thread {
 				this);
 		Peer peer = peerHandler.getPeer();
 		PeerHandler lazyOne = getTheLazyOne();
-		if ((lazyOne == null || lazyOne.getNotation() < 5) && !finished) {
+		if ((lazyOne == null || lazyOne.getNotation() < 5) && !interrupted()) {
 
 			synchronized (peerList) {
 				if (peerList.contains(peer)) {
@@ -74,20 +73,15 @@ public class PeerManager extends Thread {
 
 	@Override
 	public void run() {
-		while (!finished) {
+		while (!interrupted()) {
 			update();
-			if (!finished) {
+			if (!interrupted()) {
 				try {
 					sleep(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
-		}
-		ListIterator<PeerHandler> iterator = peerHandlers.listIterator();
-		while (iterator.hasNext()) {
-			iterator.next().interrupt();
-			iterator.remove();
 		}
 	}
 
@@ -100,7 +94,8 @@ public class PeerManager extends Thread {
 			Peer youngPeer = null;
 			synchronized (peerList) {
 				for (Peer peer : peerList) {
-					if (peer.getNotation() > minActivePeerNotation && !finished) {
+					if (peer.getNotation() > minActivePeerNotation
+							&& !interrupted()) {
 						Peer lazyPeer = lazyPeerHandler.getPeer();
 						peerList.remove(peer);
 						peerList.add(lazyPeer);
@@ -110,7 +105,7 @@ public class PeerManager extends Thread {
 					}
 				}
 			}
-			if (trouve && !finished) {
+			if (trouve && !interrupted()) {
 				PeerHandler youngPeerHandler = new PeerHandler(youngPeer,
 						torrent, encrytionEnabled, this);
 				synchronized (peerHandlers) {
@@ -129,18 +124,23 @@ public class PeerManager extends Thread {
 		}
 	}
 
-	public void finish() {
-		this.finished = true;
+	@Override
+	public void interrupt() {
+		ListIterator<PeerHandler> iterator = peerHandlers.listIterator();
+		while (iterator.hasNext()) {
+			iterator.next().interrupt();
+		}
+		super.interrupt();
 	}
 
 	private PeerHandler getTheLazyOne() {
-		if (!finished) {
+		if (!interrupted()) {
 			double minActivePeerNotation = 10;
 			PeerHandler lazyPeerHandler = null;
 			synchronized (peerHandlers) {
 				for (PeerHandler ph : peerHandlers) {
 					double notation = ph.getNotation();
-					if (notation < minActivePeerNotation && !finished) {
+					if (notation < minActivePeerNotation && !interrupted()) {
 						minActivePeerNotation = notation;
 						lazyPeerHandler = ph;
 					}
@@ -153,7 +153,7 @@ public class PeerManager extends Thread {
 	}
 
 	public void notifyPeerHandlers(int index) {
-		if (!finished) {
+		if (!interrupted()) {
 			synchronized (peerHandlers) {
 				for (PeerHandler ph : peerHandlers) {
 					ph.newPieceHave(index);
