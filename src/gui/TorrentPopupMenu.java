@@ -9,18 +9,20 @@ import torrent.Torrent;
 import gui.Actions.*;
 
 public class TorrentPopupMenu extends JPopupMenu {
-	private JMenuItem announce, stop, pause;
+	private IconActions announce, stop, pause, openDirectory;
 	private Torrent t;
 
 	public TorrentPopupMenu(Torrent torrent) {
 		this.t = torrent;
-		stop = new JMenuItem(new StopAction(t));
-		announce = new JMenuItem(new StartAction(t));
-		pause = new JMenuItem(new PauseAction(t));
-		announce.setToolTipText("Start torrent : "
-				+ torrent.getMetainfo().getFileName());
+		stop = new StopAction(t);
+		announce = new StartAction(t);
+		openDirectory = new OpenDirectoryAction(t);
+//		pause = new PauseAction(t);
 		add(announce);
-		add(pause);
+//		add(pause);
 		add(stop);
+		addSeparator();
+		add(openDirectory);
+		
 	}
 }
