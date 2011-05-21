@@ -82,7 +82,7 @@ public class PeerHandler extends Thread {
 
 			// test si le handshake est compatible
 			if (isCompatible) {
-				peerManager.connect(peer);
+				peerManager.connect(this);
 				if (encryptionEnabled) {
 					shareKeys();
 				}
@@ -421,7 +421,7 @@ public class PeerHandler extends Thread {
 		} catch (IOException e) {
 			System.err.println("Probleme de fermeture de sockets");
 		}
-		peerManager.disConnect(peer);
+		peerManager.disConnect(this);
 		super.interrupt();
 	}
 

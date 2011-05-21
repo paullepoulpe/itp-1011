@@ -10,9 +10,9 @@ import torrent.Torrent;
 
 public class PeerManager extends Thread {
 	private Torrent torrent;
-	private ArrayList<Peer> peerList = new ArrayList<Peer>(),
-			connectedPeers = new ArrayList<Peer>();
-	private ArrayList<PeerHandler> peerHandlers;
+	private ArrayList<Peer> peerList = new ArrayList<Peer>();
+	private ArrayList<PeerHandler> peerHandlers,
+			connectedPeers = new ArrayList<PeerHandler>();
 	private boolean encrytionEnabled = GeneralSettings.ENCRYPTION_ENABLED;
 
 	public PeerManager(Torrent torrent) {
@@ -163,19 +163,19 @@ public class PeerManager extends Thread {
 
 	}
 
-	public ArrayList<Peer> getConnectedPeers() {
+	public ArrayList<PeerHandler> getConnectedPeers() {
 		return connectedPeers;
 	}
 
-	public void connect(Peer peer) {
+	public void connect(PeerHandler peerHandler) {
 		synchronized (connectedPeers) {
-			connectedPeers.add(peer);
+			connectedPeers.add(peerHandler);
 		}
 	}
 
-	public void disConnect(Peer peer) {
+	public void disConnect(PeerHandler peerHandler) {
 		synchronized (connectedPeers) {
-			connectedPeers.remove(peer);
+			connectedPeers.remove(peerHandler);
 		}
 	}
 
