@@ -235,6 +235,27 @@ public class Metainfo {
 		return pieceLength;
 	}
 
+	public String getPieceLengthString() {
+		String s = "Bytes";
+		switch ((int) (Math.log(pieceLength) / Math.log(2) / 10)) {
+		case (0):
+			s = pieceLength + " " + s;
+			break;
+		case (1):
+			s = pieceLength / (1 << 10) + " K" + s;
+			break;
+		case (2):
+			s = pieceLength / (1 << 20) + " M" + s;
+			break;
+		case (3):
+			s = pieceLength / (1 << 30) + " G" + s;
+			break;
+		default:
+			s = 0 + " " + s;
+		}
+		return s;
+	}
+
 	public String getComment() {
 		return comment;
 	}

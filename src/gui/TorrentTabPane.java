@@ -16,8 +16,6 @@ import torrent.Torrent;
 public class TorrentTabPane extends JPanel implements MouseListener {
 	private JPanel info, peers, pieces;
 	private JTabbedPane tabs;
-	private JToolBar buttons;
-	private JButton play, pause, stop, openFolder;
 	private Torrent currentTorrent;
 
 	public TorrentTabPane() {
@@ -36,15 +34,7 @@ public class TorrentTabPane extends JPanel implements MouseListener {
 		pieces = new JPanel();
 		addTabs();
 		setLayout(new BorderLayout());
-		add(tabs, BorderLayout.CENTER);
-
-		buttons = new JToolBar("Torrent Controls", JToolBar.HORIZONTAL);
-		play = new JButton(new StartAction());
-		pause = new JButton(new PauseAction());
-		stop = new JButton(new StopAction());
-		openFolder = new JButton(new OpenDirectoryAction());
-		addButtons();
-		add(buttons, BorderLayout.SOUTH);
+		add(tabs, BorderLayout.CENTER);		
 	}
 
 	@Override
@@ -80,25 +70,11 @@ public class TorrentTabPane extends JPanel implements MouseListener {
 		peers = new TorrentPeersTab(currentTorrent);
 		pieces = new TorrentPiecesTab(currentTorrent);
 		addTabs();
-		play = new JButton(new StartAction(currentTorrent));
-		pause = new JButton(new PauseAction(currentTorrent));
-		stop = new JButton(new StopAction(currentTorrent));
-		openFolder = new JButton(new OpenDirectoryAction(currentTorrent));
-		buttons.removeAll();
-		addButtons();
-		buttons.revalidate();
 	}
 
 	private void addTabs() {
 		tabs.add("Information", info);
 		tabs.add("Peer List", peers);
 		tabs.add("Pieces", pieces);
-	}
-
-	private void addButtons() {
-		buttons.add(play);
-		buttons.add(pause);
-		buttons.add(stop);
-		buttons.add(openFolder);
 	}
 }

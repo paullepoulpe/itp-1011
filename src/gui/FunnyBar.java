@@ -44,7 +44,7 @@ public class FunnyBar extends JPanel {
 	@Override
 	public void paint(Graphics g) {
 		if (parent != null) {
-			this.setSize(parent.getWidth()-10, 30);
+			this.setSize(parent.getWidth(), 30);
 		}
 		int w = getWidth();
 		int h = getHeight();
