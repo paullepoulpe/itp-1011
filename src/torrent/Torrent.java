@@ -154,4 +154,13 @@ public class Torrent {
 		return upload;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Torrent) {
+			return metainfo.getInfoHash().equals(
+					((Torrent) obj).metainfo.getInfoHash());
+		}
+		return false;
+	}
+
 }
