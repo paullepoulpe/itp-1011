@@ -43,7 +43,7 @@ public class Metainfo {
 	 * @param file
 	 *            le fichier "*.torrent" qui contient les informations
 	 */
-	public Metainfo(File file) {
+	public Metainfo(File file) throws InvalidFileException {
 		BDecoder myDecoder = null;
 		BEValue dico = null, infoBEValue = null;
 		Map<String, BEValue> dicoMap = null, infoMap = null;
@@ -55,6 +55,7 @@ public class Metainfo {
 
 		} catch (IOException e) {
 			System.err.println("Le fichier metainfo n'existe pas!!!");
+			throw new InvalidFileException();
 		}
 
 		try {
@@ -118,7 +119,8 @@ public class Metainfo {
 				this.trackerList.add(dicoMap.get("announce").getString());
 			}
 		} catch (InvalidBEncodingException e) {
-			System.out.println("Probleme1 : " + e.getMessage());
+			System.err.println("Probleme d'encodage du fichier ouvert");
+			throw new InvalidFileException();
 		}
 	}
 

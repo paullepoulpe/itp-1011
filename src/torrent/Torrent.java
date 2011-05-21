@@ -34,8 +34,9 @@ public class Torrent {
 	 * 
 	 * @param numPort
 	 *            le port sur lequel on accepte les connections
+	 * @throws InvalidFileException 
 	 */
-	public Torrent(File metainfoFile, int numPort) {
+	public Torrent(File metainfoFile, int numPort) throws InvalidFileException {
 		System.out.println("Notre Port : " + numPort);
 		this.metainfo = new Metainfo(metainfoFile);
 		this.numPort = numPort;
@@ -56,8 +57,9 @@ public class Torrent {
 	 * 
 	 * @param metainfo
 	 *            le fichier .torrent
+	 * @throws InvalidFileException 
 	 */
-	public Torrent(File metainfo) {
+	public Torrent(File metainfo) throws InvalidFileException {
 		this(metainfo, 6881 + (int) (Math.random() * 30001));
 
 	}
