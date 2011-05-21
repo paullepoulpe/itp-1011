@@ -17,7 +17,7 @@ public class TestGraphics {
 		f.setSize(400, 400);
 		f.setVisible(true);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		Graphic graph = new Graphic(f.getSize(), 100);
+		Graphic graph = new Graphic(f.getSize(), 300);
 		f.add(graph);
 		LinkedList<Integer> values = new LinkedList<Integer>();
 		values.add(2);
@@ -30,7 +30,7 @@ public class TestGraphics {
 		values.add(2);
 		while (true) {
 			values.removeLast();
-			values.addFirst((int) (Math.random() * 20));
+			values.addFirst((int) (Math.random() * 1000000) + 10000);
 			int moyenne = (values.get(0) + values.get(1) + values.get(2)
 					+ values.get(3) + values.get(4) + values.get(5)
 					+ values.get(6) + values.get(7)) / 8;
