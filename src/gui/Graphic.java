@@ -35,51 +35,96 @@ public class Graphic extends JPanel {
 		super.paint(g2);
 		g2.setColor(Color.WHITE);
 		String s = "bytes/sec";
-		String m = "b/s";
 		String debit = s;
 		long deb = points[(pointeur + nbPoints - 1) % nbPoints];
-		int haut = 0;
-		switch ((int) (Math.log(max) / Math.log(2) / 10)) {
+		switch ((int) (Math.log(max) / Math.log(2) / 10.0)) {
 		case (0):
 			s = max + " " + s;
 			debit = deb + " " + debit;
-			haut = (1 << 10);
 			break;
 		case (1):
 			s = max / (1 << 10) + " K" + s;
 			debit = deb / (1 << 10) + " K" + debit;
-			haut = (1 << 20);
-			m = "K" + m;
 			break;
 		case (2):
 			s = max / (1 << 20) + " M" + s;
-			debit = deb / (1 << 20) + " K" + debit;
-			haut = (1 << 30);
-			m = "M" + m;
+			debit = deb / (1 << 20) + " M" + debit;
 			break;
 		case (3):
 			s = max / (1 << 30) + " G" + s;
-			debit = deb / (1 << 30) + " K" + debit;
-			haut = (1 << 40);
-			m = "G" + m;
+			debit = deb / (1 << 30) + " G" + debit;
 			break;
 		default:
 			s = 0 + " " + s;
+			debit = 0 + " " + debit;
 
 		}
-		g2.drawString("Max : " + s, 5, 15);
-		if (haut != 0) {
-			g2.drawString("500 " + m, 5,
-					(int) (h - (h * haut * 4.0 / (max * 10.0))));
-			g2.drawString("250 " + m, 5,
-					(int) (h - (h * haut * 4.0 / (max * 20.0))));
-			g2.drawString(debit, w - (debit.length() * 6), 15);
-			g2.setColor(Color.GRAY);
-			g2.drawLine(0, (int) (h - (h * haut * 4.0 / (max * 10.0))), w,
-					(int) (h - (h * haut * 4.0 / (max * 10.0))));
-			g2.drawLine(0, (int) (h - (h * haut * 4.0 / (max * 20.0))), w,
-					(int) (h - (h * haut * 4.0 / (max * 20.0))));
+
+		int haut = (int) Math.pow(2.0,
+				(int) (Math.log((double) max) / Math.log(2.0)));
+		String controle = "b/s";
+		int hautAffiche = 0;
+
+		switch ((int) (Math.log(haut * 3.0 / 2.0) / Math.log(2.0))) {
+		case (14):
+			hautAffiche = 16;
+			controle = "K" + controle;
+			break;
+		case (15):
+			hautAffiche = 32;
+			controle = "K" + controle;
+			break;
+		case (16):
+			hautAffiche = 64;
+			controle = "K" + controle;
+			break;
+		case (17):
+			hautAffiche = 128;
+			controle = "K" + controle;
+			break;
+		case (18):
+			hautAffiche = 256;
+			controle = "K" + controle;
+			break;
+		case (19):
+			hautAffiche = 512;
+			controle = "K" + controle;
+			break;
+		case (20):
+			hautAffiche = 1024;
+			controle = "K" + controle;
+			break;
+		case (21):
+			hautAffiche = 2;
+			controle = "M" + controle;
+			break;
+		case (22):
+			hautAffiche = 4;
+			controle = "M" + controle;
+			break;
+		case (23):
+			hautAffiche = 8;
+			controle = "M" + controle;
+			break;
+		case (24):
+			hautAffiche = 16;
+			controle = "M" + controle;
+			break;
+		default:
 		}
+
+		g2.drawString("Max : " + s, 5, 15);
+		g2.drawString(debit, w - (debit.length() * 6), 15);
+		g2.drawString(hautAffiche + controle, 5,
+				(int) (h - (h * haut * 4.0 / (max * 5.0))));
+		g2.drawString(hautAffiche / 2 + controle, 5,
+				(int) (h - (h * haut * 4.0 / (max * 10.0))));
+		g2.setColor(Color.GRAY);
+		g2.drawLine(0, (int) (h - (h * haut * 4.0 / (max * 5.0))), w,
+				(int) (h - (h * haut * 4.0 / (max * 5.0))));
+		g2.drawLine(0, (int) (h - (h * haut * 4.0 / (max * 10.0))), w,
+				(int) (h - (h * haut * 4.0 / (max * 10.0))));
+
 		g2.setColor(Color.GREEN);
 		long lastPoint = points[pointeur];
 		for (int i = 1; i < nbPoints; i++) {
