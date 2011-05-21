@@ -36,7 +36,7 @@ public class TestGraphics {
 					+ values.get(6) + values.get(7)) / 8;
 			graph.put(moyenne);
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
