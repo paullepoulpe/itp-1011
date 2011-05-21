@@ -3,6 +3,7 @@ package torrent.piece;
 import gui.FunnyBar;
 
 import java.awt.Dimension;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -220,5 +221,9 @@ public class PieceManager {
 
 	public FunnyBar getFunnyBar() {
 		return funnyBar;
+	}
+
+	public File getDownloadingFolder() {
+		return writer.getDownloadingFolder();
 	}
 }

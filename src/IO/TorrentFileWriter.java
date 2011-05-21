@@ -1,5 +1,6 @@
 package IO;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -103,5 +104,9 @@ public class TorrentFileWriter extends TorrentIO implements Runnable {
 						+ dossier.getAbsolutePath());
 			}
 		}
+	}
+
+	public File getDownloadingFolder() {
+		return dossier;
 	}
 }

@@ -28,6 +28,7 @@ public class TestGraphics {
 		values.add(2);
 		values.add(2);
 		values.add(2);
+		long lastTime = System.currentTimeMillis();
 		while (true) {
 			values.removeLast();
 			values.addFirst((int) (Math.random() * 1000000) + 10000);
@@ -36,7 +37,7 @@ public class TestGraphics {
 					+ values.get(6) + values.get(7)) / 8;
 			graph.put(moyenne);
 			try {
-				Thread.sleep(500);
+				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

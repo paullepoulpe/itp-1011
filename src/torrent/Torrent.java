@@ -117,7 +117,7 @@ public class Torrent {
 
 	public void stop() {
 		System.err.println("Stopped (TOrrent.stop())");
-		peerManager.finish();
+		peerManager.interrupt();
 	}
 
 	public void receivedBlock() {
@@ -161,6 +161,10 @@ public class Torrent {
 					((Torrent) obj).metainfo.getInfoHash());
 		}
 		return false;
+	}
+
+	public File getDownloadinFolder() {
+		return pieceManager.getDownloadingFolder();
 	}
 
 }
