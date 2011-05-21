@@ -54,7 +54,7 @@ public class Metainfo {
 			this.infoHash = new TorrentHash(myDecoder.getSpecialMapDigest());
 
 		} catch (IOException e) {
-			System.out.println(e.getLocalizedMessage());
+			System.err.println("Le fichier metainfo n'existe pas!!!");
 		}
 
 		try {

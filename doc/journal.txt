@@ -92,3 +92,4 @@ La gui avance de plus en plus (cela faisait une semaine que je beugait sur le fo
 -Nouvel icone pour notre joli programme!
 21.05.2011
 -Ajout de graphiques de telechargement
+-La methode read from file a l'air d'avoir des problemes pour lire les multifiles, elle ne les lit qu'a 98% (je pense pas que je vais reussir a le corriger avant le rendu :'( )

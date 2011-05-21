@@ -14,16 +14,16 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 
 public class Graphic extends JPanel {
-	private int[] points;
+	private long[] points;
 	private int nbPoints;
-	private int max = 1;
+	private long max = 1;
 	private int pointeur = 0;
 
 	public Graphic(Dimension d, int nbPoints) {
 		setBackground(Color.BLACK);
 		setSize(d);
 		this.nbPoints = nbPoints;
-		points = new int[nbPoints];
+		points = new long[nbPoints];
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class Graphic extends JPanel {
 		String s = "bytes/sec";
 		String m = "b/s";
 		String debit = s;
-		int deb = points[(pointeur + nbPoints - 1) % nbPoints];
+		long deb = points[(pointeur + nbPoints - 1) % nbPoints];
 		int haut = 0;
 		switch ((int) (Math.log(max) / Math.log(2) / 10)) {
 		case (0):
@@ -81,7 +81,7 @@ public class Graphic extends JPanel {
 					(int) (h - (h * haut * 4.0 / (max * 20.0))));
 		}
 		g2.setColor(Color.GREEN);
-		int lastPoint = points[pointeur];
+		long lastPoint = points[pointeur];
 		for (int i = 1; i < nbPoints; i++) {
 			int x1 = (int) (w * (i - 1.0) / (nbPoints - 1.0));
 			int x2 = (int) (w * i / (nbPoints - 1.0));
@@ -94,15 +94,15 @@ public class Graphic extends JPanel {
 		g.drawImage(img, 0, 0, (int) w, (int) h, null);
 	}
 
-	public void put(int value) {
-		int valueDisappearing = points[pointeur];
-		points[pointeur] = value;
+	public void put(long l) {
+		long valueDisappearing = points[pointeur];
+		points[pointeur] = l;
 		pointeur = (pointeur + 1) % nbPoints;
-		if (value >= max) {
-			max = value;
+		if (l >= max) {
+			max = l;
 		} else if (valueDisappearing == max) {
 			max = 1;
-			for (int i : points) {
+			for (long i : points) {
 				if (i > max) {
 					max = i;
 				}
