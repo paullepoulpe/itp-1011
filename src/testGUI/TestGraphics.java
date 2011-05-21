@@ -29,12 +29,14 @@ public class TestGraphics {
 		values.add(2);
 		values.add(2);
 		long lastTime = System.currentTimeMillis();
+		int i = 0;
 		while (true) {
 			values.removeLast();
-			values.addFirst((int) (Math.random() * 1000000) + 10000);
+			values.addFirst((int) (Math.random() * i) + 10000);
 			int moyenne = (values.get(0) + values.get(1) + values.get(2)
 					+ values.get(3) + values.get(4) + values.get(5)
 					+ values.get(6) + values.get(7)) / 8;
+			i = (i + 12345) % (1 << 24);
 			graph.put(moyenne);
 			try {
 				Thread.sleep(50);
