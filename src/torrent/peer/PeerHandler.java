@@ -276,12 +276,19 @@ public class PeerHandler extends Thread {
 
 	}
 
+	/**
+	 * Cette methode est vitale lors du protocole de HandShake encrypte
+	 * 
+	 * @return true si le hanshake encrypte s'est bien deroule, false sinon
+	 * @throws IOException
+	 *             s'il y a un quelconque probleme avec les flux
+	 */
 	private boolean shareKeys() throws IOException {
 		try {
 
-			System.out.println("Encryption supportée, echange de clés");
+			System.out.println("Encryption supportee, echange de cles");
 			KeyPair myKey = KeyGenerator
-					.generateRSAKeyPair(CryptoSettings.RSAKeySize);
+					.generateRSAKeyPair(GeneralSettings.RSA_KEY_SIZE);
 
 			SendRSAKey ourRSA = new SendRSAKey(myKey);
 			ourRSA.send(output);
