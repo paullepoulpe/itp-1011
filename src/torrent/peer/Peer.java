@@ -6,7 +6,8 @@ import torrent.Torrent;
 
 /**
  * Cette classe represente un pair. Elle implemente les methodes necessaires
- * pour changer ses attributs ainsi que pour activer son PeerHandler.
+ * pour changer ses attributs. Le systeme de notations est utile pour optimiser
+ * les requetes aux "meilleurs pairs".
  * 
  * @author Damien Engels, Maarten Sap
  * 
@@ -18,16 +19,13 @@ public class Peer {
 	private double notation = 5;
 
 	/**
-	 * Constructeur. On demarrer (start) le processus PeerHandler, car c'est
-	 * cette classe qui s'occupe de tout ce qui est traffic de donnees.
+	 * Constructeur.
 	 * 
 	 * @param data
 	 *            tableau de 6 bytes contenant l'adresse IP et le port du pair
 	 *            auquel on souhaiterait se connecter.
 	 * @param torrent
-	 *            on passe le torrent en argument pour pouvoir construire un
-	 *            PeerHandler. C'est lui qui se chargera de tout une fois qu'il
-	 *            est demarre.
+	 *            le torrent pour lequel ce pair est un seeder/leecher.
 	 */
 	public Peer(byte[] data, Torrent torrent) {
 		byte[] ip = { data[0], data[1], data[2], data[3] };
@@ -85,6 +83,13 @@ public class Peer {
 		return notation;
 	}
 
+	/**
+	 * Cette methoe permet de changer la notation du pair. Elle est appelee
+	 * lorsqu'on recoit des messages
+	 * 
+	 * @param d
+	 *            facteur qui multiplie la notaion.
+	 */
 	public void multiplyNotation(double d) {
 		notation *= d;
 		if (notation < 0) {

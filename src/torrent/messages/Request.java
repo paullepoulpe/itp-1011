@@ -4,7 +4,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
- * Cette classe est un message de requete de blocs.
+ * Cette classe est un message de requete de bloc.
  * 
  * @author Damien, Maarten
  * 

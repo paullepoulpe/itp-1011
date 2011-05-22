@@ -8,7 +8,7 @@ import torrent.piece.Piece;
  * cette classe s occupe de traiter les messages quon recoit, en faisant le
  * necessaire suivant ce quon recoit.
  * 
- * @author DAMIEN,MAARTEN
+ * @author Damien Engels, Maarten Sap
  * 
  */
 public class MessageHandler implements MessageVisitor {

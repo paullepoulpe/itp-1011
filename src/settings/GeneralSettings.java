@@ -24,6 +24,8 @@ public class GeneralSettings {
 	public static Integer MAX_NUM_OF_CURRENT_PIECES = 15;
 	public static Long PEER_RESPONSE_DELAY = 100l;
 	public static Color PROGRESS_COLOR = Color.ORANGE;
+	public static Integer SYMMETRIC_KEY_SIZE = 128;
+	public static Integer RSA_KEY_SIZE = 128;
 	public static File DOWNLOADING_FOLDER = new File(
 			System.getProperty("user.home"), "Downloads");
 
@@ -42,6 +44,8 @@ public class GeneralSettings {
 		MAX_NUM_OF_CURRENT_PIECES = 50;
 		PEER_RESPONSE_DELAY = 100l;
 		PROGRESS_COLOR = Color.ORANGE;
+		SYMMETRIC_KEY_SIZE = 128;
+		RSA_KEY_SIZE = 128;
 		DOWNLOADING_FOLDER = new File(System.getProperty("user.home"),
 				"Downloads");
 	}
@@ -76,11 +80,13 @@ public class GeneralSettings {
 					MAX_NUM_OF_CURRENT_PIECES);
 			parametres.put("PEER_RESPONSE_DELAY", PEER_RESPONSE_DELAY);
 			parametres.put("PROGRESS_COLOR", PROGRESS_COLOR);
+			parametres.put("SYMMETRIC_KEY_SIZE", SYMMETRIC_KEY_SIZE);
+			parametres.put("RSA_KEY_SIZE", RSA_KEY_SIZE);
 			parametres.put("DOWNLOADING_FOLDER", DOWNLOADING_FOLDER);
 			out.writeObject(parametres);
 		} catch (Exception e) {
 			System.err
-					.println("Probleme de sauvegarde des paramètres, le paramtètres par default seront chargés au prochain lancement du programme");
+					.println("Probleme de sauvegarde des parametres, le paramtetres par default seront charges au prochain lancement du programme");
 		}
 
 	}
@@ -116,6 +122,9 @@ public class GeneralSettings {
 					PROGRESS_COLOR = (Color) parametres.get("PROGRESS_COLOR");
 					DOWNLOADING_FOLDER = (File) parametres
 							.get("DOWNLOADING_FOLDER");
+					RSA_KEY_SIZE = (Integer) parametres.get("RSA_KEY_SIZE");
+					SYMMETRIC_KEY_SIZE = (Integer) parametres
+							.get("SYMMETRIC_KEY_SIZE");
 				}
 			} catch (Exception e) {
 				System.err

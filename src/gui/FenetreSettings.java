@@ -11,6 +11,8 @@ import java.io.File;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
+import com.sun.org.apache.bcel.internal.generic.NEW;
+
 import settings.GeneralSettings;
 
 /**
@@ -26,7 +28,8 @@ public class FenetreSettings extends JDialog implements ActionListener,
 			nbMaxPeerHandler = new JTextField(),
 			nbMaxRequests = new JTextField(),
 			peerResponseDelay = new JTextField(),
-			downloadFolderPath = new JTextField();
+			downloadFolderPath = new JTextField(),
+			rsaKeySize = new JTextField(), symmetricKeySize = new JTextField();
 	private JCheckBox encryptionEnabled = new JCheckBox();
 	private Color[] couleursValues = { Color.ORANGE, Color.BLUE, Color.RED,
 			Color.GRAY, Color.GREEN };
@@ -73,24 +76,28 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		fields1.add(choixDossier);
 		// parameters
 		param.setBorder(new TitledBorder("Download settings"));
-		param.add(new Label("Requested number of peers for per tracker"));
+		param.add(new JLabel("Requested number of peers for per tracker"));
 		param.add(numwant);
 
-		param.add(new Label("Maximum number of active peers"));
+		param.add(new JLabel("Maximum number of active peers"));
 		param.add(nbMaxPeerHandler);
 
-		param.add(new Label("Maximum number of simultaneous bloc requests"));
+		param.add(new JLabel("Maximum number of simultaneous bloc requests"));
 		param.add(nbMaxRequests);
 
-		param.add(new Label("Maximum connexion delay for a peer"));
+		param.add(new JLabel("Maximum connexion delay for a peer"));
 		param.add(peerResponseDelay);
 		// Encryption
 		encrypt.setBorder(new TitledBorder("Encryption parameters"));
-		encrypt.add(new Label("Encryption"));
+		encrypt.add(new JLabel("Encryption"));
 		encrypt.add(encryptionEnabled);
+		encrypt.add(new JLabel("RSA Key Size"));
+		encrypt.add(rsaKeySize);
+		encrypt.add(new JLabel("Symmetric Key Size"));
+		encrypt.add(symmetricKeySize);
 		// visual
 		visual.setBorder(new TitledBorder("Interface parameters"));
-		visual.add(new Label("Downloadbar color"));
+		visual.add(new JLabel("Downloadbar color"));
 		visual.add(couleurs);
 		// Buttons
 		JPanel boutons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -100,9 +107,8 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		fields1.add(choixDossier, BorderLayout.NORTH);
 		fields1.add(param, BorderLayout.CENTER);
 		fields1.add(encrypt, BorderLayout.SOUTH);
-		fields2.add(fields1,BorderLayout.CENTER);
+		fields2.add(fields1, BorderLayout.CENTER);
 		fields2.add(visual, BorderLayout.SOUTH);
-	
 
 		principal.add(fields2, BorderLayout.CENTER);
 		principal.add(boutons, BorderLayout.SOUTH);
@@ -177,6 +183,10 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		try {
 			GeneralSettings.NB_MAX_REQUESTS = Integer.parseInt(nbMaxRequests
 					.getText());
+			GeneralSettings.RSA_KEY_SIZE = Integer.parseInt(rsaKeySize
+					.getText());
+			GeneralSettings.SYMMETRIC_KEY_SIZE = Integer
+					.parseInt(symmetricKeySize.getText());
 		} catch (Exception e) {
 			probleme = true;
 		}
@@ -196,7 +206,7 @@ public class FenetreSettings extends JDialog implements ActionListener,
 
 		if (probleme) {
 			JOptionPane.showConfirmDialog(this,
-					"Plusieurs champs ont ete mal remplis", "Attention",
+					"Several fields are not filled correctly", "Caution",
 					JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 		}
 		return !probleme;
@@ -216,7 +226,8 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		peerResponseDelay.setText(GeneralSettings.PEER_RESPONSE_DELAY + "");
 
 		encryptionEnabled.setSelected(GeneralSettings.ENCRYPTION_ENABLED);
-
+		rsaKeySize.setText(GeneralSettings.RSA_KEY_SIZE+"");
+		symmetricKeySize.setText(GeneralSettings.SYMMETRIC_KEY_SIZE+"");
 		Color couleurCourante = GeneralSettings.PROGRESS_COLOR;
 		int index = 0;
 		for (index = 0; index < couleursValues.length; index++) {
@@ -251,8 +262,8 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		int n = JOptionPane
 				.showConfirmDialog(
 						this,
-						"Si vous fermez cette fenetre, les parametres ne seront pas sauvegardes !",
-						"Attention", JOptionPane.OK_CANCEL_OPTION);
+						"If you close this dialog, your settings will not be saved!",
+						"Caution", JOptionPane.OK_CANCEL_OPTION);
 		if (n == JOptionPane.OK_OPTION) {
 			close();
 		} else {

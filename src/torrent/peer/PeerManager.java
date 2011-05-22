@@ -8,6 +8,13 @@ import java.util.ListIterator;
 import settings.GeneralSettings;
 import torrent.Torrent;
 
+/**
+ * Cette classe est le gestionnaire des objets {@link PeerHandler}. Elle
+ * s'occupe d'optimiser le telechargement en recherchant les meilleurs pairs.
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class PeerManager extends Thread {
 	private Torrent torrent;
 	private ArrayList<Peer> peerList = new ArrayList<Peer>();
@@ -43,6 +50,12 @@ public class PeerManager extends Thread {
 		}
 	}
 
+	/**
+	 * On ajoute un pair par rapport a un socket de connexion.
+	 * 
+	 * @param s
+	 *            le socket de connexion
+	 */
 	public void addPeer(Socket s) {
 		PeerHandler peerHandler = new PeerHandler(s, torrent, encrytionEnabled,
 				this);
@@ -65,7 +78,7 @@ public class PeerManager extends Thread {
 				s.close();
 			} catch (IOException e) {
 				System.err
-						.println("Un pair s'est conncté et ne nous interesse pas, il veut pas se deconnecter le voyou!");
+						.println("Un pair s'est connecte et ne nous interesse pas, il veut pas se deconnecter le voyou!");
 			}
 		}
 
@@ -85,6 +98,10 @@ public class PeerManager extends Thread {
 		}
 	}
 
+	/**
+	 * cette methode met a jour la liste des {@link PeerHandler}s qui sont le
+	 * mieus notes
+	 */
 	private void update() {
 		PeerHandler lazyPeerHandler = getTheLazyOne();
 		if (lazyPeerHandler != null) {
@@ -133,6 +150,11 @@ public class PeerManager extends Thread {
 		super.interrupt();
 	}
 
+	/**
+	 * Cette methode trouve le {@link PeerHandler} le moins bien note.
+	 * 
+	 * @return le {@link PeerHandler} le plus faineant.
+	 */
 	private PeerHandler getTheLazyOne() {
 		if (!interrupted()) {
 			double minActivePeerNotation = 10;
