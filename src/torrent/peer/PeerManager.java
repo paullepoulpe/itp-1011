@@ -92,7 +92,6 @@ public class PeerManager extends Thread {
 				try {
 					sleep(1000);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
 				}
 			}
 		}

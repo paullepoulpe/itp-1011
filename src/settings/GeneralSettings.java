@@ -22,7 +22,7 @@ public class GeneralSettings {
 	public static Integer NB_MAX_PEERHANDLERS = 100;
 	public static Integer NB_MAX_REQUESTS = 15;
 	public static Integer MAX_NUM_OF_CURRENT_PIECES = 15;
-	public static Long PEER_RESPONSE_DELAY = 100l;
+	public static Long PEER_RESPONSE_DELAY = 1000l;
 	public static Color PROGRESS_COLOR = Color.ORANGE;
 	public static Integer SYMMETRIC_KEY_SIZE = 128;
 	public static Integer RSA_KEY_SIZE = 128;
@@ -129,6 +129,7 @@ public class GeneralSettings {
 			} catch (Exception e) {
 				System.err
 						.println("Problem while reading settings file. Default values will be used.");
+				restoreDefaultValues();
 			}
 		}
 	}
