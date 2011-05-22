@@ -42,8 +42,7 @@ public abstract class IconActions extends AbstractAction {
 	}
 
 	protected File getDownloadFile() {
-		String s = GeneralSettings.DOWNLOADING_FOLDER.getAbsolutePath();
-		return new File(s, torrent.getMetainfo().getFileName());
+		return torrent.getDownloadinFolder();
 	}
 
 	protected boolean isDownloading() {

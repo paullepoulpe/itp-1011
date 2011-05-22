@@ -104,16 +104,16 @@ public class TorrentTable extends JPanel {
 	}
 }
 
-class TorrentTestTable {
-	public static void main(String[] args) {
-		ArrayList<Torrent> tor = new ArrayList<Torrent>();
-		tor.add(new Torrent(new File("data/G6.torrent")));
-		// tor.add(new Torrent(new File("data/BEP.torrent")));
-		TorrentTable tab = new TorrentTable(tor);
-		JFrame fen = new JFrame("test");
-		fen.getContentPane().add(tab);
-		fen.pack();
-		fen.setVisible(true);
-		fen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	}
-}
+//class TorrentTestTable {
+//	public static void main(String[] args) {
+//		ArrayList<Torrent> tor = new ArrayList<Torrent>();
+//		tor.add(new Torrent(new File("data/G6.torrent")));
+//		// tor.add(new Torrent(new File("data/BEP.torrent")));
+//		TorrentTable tab = new TorrentTable(tor);
+//		JFrame fen = new JFrame("test");
+//		fen.getContentPane().add(tab);
+//		fen.pack();
+//		fen.setVisible(true);
+//		fen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//	}
+//}

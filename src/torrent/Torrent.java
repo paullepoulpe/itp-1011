@@ -118,7 +118,8 @@ public class Torrent {
 	}
 
 	public void stop() {
-		System.err.println("Stopped (TOrrent.stop())");
+		System.err.println("Stopped (Torrent.stop())");
+		downloadingStatus  = STOPPED;
 		peerManager.interrupt();
 	}
 
@@ -167,6 +168,9 @@ public class Torrent {
 
 	public File getDownloadinFolder() {
 		return pieceManager.getDownloadingFolder();
+	}
+	public ArrayList<PeerHandler> getConnectedPeers() {
+		return peerManager.getConnectedPeers();
 	}
 
 }
