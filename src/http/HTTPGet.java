@@ -9,7 +9,8 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 /**
- * Cette classe sert uniquement a faire la requete http
+ * Cette classe sert uniquement a faire la requete HTTPGet. Elle utilise une
+ * {@link HashMap} pour envoyer celle-ci
  * 
  * @author Damien Engels et Maarten Sap
  * 
@@ -37,7 +38,7 @@ public class HTTPGet {
 	 *            Une string representant l'url a laquelle faire l'annonce
 	 * 
 	 * @param query
-	 *            La liste des paramètres de la requete
+	 *            La liste des parametres de la requete
 	 */
 	public HTTPGet(String urlAnnounce, HashMap<String, String> query) {
 		try {
@@ -124,7 +125,6 @@ public class HTTPGet {
 			}
 		} catch (IOException e) {
 			throw new FailureReasonExeption(e.getLocalizedMessage());
-			// System.out.println(e.getLocalizedMessage());
 		}
 		return reponse.toByteArray();
 	}
