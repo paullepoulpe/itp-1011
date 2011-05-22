@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import torrent.InvalidFileException;
 import torrent.Torrent;
 
 public class MainFrame extends JFrame implements Runnable {
@@ -90,23 +91,30 @@ public class MainFrame extends JFrame implements Runnable {
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		chooser.setMultiSelectionEnabled(false);
 		chooser.showDialog(this, "Add Torrent to downloadlist !");
-		Torrent t = new Torrent(new File(chooser.getSelectedFile()
-				.getAbsolutePath()));
-		remove(tableTorrent);
-		torrentz.add(t);
-		tableTorrent = new TorrentTable(torrentz);
-		tableTorrent.getTable().addMouseListener(torrentInfo);
-		c.add(tableTorrent, BorderLayout.SOUTH);
-		if (JOptionPane.YES_OPTION == JOptionPane
-				.showConfirmDialog(
-						rootPane,
-						"Do you want to start downloading immediately ?"
-								+ "\nYou can choose to start downloading manually by right-clicking the torrent afterwards.",
-						"Start downloading", JOptionPane.YES_NO_OPTION)) {
-			t.massAnnounce();
+		Torrent t = null;
+		try {
+			t = new Torrent(new File(chooser.getSelectedFile()
+					.getAbsolutePath()));
+		} catch (InvalidFileException e) {
+			e.printStackTrace();
 		}
-		validate();
-		tableTorrent.revalidate();
+		if (t != null) {
+			remove(tableTorrent);
+			torrentz.add(t);
+			tableTorrent = new TorrentTable(torrentz);
+			tableTorrent.getTable().addMouseListener(torrentInfo);
+			c.add(tableTorrent, BorderLayout.SOUTH);
+			if (JOptionPane.YES_OPTION == JOptionPane
+					.showConfirmDialog(
+							rootPane,
+							"Do you want to start downloading immediately ?"
+									+ "\nYou can choose to start downloading manually by right-clicking the torrent afterwards.",
+							"Start downloading", JOptionPane.YES_NO_OPTION)) {
+				t.massAnnounce();
+			}
+			validate();
+			tableTorrent.revalidate();
+		}
 	}
 
 	public void setUI() {
