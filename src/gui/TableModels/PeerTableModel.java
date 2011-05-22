@@ -15,7 +15,7 @@ public class PeerTableModel extends AbstractTableModel {
 			PeerHandler current = peers.get(i);
 			Peer currentPeer = current.getPeer();
 			data[i][0] = currentPeer.getIpAdress().toString().substring(1);
-			data[i][1] = currentPeer.getPort();
+			data[i][1] = currentPeer.getPort()+"";
 			data[i][2] = current.getUpload();
 			data[i][3] = current.getDownload();
 		}

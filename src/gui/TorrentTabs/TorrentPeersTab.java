@@ -21,6 +21,7 @@ public class TorrentPeersTab extends JPanel {
 	private Torrent torrent;
 	private JTable table;
 	private PeerTableModel tm;
+	private JScrollPane pane;
 
 	public TorrentPeersTab(Torrent t) {
 		this.torrent = t;
@@ -30,17 +31,20 @@ public class TorrentPeersTab extends JPanel {
 		table.setPreferredScrollableViewportSize(new Dimension(Toolkit
 				.getDefaultToolkit().getScreenSize().width - 150, Toolkit
 				.getDefaultToolkit().getScreenSize().height - 500));
-		table.getColumnModel().getColumn(0).setWidth(30);
-		table.getColumnModel().getColumn(1).setWidth(10);
+		table.setFillsViewportHeight(true);
 		table.setDefaultRenderer(Component.class, new TableCellRenderer() {
 			@Override
-			public Component getTableCellRendererComponent(JTable table, Object value,
-					boolean isSelected, boolean hasFocus, int row, int column) {
-				return (Component)table.getValueAt(row, column);
+			public Component getTableCellRendererComponent(JTable table,
+					Object value, boolean isSelected, boolean hasFocus,
+					int row, int column) {
+				return (Component) table.getValueAt(row, column);
 			}
 		});
-		add(new JScrollPane(table));
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		pane = new JScrollPane(table);
+		add(pane);
 		setBorder(new TitledBorder("Peer list"));
+
 		new Thread(new Runnable() {
 
 			@Override
@@ -57,13 +61,13 @@ public class TorrentPeersTab extends JPanel {
 			}
 		}).start();
 	}
-	private void update(){
+
+	private void update() {
 		tm = new PeerTableModel(torrent.getConnectedPeers());
-		tm.fireTableDataChanged();
-		tm.fireTableRowsUpdated(0, table.getRowCount()-1);
-//		table.setModel(tm);
+		table.setModel(tm);
+		table.doLayout();
 	}
-	
+
 }
 // class TorrentPeersTabTest {
 // public static void main(String[] args) {
