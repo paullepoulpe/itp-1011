@@ -45,14 +45,14 @@ public class TrackerInfo extends Thread {
 	}
 
 	/**
-	 * Cette methode initie la requete HTTPGet puis l'envoie. Esuite, on initie
+	 * Cette methode initie la requete HTTPGet puis l'envoie. Ensuite, on initie
 	 * les pairs.
 	 * 
 	 * @throws FailureReasonExeption
 	 *             si la reponse du tracker contient une failure reason
 	 */
 	public void announce() throws FailureReasonExeption {
-		System.out.println("\nRequete a " + urlAnnounce + "...");
+//		System.out.println("\nRequete a " + urlAnnounce + "...");
 		HTTPGet query = new HTTPGet(urlAnnounce);
 		query
 				.add("info_hash", torrent.getMetainfo().getInfoHash()
@@ -78,7 +78,7 @@ public class TrackerInfo extends Thread {
 		this.peersList = new ArrayList<Peer>();
 		byte[] peers = info.getPeers();
 		if (peers.length % 6 != 0) {
-			System.out.println("Erreur taille tableau de pairs");
+			System.err.println("Erreur taille tableau de pairs");
 		}
 		for (int i = 0; i < peers.length; i = i + 6) {
 			byte[] data = new byte[6];
