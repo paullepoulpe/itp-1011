@@ -27,14 +27,15 @@ public class Torrent {
 			download = new DynamicFlowLabel();
 
 	/**
-	 * comstructeur avec numero de port
+	 * constructeur avec numero de port. Il demarre le {@link PeerManager} ainsi
+	 * que le {@link PeerAccepter} pour gérer les pairs
 	 * 
 	 * @param metainfoFile
 	 *            le fichier .torrent
 	 * 
 	 * @param numPort
 	 *            le port sur lequel on accepte les connections
-	 * @throws InvalidFileException 
+	 * @throws InvalidFileException
 	 */
 	public Torrent(File metainfoFile, int numPort) throws InvalidFileException {
 		System.out.println("Notre Port : " + numPort);
@@ -57,7 +58,7 @@ public class Torrent {
 	 * 
 	 * @param metainfo
 	 *            le fichier .torrent
-	 * @throws InvalidFileException 
+	 * @throws InvalidFileException
 	 */
 	public Torrent(File metainfo) throws InvalidFileException {
 		this(metainfo, 6881 + (int) (Math.random() * 30001));
@@ -65,7 +66,7 @@ public class Torrent {
 	}
 
 	/**
-	 * fais les premieres requetes aux trackers et demarre le @PeerAccepter
+	 * Cette methode fait les premieres requetes aux trackers par des objets {@link TrackerInfo}
 	 */
 	public void massAnnounce() {
 		this.downloadingStatus = STARTED;
@@ -82,7 +83,7 @@ public class Torrent {
 	 * 
 	 * @param peer
 	 *            le peer qu'on veut ajouter
-	 * @return false si on l'as deja
+	 * @return false si on l'a deja
 	 */
 	public void addPeer(Peer peer) {
 		peerManager.addPeer(peer);
@@ -118,8 +119,7 @@ public class Torrent {
 	}
 
 	public void stop() {
-		System.err.println("Stopped (Torrent.stop())");
-		downloadingStatus  = STOPPED;
+		downloadingStatus = STOPPED;
 		peerManager.interrupt();
 	}
 
@@ -130,7 +130,10 @@ public class Torrent {
 	public void sentBlock() {
 		upload.add(Piece.BLOCK_SIZE);
 	}
-
+/**
+ * @deprecated
+ * Cette methode devait mettre en pause le téléchargment; utiliser {@link Torrent#stop} a la place.
+ */
 	public void pause() {
 		System.out.println("Torrent Paused (Torrent.pause())");
 		try {
@@ -139,7 +142,9 @@ public class Torrent {
 			e.printStackTrace();
 		}
 	}
-
+/**
+ * @deprecated Tout comme {@link Torrent#pause()}, methode a ne pas utiliser.
+ */
 	public void unPause() {
 		System.out.println("Torrent.unpause()");
 		peerManager.notify();
@@ -169,6 +174,7 @@ public class Torrent {
 	public File getDownloadinFolder() {
 		return pieceManager.getDownloadingFolder();
 	}
+
 	public ArrayList<PeerHandler> getConnectedPeers() {
 		return peerManager.getConnectedPeers();
 	}
