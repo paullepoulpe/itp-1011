@@ -98,8 +98,8 @@ public class PeerManager extends Thread {
 	}
 
 	/**
-	 * cette methode met a jour la liste des {@link PeerHandler}s qui sont le
-	 * mieus notes
+	 * cette methode met a jour la liste des {@link PeerHandler}s qui sont les
+	 * mieux notes
 	 */
 	private void update() {
 		PeerHandler lazyPeerHandler = getTheLazyOne();
