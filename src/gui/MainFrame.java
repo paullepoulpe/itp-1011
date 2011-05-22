@@ -1,17 +1,26 @@
 package gui;
 
+import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
 import java.awt.Toolkit;
+import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -54,13 +63,6 @@ public class MainFrame extends JFrame implements Runnable {
 		tableTorrent.getTable().addMouseListener(torrentInfo);
 		c.add(torrentInfo, BorderLayout.CENTER);
 
-		setExtendedState(MAXIMIZED_BOTH);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setIconImage(Toolkit.getDefaultToolkit().getImage("src/gui/ico3.png"));
-		setSize(new Dimension(
-				Toolkit.getDefaultToolkit().getScreenSize().width - 100,
-				Toolkit.getDefaultToolkit().getScreenSize().height - 100));
-
 		setSize(new Dimension(
 				Toolkit.getDefaultToolkit().getScreenSize().width - 100,
 				Toolkit.getDefaultToolkit().getScreenSize().height - 100));
@@ -98,7 +100,7 @@ public class MainFrame extends JFrame implements Runnable {
 		} catch (InvalidFileException e) {
 			e.printStackTrace();
 		}
-		if (t != null) {
+		if (t != null && !torrentz.contains(t)) {
 			remove(tableTorrent);
 			torrentz.add(t);
 			tableTorrent = new TorrentTable(torrentz);
@@ -131,7 +133,38 @@ public class MainFrame extends JFrame implements Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		// setResizable(false);
+		setResizable(false);
+		setExtendedState(MAXIMIZED_BOTH);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setIconImage(Toolkit.getDefaultToolkit().getImage("src/gui/ico3.png"));
+		if(SystemTray.isSupported()){
+			Image image = Toolkit.getDefaultToolkit().getImage("src/gui/ico3.png");
+			String tooltip = "DAART is running, as fast as lightning, your torrents are probably done downloading ;)";
+			PopupMenu popup = new PopupMenu("DAART");
+			MenuItem open = new MenuItem("Open DAART");
+			open.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					MainFrame.this.setExtendedState(NORMAL);
+				}
+			});
+			TrayIcon icon = new TrayIcon(image, tooltip, popup);
+			icon.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseReleased(MouseEvent e) {
+//					MainFrame.popup.show(icon, e.getX(), e.getY());
+				}
+				@Override
+				public void mousePressed(MouseEvent e) {
+					mouseReleased(e);
+				}
+			});
+			try {
+				SystemTray.getSystemTray().add(icon);
+			} catch (AWTException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public Torrent selectedTorrent() {
