@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * ce message est un Thread qui - une fois demarre - envoie un tableau de 4
- * bytes nuls pour garder la connexion au pair active.
+ * ce message est un Thread qui - une fois demarre - envoie periodiquement un
+ * tableau de 4 bytes nuls pour garder la connexion au pair active.
  * 
  * @author Damien Engels & Maarten Sap
  */

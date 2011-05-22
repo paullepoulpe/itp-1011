@@ -10,6 +10,8 @@ import torrent.piece.Piece;
 /**
  * Ce message correspond a un tableau de bits de taille egale au nombre de
  * pieces du torrent. Les bits a 1 sont ceux que le pair possede.
+ * 
+ * @author Damien, Maarten
  */
 public class BitField extends Message {
 	private boolean[] posessedPieces;

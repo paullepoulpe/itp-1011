@@ -9,8 +9,8 @@ import java.util.Arrays;
 import torrent.Torrent;
 
 /**
- * Cette classe correspond a un message handshake, cest a dire le premier
- * message quon envoie a un pair pour initialiser la connexion.
+ * Cette classe correspond a un message handshake, c'est a dire le premier
+ * message qu'on envoie a un pair pour initialiser la connexion.
  * 
  * @author Damien, Maarten
  * 

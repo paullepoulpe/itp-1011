@@ -6,6 +6,13 @@ import java.util.Random;
 import crypto.RSA.*;
 import crypto.XOR.SymetricKey;
 
+/**
+ * Cette classe s'occupe de generer des cles pseudo-aleatoires pour cryptage RSA
+ * et symetrique
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class KeyGenerator {
 
 	/**
