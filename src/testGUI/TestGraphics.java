@@ -17,7 +17,7 @@ public class TestGraphics {
 		f.setSize(400, 400);
 		f.setVisible(true);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		Graphic graph = new Graphic(f.getSize(), 300);
+		Graphic graph = new Graphic(f.getSize(), 100);
 		f.add(graph);
 		LinkedList<Integer> values = new LinkedList<Integer>();
 		values.add(2);
@@ -28,7 +28,6 @@ public class TestGraphics {
 		values.add(2);
 		values.add(2);
 		values.add(2);
-		long lastTime = System.currentTimeMillis();
 		int i = 0;
 		while (true) {
 			values.removeLast();

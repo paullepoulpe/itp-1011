@@ -13,13 +13,12 @@ import javax.swing.plaf.basic.BasicBorders;
 
 import torrent.Torrent;
 
-public class TorrentTabPane extends JPanel implements MouseListener {
-	private JPanel info, peers, pieces;
-	private JTabbedPane tabs;
+public class TorrentTabPane extends JTabbedPane implements MouseListener {
+	private JPanel info, peers, pieces, graph;
 	private Torrent currentTorrent;
 
 	public TorrentTabPane() {
-		tabs = new JTabbedPane(JTabbedPane.BOTTOM);
+		setTabPlacement(BOTTOM);
 		info = new JPanel() {
 			public void paintComponent(java.awt.Graphics g) {
 				g.translate(getSize().width / 4, 200);
@@ -33,8 +32,6 @@ public class TorrentTabPane extends JPanel implements MouseListener {
 		peers = new JPanel();
 		pieces = new JPanel();
 		addTabs();
-		setLayout(new BorderLayout());
-		add(tabs, BorderLayout.CENTER);		
 	}
 
 	@Override
@@ -59,24 +56,26 @@ public class TorrentTabPane extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		int i = tabs.getSelectedIndex();
+		int i = getSelectedIndex();
 		currentTorrent = ((TorrentTable) ((JTable) e.getSource()).getParent()
 				.getParent().getParent()).getSelectedTorrent();
 		contructAllTabs();
-		tabs.setSelectedIndex(i);		
+		setSelectedIndex(i);		
 	}
 
 	private void contructAllTabs() {
-		tabs.removeAll();
+		removeAll();
 		info = new TorrentInfoTab(currentTorrent);
 		peers = new TorrentPeersTab(currentTorrent);
 		pieces = new TorrentPiecesTab(currentTorrent);
+		graph = new GraphTab(currentTorrent);
 		addTabs();
 	}
 
 	private void addTabs() {
-		tabs.add("Information", info);
-		tabs.add("Peer List", peers);
-		tabs.add("Pieces", pieces);
+		add("Information", info);
+		add("Peer List", peers);
+		add("Pieces", pieces);
+		add("Graph", graph);
 	}
 }
