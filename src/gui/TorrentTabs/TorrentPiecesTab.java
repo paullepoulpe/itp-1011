@@ -44,6 +44,8 @@ public class TorrentPiecesTab extends JPanel {
 			pieceTable.setPreferredScrollableViewportSize(new Dimension(Toolkit
 					.getDefaultToolkit().getScreenSize().width - 150, Toolkit
 					.getDefaultToolkit().getScreenSize().height - 500));
+			pieceTable.setFillsViewportHeight(true);
+
 			add(pane);
 		}
 		new Thread(new Runnable() {
@@ -62,18 +64,5 @@ public class TorrentPiecesTab extends JPanel {
 				}
 			}
 		}).start();
-	}
-}
-
-class test {
-	public static void main(String[] args) {
-		Torrent t = new Torrent(new File("data/glee.torrent"));
-		t.massAnnounce();
-		JFrame fen = new JFrame();
-		JOptionPane.showConfirmDialog(fen, "Lalalala");
-		fen.getContentPane().add(new TorrentPiecesTab(t));
-		fen.pack();
-		fen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		fen.setVisible(true);
 	}
 }

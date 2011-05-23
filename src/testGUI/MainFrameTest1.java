@@ -16,9 +16,9 @@ public class MainFrameTest1 {
 		try {
 			// tor.add(new Torrent(new
 			// File("data/LePetitPrince-local.torrent")));
-			tor.add(new Torrent(new File("data/TBBTS04E24.torrent")));
+//			tor.add(new Torrent(new File("data/TBBTS04E24.torrent")));
 		} catch (Exception e) {
 		}
-		new Thread(new MainFrame(tor)).start();
+		new MainFrame(tor);
 	}
 }

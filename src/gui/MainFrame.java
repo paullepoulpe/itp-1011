@@ -27,7 +27,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import torrent.InvalidFileException;
 import torrent.Torrent;
 
-public class MainFrame extends JFrame implements Runnable {
+public class MainFrame extends JFrame {
 	private ArrayList<Torrent> torrentz;
 	private TorrentTable tableTorrent;
 	private MenuBar menu;
@@ -66,21 +66,10 @@ public class MainFrame extends JFrame implements Runnable {
 		setSize(new Dimension(
 				Toolkit.getDefaultToolkit().getScreenSize().width - 100,
 				Toolkit.getDefaultToolkit().getScreenSize().height - 100));
+		setLocationRelativeTo(null);
 		setVisible(true);
 		if (torrentz.size() == 0)
 			addTorrent();
-	}
-
-	@Override
-	public void run() {
-		while (true) {
-			try {
-				Thread.sleep(60000);
-				validate();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	public void addTorrent() {
@@ -98,7 +87,9 @@ public class MainFrame extends JFrame implements Runnable {
 			t = new Torrent(new File(chooser.getSelectedFile()
 					.getAbsolutePath()));
 		} catch (InvalidFileException e) {
-			JOptionPane.showMessageDialog(this, "The selected file is not a valid torrent file! ", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this,
+					"The selected file is not a valid torrent file! ", "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 		if (t != null && !torrentz.contains(t)) {
 			remove(tableTorrent);
@@ -106,14 +97,6 @@ public class MainFrame extends JFrame implements Runnable {
 			tableTorrent = new TorrentTable(torrentz);
 			tableTorrent.getTable().addMouseListener(torrentInfo);
 			c.add(tableTorrent, BorderLayout.SOUTH);
-			if (JOptionPane.YES_OPTION == JOptionPane
-					.showConfirmDialog(
-							rootPane,
-							"Do you want to start downloading immediately ?"
-									+ "\nYou can choose to start downloading manually by right-clicking the torrent afterwards.",
-							"Start downloading", JOptionPane.YES_NO_OPTION)) {
-				t.massAnnounce();
-			}
 			validate();
 			tableTorrent.revalidate();
 		}
@@ -137,29 +120,33 @@ public class MainFrame extends JFrame implements Runnable {
 		setExtendedState(MAXIMIZED_BOTH);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setIconImage(Toolkit.getDefaultToolkit().getImage("src/gui/ico3.png"));
-		if(SystemTray.isSupported()){
-			Image image = Toolkit.getDefaultToolkit().getImage("src/gui/ico3.png");
+		if (SystemTray.isSupported()) {
+			// Malheureusement le package swing n'est pas supporte pour le
+			// SystemTray
+			Image image = getToolkit().getImage("src/gui/ico3.gif");
 			String tooltip = "DAART is running, as fast as lightning, your torrents are probably done downloading ;)";
 			PopupMenu popup = new PopupMenu("DAART");
 			MenuItem open = new MenuItem("Open DAART");
+			MenuItem exit = new MenuItem("Exit the program");
 			popup.add(open);
+			popup.add(exit);
 			open.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					MainFrame.this.setExtendedState(NORMAL);
 				}
 			});
-			TrayIcon icon = new TrayIcon(image, tooltip, popup);
-			icon.addMouseListener(new MouseAdapter() {
+			exit.addActionListener(new ActionListener() {
+
 				@Override
-				public void mouseReleased(MouseEvent e) {
-//					MainFrame.popup.show(icon, e.getX(), e.getY());
-				}
-				@Override
-				public void mousePressed(MouseEvent e) {
-					mouseReleased(e);
+				public void actionPerformed(ActionEvent arg0) {
+					System.exit(0);
 				}
 			});
+			TrayIcon icon = new TrayIcon(image);
+			icon.setImageAutoSize(true);
+			icon.setPopupMenu(popup);
+			icon.setToolTip(tooltip);
 			try {
 				SystemTray.getSystemTray().add(icon);
 			} catch (AWTException e) {
