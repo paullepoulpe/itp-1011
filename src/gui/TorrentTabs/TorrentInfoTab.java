@@ -8,6 +8,7 @@ import gui.Actions.StartAction;
 import gui.Actions.StopAction;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,9 +36,9 @@ import torrent.Torrent;
  */
 public class TorrentInfoTab extends JPanel {
 	private Torrent torrent;
-	private Box vBox;
+	private Box vBox1, vBox2;
 	private JToolBar buttons;
-	private JButton play, pause, stop, openFolder, trackers, files;
+	private JButton play, stop, openFolder, trackers, files;
 	private JLabel name, size, downloadFolder, author, creationDate, comment;
 	private JPanel fields0;
 	FunnyBar funnyBar;
@@ -45,16 +46,19 @@ public class TorrentInfoTab extends JPanel {
 	public TorrentInfoTab(Torrent t) {
 		torrent = t;
 		setLayout(new BorderLayout());
-		vBox = Box.createVerticalBox();
-		vBox.setBorder(new TitledBorder("Torrent information"));
+		vBox1 = Box.createVerticalBox();
+		vBox1.setBorder(new TitledBorder("Download Information"));
+		vBox2 = Box.createVerticalBox();
+		vBox2.setBorder(new TitledBorder("Torrent information"));
 		funnyBar = torrent.getPieceManager().getFunnyBar();
 
 		fields0 = new JPanel(new BorderLayout());
+		fields0.setPreferredSize(new Dimension(this.getWidth(), 70));
 		funnyBar.setParent(null);
-		fields0.setBorder(new TitledBorder("Download Information"));
 		fields0.add(new JLabel("Download progress : "), BorderLayout.WEST);
 		fields0.add(funnyBar, BorderLayout.CENTER);
 		fields0.add(new DynamicPercent(), BorderLayout.EAST);
+
 		DynamicFlowLabel upload = torrent.getUpload(), download = torrent
 				.getDownload();
 		JPanel debit = new JPanel(new GridLayout(1, 4));
@@ -63,9 +67,8 @@ public class TorrentInfoTab extends JPanel {
 		debit.add(new JLabel("Download rate"));
 		debit.add(download);
 		fields0.add(debit, BorderLayout.SOUTH);
-		add(fields0, BorderLayout.NORTH);
-
-		vBox.add(Box.createVerticalStrut(20));
+		vBox1.add(fields0);
+		add(vBox1, BorderLayout.NORTH);
 
 		JPanel fields1 = new JPanel(new BorderLayout());
 		name = new JLabel("Torrent name: "
@@ -74,14 +77,14 @@ public class TorrentInfoTab extends JPanel {
 				+ torrent.getMetainfo().getSizeString());
 		fields1.add(name, BorderLayout.CENTER);
 		fields1.add(size, BorderLayout.EAST);
-		vBox.add(fields1);
+		vBox2.add(fields1);
 
 		JPanel fields1andahalf = new JPanel(new BorderLayout());
 		downloadFolder = new JLabel("This torrent will be downloaded in : "
 				+ torrent.getDownloadinFolder().getAbsolutePath());
 
 		fields1andahalf.add(downloadFolder, BorderLayout.CENTER);
-		vBox.add(fields1andahalf);
+		vBox2.add(fields1andahalf);
 
 		JPanel fields2 = new JPanel(new BorderLayout());
 		author = new JLabel("Created by : "
@@ -90,7 +93,7 @@ public class TorrentInfoTab extends JPanel {
 				+ torrent.getMetainfo().getCreationDate());
 		fields2.add(author, BorderLayout.CENTER);
 		fields2.add(creationDate, BorderLayout.EAST);
-		vBox.add(fields2);
+		vBox2.add(fields2);
 
 		JPanel fields3 = new JPanel(new BorderLayout());
 		fields3.add(new JLabel("Number of pieces: "
@@ -98,12 +101,12 @@ public class TorrentInfoTab extends JPanel {
 		fields3.add(new JLabel("Piece size: "
 				+ torrent.getMetainfo().getPieceLengthString()),
 				BorderLayout.EAST);
-		vBox.add(fields3);
+		vBox2.add(fields3);
 
 		JPanel fields4 = new JPanel(new BorderLayout());
 		comment = new JLabel("Comments: " + torrent.getMetainfo().getComment());
 		fields4.add(comment);
-		vBox.add(fields4);
+		vBox2.add(fields4);
 
 		JPanel fields5 = new JPanel(new GridLayout(0, 2));
 		if (torrent.getMetainfo().isMultifile()) {
@@ -125,9 +128,9 @@ public class TorrentInfoTab extends JPanel {
 			}
 		});
 		fields5.add(trackers);
-		vBox.add(fields5);
+		vBox2.add(fields5);
 
-		add(new JScrollPane(vBox));
+		add(vBox2);
 
 		buttons = new JToolBar("Torrent Controls", JToolBar.HORIZONTAL);
 		buttons.setFloatable(false);
@@ -138,10 +141,6 @@ public class TorrentInfoTab extends JPanel {
 		addButtons();
 	}
 
-	public void printSize() {
-		System.out.println(fields0.getSize());
-	}
-
 	private void addButtons() {
 		buttons.add(play);
 		buttons.add(stop);
@@ -150,9 +149,12 @@ public class TorrentInfoTab extends JPanel {
 
 	class DynamicPercent extends JLabel implements Runnable {
 		public DynamicPercent() {
-			super(" " + Math.floor(torrent.getPieceManager()
-					.getDownloadedCompleteness() * 100) / 100
-					+ " %");
+
+			super(" "
+					+ Math.floor(torrent.getPieceManager()
+							.getDownloadedCompleteness() * 100) / 100 + " %");
+			this.setPreferredSize(new Dimension(48, 14));
+			this.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
 			new Thread(this).start();
 		}
 
@@ -171,6 +173,7 @@ public class TorrentInfoTab extends JPanel {
 					e.printStackTrace();
 				}
 				this.revalidate();
+				TorrentInfoTab.this.revalidate();
 			}
 		}
 
@@ -190,7 +193,5 @@ class TorrentTabtest {
 		fen.pack();
 		fen.setVisible(true);
 		fen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		tab.printSize();
-
 	}
 }

@@ -142,6 +142,7 @@ public class MainFrame extends JFrame implements Runnable {
 			String tooltip = "DAART is running, as fast as lightning, your torrents are probably done downloading ;)";
 			PopupMenu popup = new PopupMenu("DAART");
 			MenuItem open = new MenuItem("Open DAART");
+			popup.add(open);
 			open.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {

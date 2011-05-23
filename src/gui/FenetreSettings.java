@@ -23,10 +23,11 @@ import settings.GeneralSettings;
  * 
  */
 public class FenetreSettings extends JDialog implements ActionListener,
-		WindowListener {
+		WindowListener, ItemListener {
 	private JTextField numwant = new JTextField(),
 			nbMaxPeerHandler = new JTextField(),
 			nbMaxRequests = new JTextField(),
+			sizePiecesOfInterest = new JTextField(),
 			peerResponseDelay = new JTextField(),
 			downloadFolderPath = new JTextField(),
 			rsaKeySize = new JTextField(), symmetricKeySize = new JTextField();
@@ -50,7 +51,9 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		valider.addActionListener(this);
 		restoreDefault.addActionListener(this);
 		browse.addActionListener(this);
-
+		encryptionEnabled.addItemListener(this);
+		rsaKeySize.setEnabled(encryptionEnabled.isSelected());
+		symmetricKeySize.setEnabled(encryptionEnabled.isSelected());
 		arrange();
 	}
 
@@ -76,6 +79,10 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		fields1.add(choixDossier);
 		// parameters
 		param.setBorder(new TitledBorder("Download settings"));
+
+		param.add(new JLabel("Maximum number of downloading pieces"));
+		param.add(sizePiecesOfInterest);
+
 		param.add(new JLabel("Requested number of peers for per tracker"));
 		param.add(numwant);
 
@@ -127,6 +134,7 @@ public class FenetreSettings extends JDialog implements ActionListener,
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
+		
 		if (source == browse) {
 			JFileChooser fileChooser = new JFileChooser(
 					GeneralSettings.DOWNLOADING_FOLDER);
@@ -181,6 +189,8 @@ public class FenetreSettings extends JDialog implements ActionListener,
 			probleme = true;
 		}
 		try {
+			GeneralSettings.MAX_NUM_OF_CURRENT_PIECES = Integer
+					.parseInt(sizePiecesOfInterest.getText());
 			GeneralSettings.NB_MAX_REQUESTS = Integer.parseInt(nbMaxRequests
 					.getText());
 			GeneralSettings.RSA_KEY_SIZE = Integer.parseInt(rsaKeySize
@@ -224,10 +234,12 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		nbMaxPeerHandler.setText(GeneralSettings.NB_MAX_PEERHANDLERS + "");
 		nbMaxRequests.setText(GeneralSettings.NB_MAX_REQUESTS + "");
 		peerResponseDelay.setText(GeneralSettings.PEER_RESPONSE_DELAY + "");
+		sizePiecesOfInterest.setText(GeneralSettings.MAX_NUM_OF_CURRENT_PIECES
+				+ "");
 
 		encryptionEnabled.setSelected(GeneralSettings.ENCRYPTION_ENABLED);
-		rsaKeySize.setText(GeneralSettings.RSA_KEY_SIZE+"");
-		symmetricKeySize.setText(GeneralSettings.SYMMETRIC_KEY_SIZE+"");
+		rsaKeySize.setText(GeneralSettings.RSA_KEY_SIZE + "");
+		symmetricKeySize.setText(GeneralSettings.SYMMETRIC_KEY_SIZE + "");
 		Color couleurCourante = GeneralSettings.PROGRESS_COLOR;
 		int index = 0;
 		for (index = 0; index < couleursValues.length; index++) {
@@ -259,11 +271,9 @@ public class FenetreSettings extends JDialog implements ActionListener,
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		int n = JOptionPane
-				.showConfirmDialog(
-						this,
-						"If you close this dialog, your settings will not be saved!",
-						"Caution", JOptionPane.OK_CANCEL_OPTION);
+		int n = JOptionPane.showConfirmDialog(this,
+				"If you close this dialog, your settings will not be saved!",
+				"Caution", JOptionPane.OK_CANCEL_OPTION);
 		if (n == JOptionPane.OK_OPTION) {
 			close();
 		} else {
@@ -294,6 +304,14 @@ public class FenetreSettings extends JDialog implements ActionListener,
 	public void windowOpened(WindowEvent arg0) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void itemStateChanged(ItemEvent arg0) {
+		boolean enabled = encryptionEnabled.isSelected();
+		rsaKeySize.setEnabled(enabled);
+		symmetricKeySize.setEnabled(enabled);
+				
 	}
 
 }
