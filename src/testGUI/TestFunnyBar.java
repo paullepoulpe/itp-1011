@@ -19,7 +19,7 @@ public class TestFunnyBar {
 		f.add(fb);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		for (int i = 0; i < 20; i++) {
-			fb.add(i);
+			fb.add((i*i)%20);
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {

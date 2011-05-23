@@ -98,7 +98,7 @@ public class MainFrame extends JFrame implements Runnable {
 			t = new Torrent(new File(chooser.getSelectedFile()
 					.getAbsolutePath()));
 		} catch (InvalidFileException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(this, "The selected file is not a valid torrent file! ", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		if (t != null && !torrentz.contains(t)) {
 			remove(tableTorrent);

@@ -39,14 +39,3 @@ public class FileListDialog extends JDialog {
 		return s;
 	}
 }
-
-class Test {
-	public static void main(String[] args) {
-		Torrent t = null;
-		try {
-			t = new Torrent(new File("data/BEP.torrent"));
-		} catch (Exception e) {
-		}
-		new FileListDialog(t).setVisible(true);
-	}
-}
