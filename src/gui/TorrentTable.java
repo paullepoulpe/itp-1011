@@ -45,6 +45,7 @@ public class TorrentTable extends JPanel {
 				mousePressed(e);
 			}
 		});
+		table.setFillsViewportHeight(true);
 		add(new JScrollPane(table));
 	}
 

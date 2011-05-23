@@ -41,6 +41,7 @@ public class TorrentPeersTab extends JPanel {
 			}
 		});
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		table.setFillsViewportHeight(true);
 		pane = new JScrollPane(table);
 		add(pane);
 		setBorder(new TitledBorder("Peer list"));
