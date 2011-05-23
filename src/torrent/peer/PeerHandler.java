@@ -108,17 +108,16 @@ public class PeerHandler extends Thread {
 					amMaybeInterested();
 					prepareRequest();
 					sendMessages();
-					try {
-						yield();
-						sleep(20);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+					yield();
+					sleep(20);
+
 				}
 			}
 
 		} catch (IOException e) {
 			peer.multiplyNotation(0.1);
+		} catch (InterruptedException e) {
+
 		}
 		System.out.println("Peer deconnecte");
 		interrupt();

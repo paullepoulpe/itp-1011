@@ -109,7 +109,7 @@ public class Piece {
 	 * @param bloc
 	 *            Un tableau de bytes representant les donnees du bloc.
 	 */
-	public void feed(int begin, byte[] bloc) {
+	public synchronized void feed(int begin, byte[] bloc) {
 		if (!this.isChecked) {
 			/*
 			 * le debut doit etre un multiple de BLOCK_SIZE et doit etre contenu

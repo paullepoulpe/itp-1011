@@ -87,12 +87,13 @@ public class PeerManager extends Thread {
 	@Override
 	public void run() {
 		while (!interrupted()) {
-			update();
-			if (!interrupted()) {
-				try {
+			try {
+				update();
+				if (!interrupted()) {
+
 					sleep(1000);
-				} catch (InterruptedException e) {
 				}
+			} catch (InterruptedException e) {
 			}
 		}
 	}
@@ -100,8 +101,10 @@ public class PeerManager extends Thread {
 	/**
 	 * cette methode met a jour la liste des {@link PeerHandler}s qui sont les
 	 * mieux notes
+	 * 
+	 * @throws InterruptedException
 	 */
-	private void update() {
+	private void update() throws InterruptedException {
 		PeerHandler lazyPeerHandler = getTheLazyOne();
 		if (lazyPeerHandler != null) {
 
@@ -131,11 +134,9 @@ public class PeerManager extends Thread {
 
 				}
 				lazyPeerHandler.interrupt();
-				try {
-					lazyPeerHandler.join();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+
+				lazyPeerHandler.join();
+
 			}
 		}
 	}

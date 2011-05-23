@@ -31,6 +31,7 @@ public class PieceManager {
 	private LinkedList<Piece> piecesOfInterest, leftPieces;
 	private Torrent torrent;
 	private TorrentFileWriter writer;
+	private TorrentFileReader reader;
 	private FunnyBar funnyBar;
 
 	public PieceManager(Torrent torrent) {
@@ -40,7 +41,7 @@ public class PieceManager {
 		initPieces();
 		funnyBar = new FunnyBar((int) Math.ceil((double) torrent.getMetainfo()
 				.getSize() / (double) Piece.BLOCK_SIZE), new Dimension(600, 80));
-		TorrentFileReader reader = new TorrentFileReader(torrent);
+		reader = new TorrentFileReader(torrent);
 		reader.readFromFile(allPieces);
 		this.writer = new TorrentFileWriter(torrent);
 		// on met les pieces dans la liste de pieces a telecharger
@@ -216,6 +217,7 @@ public class PieceManager {
 	}
 
 	public Piece[] getCurrentPieces() {
+		// System.out.println(piecesOfInterest.size());
 		return piecesOfInterest.toArray(new Piece[piecesOfInterest.size()]);
 	}
 
@@ -225,5 +227,10 @@ public class PieceManager {
 
 	public File getDownloadingFolder() {
 		return writer.getDownloadingFolder();
+	}
+
+	public Piece readPiece(int index) throws FileNotFoundException {
+		reader.readPiece(allPieces.get(index));
+		return allPieces.get(index);
 	}
 }
