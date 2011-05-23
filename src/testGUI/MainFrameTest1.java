@@ -14,8 +14,9 @@ public class MainFrameTest1 {
 	public static void main(String[] args) {
 		ArrayList<Torrent> tor = new ArrayList<Torrent>();
 		try {
-//			tor.add(new Torrent(new File("data/LePetitPrince-local.torrent")));
-			tor.add(new Torrent(new File("data/CB.torrent")));
+			// tor.add(new Torrent(new
+			// File("data/LePetitPrince-local.torrent")));
+			tor.add(new Torrent(new File("data/TBBTS04E24.torrent")));
 		} catch (Exception e) {
 		}
 		new Thread(new MainFrame(tor)).start();
