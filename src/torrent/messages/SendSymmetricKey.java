@@ -5,7 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import settings.CryptoSettings;
+import settings.GeneralSettings;
 
 import crypto.KeyGenerator;
 import crypto.XOR.SymetricKey;
@@ -22,7 +22,7 @@ public class SendSymmetricKey extends Message {
 
 	public SendSymmetricKey() {
 		this.XORKey = KeyGenerator
-				.generateSymmetricKey(CryptoSettings.SymetricKeySize);
+				.generateSymmetricKey(GeneralSettings.SYMMETRIC_KEY_SIZE);
 		this.id = ID.sendSymmetricKey.ordinal();
 		;
 	}
