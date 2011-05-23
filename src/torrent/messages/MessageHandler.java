@@ -1,5 +1,7 @@
 package torrent.messages;
 
+import java.io.FileNotFoundException;
+
 import torrent.Torrent;
 import torrent.peer.PeerHandler;
 import torrent.piece.Piece;
@@ -36,19 +38,25 @@ public class MessageHandler implements MessageVisitor {
 	public void visit(Request r) {
 		// si on recoit cela, on doit idealement preparer un message
 		// SendBloc dans notre queue de messages avec les attributs de request
+		Piece piece;
+		try {
+			piece = torrent.getPieceManager().readPiece(r.getIndex());
+			SendBlock sendBlock = new SendBlock(r.getIndex(), r.getBegin(),
+					piece.getBlock(r.getBegin()));
+			peerHandler.addAEnvoyer(sendBlock);
+			piece.releaseMemory();
 
-		SendBlock sendBlock = new SendBlock(r.getIndex(), r.getBegin(), torrent
-				.getPieceManager().getPiece(r.getIndex())
-				.getBlock(r.getBegin()));
-		peerHandler.addAEnvoyer(sendBlock);
+			// Pour le debit de upload
+			peerHandler.sentBlock();
+			torrent.sentBlock();
 
-		// Pour le debit de upload
-		peerHandler.sentBlock();
-		torrent.sentBlock();
-
-		System.out.println("Recu un request pour piece : " + r.getIndex()
-				+ ", bloc : " + r.getBegin());
-		peerHandler.multiplyNotation(1.001);
+			System.out.println("Recu un request pour piece : " + r.getIndex()
+					+ ", bloc : " + r.getBegin());
+			peerHandler.multiplyNotation(1.001);
+		} catch (FileNotFoundException e) {
+			System.err
+					.println("Fichier non trouvé pour envoyer un sendBlock, le message request sera ignoré!");
+		}
 
 	}
 

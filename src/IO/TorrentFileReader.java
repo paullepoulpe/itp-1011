@@ -73,7 +73,7 @@ public class TorrentFileReader extends TorrentIO {
 				// je regarde combien on peut encore lire dans ce fichier
 				int available = filesLength[fileIndex] - beginPosition;
 
-				// si on peut tou lire dans le fichier
+				// si on peut tout lire dans le fichier
 				if (available >= toRead) {
 					// on lis tout ce qu'il reste
 					raf.read(data, positionReading, toRead);
@@ -81,23 +81,24 @@ public class TorrentFileReader extends TorrentIO {
 				} else {
 					// sinon on lis ce qu'on peut et on passe au debut de
 					// la piece suivante
-					raf.write(data, positionReading, available);
+					raf.read(data, positionReading, available);
 					toRead -= available;
-					positionReading = +available;
+					positionReading += available;
 					fileIndex++;
 					beginPosition = 0;
 				}
-				piece.setData(data);
 				raf.close();
 			} catch (IOException e) {
 				System.err.println("Probleme de lecture de Piece");
 				try {
 					raf.close();
 				} catch (IOException e1) {
-					e1.printStackTrace();
+					System.err
+							.println("Probleme de fermeture du fichier pendant la lecture depuis le disque");
 				}
 			}
 		}
+		piece.setData(data);
 
 	}
 

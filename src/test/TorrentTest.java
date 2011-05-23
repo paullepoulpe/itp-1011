@@ -8,6 +8,7 @@ package test;
 import java.io.File;
 
 import settings.GeneralSettings;
+import torrent.InvalidFileException;
 import torrent.Torrent;
 
 public class TorrentTest extends Thread {
@@ -17,16 +18,23 @@ public class TorrentTest extends Thread {
 	}
 
 	public void run() {
-		Torrent myTorrent = new Torrent(new File("data/junk.torrent"));
-
-		while (true) {
+		Torrent myTorrent;
+		try {
+			myTorrent = new Torrent(
+					new File("data/LePetitPrince-local.torrent"));
 			myTorrent.massAnnounce();
-			try {
-				sleep(240000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+		} catch (InvalidFileException e1) {
+			e1.printStackTrace();
 		}
+
+		// while (true) {
+		// myTorrent.massAnnounce();
+		// try {
+		// sleep(240000);
+		// } catch (InterruptedException e) {
+		// e.printStackTrace();
+		// }
+		// }
 
 	}
 }

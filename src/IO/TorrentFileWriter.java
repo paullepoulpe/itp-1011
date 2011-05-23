@@ -23,12 +23,18 @@ public class TorrentFileWriter extends TorrentIO implements Runnable {
 	}
 
 	public boolean writePiece(Piece piece) throws FileNotFoundException {
-		if (piecesWritten[piece.getIndex()] || piece.isChecked()) {
+		if (!piecesWritten[piece.getIndex()] && piece.isChecked()) {
+			//data a ecrire
 			byte[] data = piece.getData();
+			//ce qu'il reste a ecrire
 			int toWrite = data.length;
+			// jusqu'a ou on a ecrit dans le tableau data
 			int positionWritten = 0;
+			//position de depart de data dans les fichiers
 			int beginPosition = piece.getIndex() * metainfo.getPieceLength();
+			//quand on a trouve le bon fichier
 			boolean stop = false;
+			//l'index du fichier dans lequel il faut ecrire
 			int fileIndex = 0;
 			// je trouve dans quel fichier ma piece commence
 			while (fileIndex < filesLength.length && !stop) {
@@ -57,7 +63,7 @@ public class TorrentFileWriter extends TorrentIO implements Runnable {
 					// je regarde combien on peut encore ecrire dans ce fichier
 					int writable = filesLength[fileIndex] - beginPosition;
 
-					// si on peut tou ecrire dans le fichier
+					// si on peut tout ecrire dans le fichier
 					if (writable >= toWrite) {
 						// on ecris tout ce qu'il reste
 						raf.write(data, positionWritten, toWrite);
@@ -67,7 +73,7 @@ public class TorrentFileWriter extends TorrentIO implements Runnable {
 						// la piece suivante
 						raf.write(data, positionWritten, writable);
 						toWrite -= writable;
-						positionWritten = +writable;
+						positionWritten += writable;
 						fileIndex++;
 						beginPosition = 0;
 					}
