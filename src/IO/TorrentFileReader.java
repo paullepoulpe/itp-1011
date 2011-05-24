@@ -1,8 +1,8 @@
 package IO;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
 import torrent.Torrent;
@@ -57,41 +57,41 @@ public class TorrentFileReader extends TorrentIO {
 		}
 		// tant qu'il me reste quelquechose a lire
 		while (toRead > 0) {
-			RandomAccessFile raf = null;
+			FileInputStream fis = null;
 			// j'initialise le stream du fichier courant
 			if (!allFiles[fileIndex].exists()) {
 				System.err.println("Ce fichier n'existe pas :"
 						+ allFiles[fileIndex].getAbsolutePath());
 				throw new FileNotFoundException();
 			}
-			raf = new RandomAccessFile(allFiles[fileIndex], "rw");
+			fis = new FileInputStream(allFiles[fileIndex]);
 
 			try {
 				// je me positionne a l'endroit ou je vais commencer a
 				// lire
-				raf.seek(beginPosition);
+				fis.skip(beginPosition);
 				// je regarde combien on peut encore lire dans ce fichier
 				int available = filesLength[fileIndex] - beginPosition;
 
 				// si on peut tout lire dans le fichier
 				if (available >= toRead) {
 					// on lis tout ce qu'il reste
-					raf.read(data, positionReading, toRead);
+					fis.read(data, positionReading, toRead);
 					toRead = -1;
 				} else {
 					// sinon on lis ce qu'on peut et on passe au debut de
 					// la piece suivante
-					raf.read(data, positionReading, available);
+					fis.read(data, positionReading, available);
 					toRead -= available;
 					positionReading += available;
 					fileIndex++;
 					beginPosition = 0;
 				}
-				raf.close();
+				fis.close();
 			} catch (IOException e) {
 				System.err.println("Probleme de lecture de Piece");
 				try {
-					raf.close();
+					fis.close();
 				} catch (IOException e1) {
 					System.err
 							.println("Probleme de fermeture du fichier pendant la lecture depuis le disque");
