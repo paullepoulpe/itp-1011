@@ -73,6 +73,5 @@ public class PieceListModel extends AbstractTableModel {
 					* current.getNbBlocs() / 100);
 		}
 		fireTableDataChanged();
-		fireTableStructureChanged();
 	}
 }
