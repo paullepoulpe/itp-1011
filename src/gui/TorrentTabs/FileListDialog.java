@@ -13,7 +13,8 @@ public class FileListDialog extends JDialog {
 	private Torrent t;
 	private JList list;
 
-	public FileListDialog(Torrent torrent) {
+	public FileListDialog(JFrame owner, Torrent torrent) {
+		super(owner, true);
 		this.t = torrent;
 		setTitle("File list");
 		setLayout(new BorderLayout());
@@ -23,7 +24,6 @@ public class FileListDialog extends JDialog {
 		add(new JScrollPane(list), BorderLayout.CENTER);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		pack();
-		setLocationRelativeTo(null);
 	}
 
 	private String[] listFiles() {

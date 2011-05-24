@@ -42,6 +42,9 @@ public abstract class IconActions extends AbstractAction {
 	}
 
 	protected File getDownloadFile() {
+		if(torrent.getMetainfo().isMultifile()){
+			return new File(torrent.getDownloadinFolder().getAbsolutePath(), torrent.getMetainfo().getFileName());
+		}
 		return torrent.getDownloadinFolder();
 	}
 

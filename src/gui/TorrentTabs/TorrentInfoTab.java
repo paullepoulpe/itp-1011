@@ -28,9 +28,9 @@ import sun.rmi.runtime.NewThreadAction;
 import torrent.Torrent;
 
 /**
- * Cette classe est le paneau qui contient la plupart des informations pr�sentes
- * dans le torrent, ainsi qu'un jolie barre de t�l�chargement montrant
- * visuellement quelles pieces sont deja telechargees.
+ * Cette classe est le paneau qui contient la plupart des informations
+ * pr�sentes dans le torrent, ainsi qu'un jolie barre de t�l�chargement
+ * montrant visuellement quelles pieces sont deja telechargees.
  * 
  * @author Damien, Maarten
  * 
@@ -41,8 +41,9 @@ public class TorrentInfoTab extends JPanel {
 	private JToolBar buttons;
 	private JButton play, stop, openFolder, trackers, files;
 	private JLabel name, size, downloadFolder, author, creationDate, comment;
-	private JPanel fields0;
-	FunnyBar funnyBar;
+	private JPanel fields0,debit;
+	private FunnyBar funnyBar;
+	private DynamicFlowLabel upload, download;
 
 	public TorrentInfoTab(Torrent t) {
 		torrent = t;
@@ -53,25 +54,26 @@ public class TorrentInfoTab extends JPanel {
 		vBox2.setBorder(new TitledBorder("Torrent information"));
 		funnyBar = torrent.getPieceManager().getFunnyBar();
 
+		upload = torrent.getUpload();
+		download = torrent.getDownload();
+		debit = new JPanel(new GridLayout(1, 4));
+		debit.add(new JLabel("Upload rate : "));
+		debit.add(upload);
+		debit.add(new JLabel("Download rate"));
+		debit.add(download);
+		
 		fields0 = new JPanel(new BorderLayout());
 		fields0.setPreferredSize(new Dimension(this.getWidth(), 70));
 		funnyBar.setParent(null);
 		fields0.add(new JLabel("Download progress : "), BorderLayout.WEST);
 		fields0.add(funnyBar, BorderLayout.CENTER);
 		fields0.add(new DynamicPercent(), BorderLayout.EAST);
-
-		DynamicFlowLabel upload = torrent.getUpload(), download = torrent
-				.getDownload();
-		JPanel debit = new JPanel(new GridLayout(1, 4));
-		debit.add(new JLabel("Upload rate : "));
-		debit.add(upload);
-		debit.add(new JLabel("Download rate"));
-		debit.add(download);
-		fields0.add(debit, BorderLayout.SOUTH);
 		vBox1.add(fields0);
+
+		vBox1.add(debit);
 		add(vBox1, BorderLayout.NORTH);
-		
-		JPanel fields1 = new JPanel(new GridLayout(1,6));
+
+		JPanel fields1 = new JPanel(new GridLayout(1, 6));
 		name = new JLabel(torrent.getMetainfo().getFileName());
 		size = new JLabel(torrent.getMetainfo().getSizeString());
 		fields1.add(new JLabel("Torrent name: "));
@@ -118,7 +120,10 @@ public class TorrentInfoTab extends JPanel {
 			files.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					new FileListDialog(torrent).setVisible(true);
+					FileListDialog fileList = new FileListDialog(
+							(JFrame) getTopLevelAncestor(), torrent);
+					fileList.setLocationRelativeTo(getTopLevelAncestor());
+					fileList.setVisible(true);
 				}
 			});
 		}
@@ -127,7 +132,10 @@ public class TorrentInfoTab extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new TrackerListDialog(torrent).setVisible(true);
+				TrackerListDialog trackerList = new TrackerListDialog(
+						(JFrame) getTopLevelAncestor(), torrent);
+				trackerList.setLocationRelativeTo(getTopLevelAncestor());
+				trackerList.setVisible(true);
 			}
 		});
 		fields5.add(trackers);
@@ -143,6 +151,7 @@ public class TorrentInfoTab extends JPanel {
 		openFolder = new JButton(new OpenDirectoryAction(torrent));
 		addButtons();
 	}
+
 	private void addButtons() {
 		buttons.add(play);
 		buttons.add(stop);
@@ -156,7 +165,6 @@ public class TorrentInfoTab extends JPanel {
 					+ Math.floor(torrent.getPieceManager()
 							.getDownloadedCompleteness() * 100) / 100 + " %");
 			this.setPreferredSize(new Dimension(60, 14));
-			this.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
 			new Thread(this).start();
 		}
 
@@ -175,7 +183,10 @@ public class TorrentInfoTab extends JPanel {
 					e.printStackTrace();
 				}
 				this.revalidate();
-				TorrentInfoTab.this.revalidate();
+				TorrentInfoTab.this.upload = torrent.getUpload();
+				TorrentInfoTab.this.download = torrent.getDownload();
+				TorrentInfoTab.this.debit.validate();
+				TorrentInfoTab.this.upload.revalidate();
 			}
 		}
 
