@@ -70,14 +70,15 @@ public class TorrentInfoTab extends JPanel {
 		fields0.add(debit, BorderLayout.SOUTH);
 		vBox1.add(fields0);
 		add(vBox1, BorderLayout.NORTH);
-
-		JPanel fields1 = new JPanel(new BorderLayout());
-		name = new JLabel("Torrent name: "
-				+ torrent.getMetainfo().getFileName());
-		size = new JLabel("Torrent size: "
-				+ torrent.getMetainfo().getSizeString());
-		fields1.add(name, BorderLayout.CENTER);
-		fields1.add(size, BorderLayout.EAST);
+		
+		JPanel fields1 = new JPanel(new GridLayout(1,6));
+		name = new JLabel(torrent.getMetainfo().getFileName());
+		size = new JLabel(torrent.getMetainfo().getSizeString());
+		fields1.add(new JLabel("Torrent name: "));
+		fields1.add(name);
+		fields1.add(new JLabel());
+		fields1.add(new JLabel("Torrent size:"));
+		fields1.add(size);
 		vBox2.add(fields1);
 
 		JPanel fields1andahalf = new JPanel(new BorderLayout());
@@ -142,9 +143,6 @@ public class TorrentInfoTab extends JPanel {
 		openFolder = new JButton(new OpenDirectoryAction(torrent));
 		addButtons();
 	}
-	public void print(){
-		System.out.println(play.getParent());
-	};
 	private void addButtons() {
 		buttons.add(play);
 		buttons.add(stop);
@@ -157,7 +155,7 @@ public class TorrentInfoTab extends JPanel {
 			super(" "
 					+ Math.floor(torrent.getPieceManager()
 							.getDownloadedCompleteness() * 100) / 100 + " %");
-			this.setPreferredSize(new Dimension(48, 14));
+			this.setPreferredSize(new Dimension(60, 14));
 			this.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
 			new Thread(this).start();
 		}
@@ -182,6 +180,7 @@ public class TorrentInfoTab extends JPanel {
 		}
 
 	}
+
 }
 
 class TorrentTabtest {
@@ -197,6 +196,5 @@ class TorrentTabtest {
 		fen.pack();
 		fen.setVisible(true);
 		fen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		tab.print();
 	}
 }
