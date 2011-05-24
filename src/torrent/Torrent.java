@@ -28,7 +28,7 @@ public class Torrent {
 
 	/**
 	 * constructeur avec numero de port. Il demarre le {@link PeerManager} ainsi
-	 * que le {@link PeerAccepter} pour gérer les pairs
+	 * que le {@link PeerAccepter} pour gï¿½rer les pairs
 	 * 
 	 * @param metainfoFile
 	 *            le fichier .torrent
@@ -132,7 +132,7 @@ public class Torrent {
 	}
 /**
  * @deprecated
- * Cette methode devait mettre en pause le téléchargment; utiliser {@link Torrent#stop} a la place.
+ * Cette methode devait mettre en pause le tï¿½lï¿½chargment; utiliser {@link Torrent#stop} a la place.
  */
 	public void pause() {
 		System.out.println("Torrent Paused (Torrent.pause())");
