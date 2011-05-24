@@ -1,8 +1,9 @@
 package gui.Actions;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 
-import javax.swing.AbstractAction;
+import javax.swing.*;
 
 import torrent.Torrent;
 
@@ -25,7 +26,16 @@ public class StartAction extends IconActions {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		System.out.println("Clicked on start");
+		Object source = e.getSource();
+		if (((JComponent) source).getParent() instanceof JToolBar) {
+			JToolBar sourceToolBar = (JToolBar) ((JComponent) source)
+					.getParent();
+			JButton peerButton = (JButton) sourceToolBar.getComponent(1);
+			if (peerButton.getText().equals("Stop download")) {
+				peerButton.getAction().setEnabled(true);
+				this.setEnabled(false);
+			}
+		}
 		super.start();
 	}
 }

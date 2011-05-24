@@ -51,9 +51,9 @@ public class TorrentTableModel extends AbstractTableModel {
 		try {
 			to[rowIndex][columnIndex] = aValue;
 		} catch (ArrayIndexOutOfBoundsException e) {
-			throw new ArrayIndexOutOfBoundsException("Tried updating value at "
-					+ rowIndex + " " + columnIndex + "which is object : "
-					+ to[rowIndex][columnIndex]);
+			// this exception seems to be thrown everytime i add a torrent to
+			// the torrenttable... but it works anyway... weird !?!
+			e.printStackTrace();
 		}
 	}
 

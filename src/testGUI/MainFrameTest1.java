@@ -5,9 +5,6 @@ import gui.MainFrame;
 import java.io.File;
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
-
-import settings.GeneralSettings;
 import torrent.Torrent;
 
 public class MainFrameTest1 {
