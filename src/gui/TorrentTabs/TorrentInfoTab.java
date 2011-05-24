@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -27,8 +28,8 @@ import sun.rmi.runtime.NewThreadAction;
 import torrent.Torrent;
 
 /**
- * Cette classe est le paneau qui contient la plupart des informations présentes
- * dans le torrent, ainsi qu'un jolie barre de téléchargement montrant
+ * Cette classe est le paneau qui contient la plupart des informations prï¿½sentes
+ * dans le torrent, ainsi qu'un jolie barre de tï¿½lï¿½chargement montrant
  * visuellement quelles pieces sont deja telechargees.
  * 
  * @author Damien, Maarten
@@ -108,8 +109,9 @@ public class TorrentInfoTab extends JPanel {
 		fields4.add(comment);
 		vBox2.add(fields4);
 
-		JPanel fields5 = new JPanel(new GridLayout(0, 2));
+		JPanel fields5 = new JPanel(new GridLayout(0, 1));
 		if (torrent.getMetainfo().isMultifile()) {
+			fields5.setLayout(new GridLayout(0, 2));
 			files = new JButton("Show file list");
 			fields5.add(files);
 			files.addActionListener(new ActionListener() {
@@ -140,7 +142,9 @@ public class TorrentInfoTab extends JPanel {
 		openFolder = new JButton(new OpenDirectoryAction(torrent));
 		addButtons();
 	}
-
+	public void print(){
+		System.out.println(play.getParent());
+	};
 	private void addButtons() {
 		buttons.add(play);
 		buttons.add(stop);
@@ -193,5 +197,6 @@ class TorrentTabtest {
 		fen.pack();
 		fen.setVisible(true);
 		fen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		tab.print();
 	}
 }
