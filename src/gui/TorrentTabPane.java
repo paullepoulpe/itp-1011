@@ -57,9 +57,12 @@ public class TorrentTabPane extends JTabbedPane implements MouseListener {
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		int i = getSelectedIndex();
-		currentTorrent = ((TorrentTable) ((JTable) e.getSource()).getParent()
+		Torrent newTorrent = ((TorrentTable) ((JTable) e.getSource()).getParent()
 				.getParent().getParent()).getSelectedTorrent();
-		contructAllTabs();
+		if(!newTorrent.equals(currentTorrent)){
+			currentTorrent = newTorrent;
+			contructAllTabs();
+		}
 		setSelectedIndex(i);		
 	}
 

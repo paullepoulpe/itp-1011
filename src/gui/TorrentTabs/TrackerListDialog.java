@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.io.File;
 
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -15,7 +16,8 @@ public class TrackerListDialog extends JDialog {
 	private Torrent t;
 	private JList list;
 
-	public TrackerListDialog(Torrent torrent) {
+	public TrackerListDialog(JFrame owner,Torrent torrent) {
+		super(owner, true);
 		setLayout(new BorderLayout());
 		setTitle("Tracker list");
 		this.t=torrent;
