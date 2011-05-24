@@ -12,6 +12,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.TableCellRenderer;
 
 import torrent.Torrent;
+import torrent.piece.Piece;
 
 public class TorrentPiecesTab extends JPanel {
 	private Torrent torrent;
@@ -56,12 +57,14 @@ public class TorrentPiecesTab extends JPanel {
 				while (true) {
 					try {
 						Thread.sleep(500);
-						tm.setData(torrent.getPieceManager().getCurrentPieces());
-						tm.fireTableDataChanged();
+						tm
+								.setData(torrent.getPieceManager()
+										.getCurrentPieces());
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 				}
+				// tm.setData(new Piece[0]);
 			}
 		}).start();
 	}
