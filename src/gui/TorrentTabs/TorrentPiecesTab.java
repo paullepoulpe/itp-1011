@@ -57,9 +57,11 @@ public class TorrentPiecesTab extends JPanel {
 				while (true) {
 					try {
 						Thread.sleep(500);
-						tm
-								.setData(torrent.getPieceManager()
-										.getCurrentPieces());
+						Piece[] data = torrent.getPieceManager()
+								.getCurrentPieces();
+						if (data != null) {
+							tm.setData(data);
+						}
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}

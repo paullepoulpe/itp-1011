@@ -12,7 +12,6 @@ import org.junit.After;
 import test.Download;
 import bencoding.InvalidBEncodingException;
 
-
 public class DataDownloadTest {
 
 	boolean finished = false;
@@ -22,23 +21,24 @@ public class DataDownloadTest {
 	Process clientProcess = null;
 
 	@Test
-	public void testDataExchange() throws InterruptedException, InvalidBEncodingException, IOException {
-		
+	public void testDataExchange() throws InterruptedException,
+			InvalidBEncodingException, IOException {
+
 		// Start the tracker
 		trackerProcess = jarStarter("tracker.jar");
 		checkTrackerState();
-		
+
 		// Start uploading
 		clientProcess = jarStarter("client.jar");
-		
+
 		// Start downloading
 		new Thread() {
 			public void run() {
 				try {
 					Download download = new Download();
 					download.run("data/LePetitPrince.torrent", true, true);
-					while(true) {
-						if(download.torrent.isComplete()) {
+					while (true) {
+						if (download.torrent.getPieceManager().isComplete()) {
 							success = true;
 							finished = true;
 						}
@@ -49,28 +49,32 @@ public class DataDownloadTest {
 				}
 			}
 		}.start();
-		
-		while(!finished) {
+
+		while (!finished) {
 			Thread.sleep(100L);
 		}
-		
+
 		Assert.assertTrue(success);
 	}
 
 	@After
 	public void destroyProcesses() {
 		System.out.println("Exiting...");
-		
-		if (clientProcess != null) clientProcess.destroy();
-		if (trackerProcess != null) trackerProcess.destroy();
+
+		if (clientProcess != null)
+			clientProcess.destroy();
+		if (trackerProcess != null)
+			trackerProcess.destroy();
 	}
-	
+
 	public static Process jarStarter(String path) throws IOException {
 		long trackerStart = System.nanoTime();
-		Process p = Runtime.getRuntime().exec(new String [] {"java", "-jar", path});		
-		
+		Process p = Runtime.getRuntime().exec(
+				new String[] { "java", "-jar", path });
+
 		long trackerStarted = System.nanoTime();
-		System.out.println(path + " started in " + (((trackerStarted - trackerStart) / 10000) / 100.0) + " ms");
+		System.out.println(path + " started in "
+				+ (((trackerStarted - trackerStart) / 10000) / 100.0) + " ms");
 
 		return p;
 	}
