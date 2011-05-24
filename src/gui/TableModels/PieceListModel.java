@@ -23,7 +23,7 @@ public class PieceListModel extends AbstractTableModel {
 		for (int i = 0; i < list.length; i++) {
 			Piece current = list[i];
 			data[i][0] = current.getIndex();
-			data[i][1] = current.getFunnyBar();			
+			data[i][1] = current.getFunnyBar();
 			data[i][2] = current.getDownloadCompleteness();
 			data[i][3] = current.getNbBlocs();
 			data[i][4] = Math.floor(current.getDownloadCompleteness()
@@ -60,16 +60,19 @@ public class PieceListModel extends AbstractTableModel {
 	public String getColumnName(int column) {
 		return colNames[column];
 	}
+
 	public void setData(Piece[] list) {
+		data = new Object[list.length][colNames.length];
 		for (int i = 0; i < list.length; i++) {
 			Piece current = list[i];
 			data[i][0] = current.getIndex();
-			data[i][1] = current.getFunnyBar();			
+			data[i][1] = current.getFunnyBar();
 			data[i][2] = current.getDownloadCompleteness();
 			data[i][3] = current.getNbBlocs();
 			data[i][4] = Math.floor(current.getDownloadCompleteness()
 					* current.getNbBlocs() / 100);
 		}
 		fireTableDataChanged();
+		fireTableStructureChanged();
 	}
 }

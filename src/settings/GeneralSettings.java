@@ -18,7 +18,7 @@ import java.util.HashMap;
  */
 public class GeneralSettings {
 	public static Integer NUMWANT = 50;
-	public static Boolean ENCRYPTION_ENABLED = true;
+	public static Boolean ENCRYPTION_ENABLED = false;
 	public static Integer NB_MAX_PEERHANDLERS = 100;
 	public static Integer NB_MAX_REQUESTS = 15;
 	public static Integer MAX_NUM_OF_CURRENT_PIECES = 15;
@@ -26,8 +26,8 @@ public class GeneralSettings {
 	public static Color PROGRESS_COLOR = Color.ORANGE;
 	public static Integer SYMMETRIC_KEY_SIZE = 128;
 	public static Integer RSA_KEY_SIZE = 128;
-	public static File DOWNLOADING_FOLDER = new File(
-			System.getProperty("user.home"), "Downloads");
+	public static File DOWNLOADING_FOLDER = new File(System
+			.getProperty("user.home"), "Downloads");
 
 	public GeneralSettings() {
 		restoreDefaultValues();
