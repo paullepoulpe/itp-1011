@@ -122,6 +122,12 @@ public class Torrent {
 	 * @return la progressBar de notre {@link Torrent} ({@link JProgressBar})
 	 */
 	public JProgressBar getProgressBar() {
+		UIManager.getDefaults().put("ProgressBar.highlight",
+				GeneralSettings.PROGRESS_COLOR);
+		// System.out.println(UIManager.getDefaults()
+		// .get("ProgressBar.background"));
+		progressBar.updateUI();
+		progressBar.getGraphics().setColor(GeneralSettings.PROGRESS_COLOR);
 		progressBar.setValue((int) pieceManager.getDownloadedCompleteness());
 		return progressBar;
 	}
@@ -141,28 +147,6 @@ public class Torrent {
 
 	public void sentBlock() {
 		upload.add(Piece.BLOCK_SIZE);
-	}
-
-	/**
-	 * @deprecated Cette methode devait mettre en pause le telechargment;
-	 *             utiliser {@link Torrent#stop} a la place.
-	 */
-	public void pause() {
-		System.out.println("Torrent Paused (Torrent.pause())");
-		try {
-			peerManager.wait();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * @deprecated Tout comme {@link Torrent#pause()}, methode a ne pas
-	 *             utiliser.
-	 */
-	public void unPause() {
-		System.out.println("Torrent.unpause()");
-		peerManager.notify();
 	}
 
 	public int getDownloadingStatus() {
