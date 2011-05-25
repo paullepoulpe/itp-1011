@@ -1,18 +1,29 @@
 package gui;
 
-import gui.Actions.*;
-import gui.TorrentTabs.*;
+import gui.TorrentTabs.GraphTab;
+import gui.TorrentTabs.TorrentInfoTab;
+import gui.TorrentTabs.TorrentPeersTab;
+import gui.TorrentTabs.TorrentPiecesTab;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-import javax.swing.*;
-import javax.swing.plaf.basic.BasicBorders;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 
 import torrent.Torrent;
 
+/**
+ * Cette classe contient les differents onglets qui affichent les informations
+ * sur le torrent selectionne. Elle ecoute les clicks sur un des torrents de la
+ * {@link JTable} de la {@link TorrentTable} et cree des onglets par rapport a
+ * ce torrent.
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class TorrentTabPane extends JTabbedPane implements MouseListener {
 	private JPanel info, peers, pieces, graph;
 	private Torrent currentTorrent;

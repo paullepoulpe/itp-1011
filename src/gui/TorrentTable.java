@@ -18,6 +18,13 @@ import java.io.File;
 import torrent.Torrent;
 import src.gui.TableModels.*;
 
+/**
+ * Classe qui contient la table des {@link Torrent}s. La table elle-même estr un
+ * ecouteur de clicks, pour qu'on puisse montrer un {@link TorrentPopupMenu}.
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class TorrentTable extends JPanel {
 	private JTable table;
 	private JPopupMenu popup;
@@ -51,6 +58,11 @@ public class TorrentTable extends JPanel {
 		add(new JScrollPane(table));
 	}
 
+	/**
+	 * Contruit la table.
+	 * 
+	 * @return la {@link JTable} contruite
+	 */
 	public synchronized JTable constructTable() {
 		removeAll();
 		tm = new TorrentTableModel(torrentlist);
@@ -93,6 +105,9 @@ public class TorrentTable extends JPanel {
 		return torrentlist.get(getSelectedRow());
 	}
 
+	/**
+	 * Met a jour la valeur de la {@link JProgressBar}
+	 */
 	public void updateProgressBar() {
 		for (int i = 0; i < torrentlist.size(); i++) {
 			table.setValueAt(torrentlist.get(i).getProgressBar(), i, 1);
