@@ -8,6 +8,14 @@ import java.util.ArrayList;
 import torrent.Torrent;
 import torrent.piece.Piece;
 
+/**
+ * Cette classe est un lecteur des fichiers du {@link Torrent}. Elle implement
+ * diverses methodes pour lire tous les fichiers ou lire une {@link Piece} en
+ * particulier
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class TorrentFileReader extends TorrentIO {
 	Torrent torrent;
 

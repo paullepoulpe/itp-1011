@@ -62,7 +62,6 @@ public class Torrent {
 	 */
 	public Torrent(File metainfo) throws InvalidFileException {
 		this(metainfo, 6881 + (int) (Math.random() * 30001));
-
 	}
 
 	/**
@@ -105,10 +104,22 @@ public class Torrent {
 		return pieceManager;
 	}
 
+	/**
+	 * Permet d'ajouter un pair depuis un socket
+	 * 
+	 * @param socket
+	 *            le socket representant la connexion au pair
+	 */
 	public void addPeer(Socket socket) {
 		peerManager.addPeer(socket);
 	}
 
+	/**
+	 * Permet d'avoir la JProgressBar de notre torrent. On s'assure que la
+	 * valeur soit la bonne par un setValue
+	 * 
+	 * @return la progressBar de notre {@link Torrent} ({@link JProgressBar})
+	 */
 	public JProgressBar getProgressBar() {
 		progressBar.setValue((int) pieceManager.getDownloadedCompleteness());
 		return progressBar;

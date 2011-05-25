@@ -3,12 +3,15 @@ package http;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Map;
+
+import javax.xml.ws.http.HTTPException;
+
 import bencoding.BDecoder;
 import bencoding.BEValue;
 import bencoding.InvalidBEncodingException;
 
 /**
- * Cette classe est un conteneur, qui decode la reponse d'une requete httpget et
+ * Cette classe est un conteneur, qui decode la reponse d'une requete {@link HTTPGet} et
  * la met sous forme lisible
  * 
  * @author Damien Engels et Maarten Sap
@@ -23,7 +26,7 @@ public class AnnounceInfo {
 	private byte[] peers;
 
 	/**
-	 * Recupere la reponse d'une requete httpget et la met sous forme lisible
+	 * Recupere la reponse d'une requete {@link HTTPGet} et la met sous forme lisible
 	 * 
 	 * @param data
 	 *            un tableau de byte qui correspond a la reponse du tracker
@@ -78,7 +81,7 @@ public class AnnounceInfo {
 	}
 
 	/**
-	 * Imprime de maniere lisible(human readable) les informations concernant
+	 * Arrange de maniere lisible(human readable) les informations concernant
 	 * cette classe
 	 */
 	public String toString() {
