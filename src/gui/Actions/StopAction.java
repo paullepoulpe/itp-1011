@@ -9,6 +9,12 @@ import javax.swing.JToolBar;
 
 import torrent.Torrent;
 
+/**
+ * Action permettant de stopper le telechargement.
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class StopAction extends IconActions {
 	public StopAction() {
 		super("Stop download");
@@ -24,6 +30,9 @@ public class StopAction extends IconActions {
 		}
 	}
 
+	/**
+	 * Stoppe le {@link Torrent} en appelant la methode {@link Torrent#stop()}
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();

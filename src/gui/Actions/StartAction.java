@@ -7,6 +7,12 @@ import javax.swing.*;
 
 import torrent.Torrent;
 
+/**
+ * Action qui permet de demarrer le telechargement d'un {@link Torrent}.
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class StartAction extends IconActions {
 	public StartAction() {
 		super("Start download");
@@ -24,6 +30,10 @@ public class StartAction extends IconActions {
 
 	}
 
+	/**
+	 * Demarre le telechargement en appelant la methode
+	 * {@link Torrent#massAnnounce()}
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();

@@ -17,6 +17,13 @@ import torrent.Torrent;
 import torrent.peer.Peer;
 import torrent.peer.PeerHandler;
 
+/**
+ * Onglet qui affiche la liste des {@link Peer}s actifs (avec meme leurs taux de
+ * upload et download !)
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class TorrentPeersTab extends JPanel {
 	private Torrent torrent;
 	private JTable table;
@@ -63,6 +70,10 @@ public class TorrentPeersTab extends JPanel {
 		}).start();
 	}
 
+	/**
+	 * Met a jour la liste des pairs, afin que le tableau reste realiste par
+	 * rapport a ce qu'il se passe reellement
+	 */
 	private void update() {
 		tm = new PeerTableModel(torrent.getConnectedPeers());
 		table.setModel(tm);
@@ -70,15 +81,3 @@ public class TorrentPeersTab extends JPanel {
 	}
 
 }
-// class TorrentPeersTabTest {
-// public static void main(String[] args) {
-// JFrame fen = new JFrame();
-// fen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-// ArrayList<Peer> list = new ArrayList<Peer>();
-// list.add(p1);
-// list.add(p2);
-// TorrentPeersTab tab = new TorrentPeersTab(list);
-// fen.getContentPane().add(tab);
-// fen.setVisible(true);
-// }
-// }

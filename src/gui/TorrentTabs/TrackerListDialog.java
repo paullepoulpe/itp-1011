@@ -12,16 +12,23 @@ import javax.swing.JScrollPane;
 
 import torrent.Torrent;
 
+/**
+ * Boite de dialogue qui affiche les trackers sous forme de liste.
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class TrackerListDialog extends JDialog {
 	private Torrent t;
 	private JList list;
 
-	public TrackerListDialog(JFrame owner,Torrent torrent) {
+	public TrackerListDialog(JFrame owner, Torrent torrent) {
 		super(owner, true);
 		setLayout(new BorderLayout());
 		setTitle("Tracker list");
-		this.t=torrent;
-		add(new JLabel("Tracker list for torrent "+t.getMetainfo().getFileName()), BorderLayout.NORTH);
+		this.t = torrent;
+		add(new JLabel("Tracker list for torrent "
+				+ t.getMetainfo().getFileName()), BorderLayout.NORTH);
 		list = new JList(t.getMetainfo().getTrackerList().toArray());
 		add(new JScrollPane(list), BorderLayout.CENTER);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);

@@ -35,6 +35,7 @@ public abstract class IconActions extends AbstractAction {
 		if (torrent.getDownloadingStatus() != Torrent.STOPPED)
 			torrent.stop();
 	}
+
 	/**
 	 * Demarre le torrent auquel appartient l'action.
 	 */
@@ -45,6 +46,11 @@ public abstract class IconActions extends AbstractAction {
 
 	}
 
+	/**
+	 * Permet d'acceder au dossier de telechargement du torrent.
+	 * 
+	 * @return le {@link File} ou les fichiers sont telecharges.
+	 */
 	protected File getDownloadFile() {
 		if (torrent.getMetainfo().isMultifile()) {
 			return new File(torrent.getDownloadinFolder().getAbsolutePath(),
@@ -57,6 +63,12 @@ public abstract class IconActions extends AbstractAction {
 		return (torrent.getDownloadingStatus() == Torrent.STARTED);
 	}
 
+	/**
+	 * Supprime le torrent
+	 * 
+	 * @param mf
+	 *            fenetre principale, pour avoir acces a la liste des torrents
+	 */
 	public void delete(MainFrame mf) {
 		mf.deleteTorrent(torrent);
 	}
