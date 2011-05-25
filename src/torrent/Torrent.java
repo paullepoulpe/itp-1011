@@ -49,6 +49,7 @@ public class Torrent {
 		this.downloadingStatus = STOPPED;
 		progressBar = new JProgressBar(0, 100);
 		progressBar.setStringPainted(true);
+		System.out.println(progressBar);
 		System.out.println(this.metainfo);
 		new PeerAccepter(this.numPort, this).start();
 	}
@@ -122,12 +123,6 @@ public class Torrent {
 	 * @return la progressBar de notre {@link Torrent} ({@link JProgressBar})
 	 */
 	public JProgressBar getProgressBar() {
-		UIManager.getDefaults().put("ProgressBar.highlight",
-				GeneralSettings.PROGRESS_COLOR);
-		// System.out.println(UIManager.getDefaults()
-		// .get("ProgressBar.background"));
-		progressBar.updateUI();
-		progressBar.getGraphics().setColor(GeneralSettings.PROGRESS_COLOR);
 		progressBar.setValue((int) pieceManager.getDownloadedCompleteness());
 		return progressBar;
 	}
