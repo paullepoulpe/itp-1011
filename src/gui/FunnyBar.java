@@ -14,6 +14,13 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
+/**
+ * cette classe est un {@link JPanel} qui permet d'avoir une representation
+ * visuelle des parties deja telechargees de la classe qui l'a en attribut
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class FunnyBar extends JPanel {
 	private byte[] barresDessinees;
 	private int nbBarres = 0;
@@ -57,9 +64,8 @@ public class FunnyBar extends JPanel {
 		for (int i = 0; i < nbBarres; i++) {
 			if ((barresDessinees[i / 8] & (byte) (1 << (7 - i % 8))) != 0) {
 				int debut = (int) Math.ceil(i * intervalle) + 1;
-				g2.fillRect(debut, 1,
-						Math.min((int) Math.ceil(intervalle), w - debut - 1),
-						h - 2);
+				g2.fillRect(debut, 1, Math.min((int) Math.ceil(intervalle), w
+						- debut - 1), h - 2);
 			}
 		}
 		g.drawImage(img, 0, 0, w, h, null);
@@ -73,5 +79,4 @@ public class FunnyBar extends JPanel {
 	public void setParent(Component parent) {
 		this.parent = parent;
 	}
-
 }

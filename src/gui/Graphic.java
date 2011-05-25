@@ -13,6 +13,13 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
+/**
+ * Cette classe est un {@link JPanel} qui dessine un graphique en se faisant
+ * donner des points a dessiner.
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class Graphic extends JPanel {
 	private long[] points;
 	private int nbPoints;
@@ -60,8 +67,8 @@ public class Graphic extends JPanel {
 
 		}
 
-		int haut = (int) Math.pow(2.0,
-				(int) (Math.log((double) max) / Math.log(2.0)));
+		int haut = (int) Math.pow(2.0, (int) (Math.log((double) max) / Math
+				.log(2.0)));
 		String controle = "b/s";
 		int hautAffiche = 0;
 

@@ -1,33 +1,14 @@
 package gui;
 
-import gui.TableModels.TorrentTableModel;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.*;
 
-import java.awt.AWTException;
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Image;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
-import java.awt.SystemTray;
-import java.awt.Toolkit;
-import java.awt.TrayIcon;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.util.ArrayList;
+import javax.swing.*;
+import javax.swing.filechooser.*;
 
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.UIManager;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
-import torrent.InvalidFileException;
-import torrent.Torrent;
+import torrent.*;
 
 public class MainFrame extends JFrame {
 	private ArrayList<Torrent> torrentz;
@@ -74,6 +55,10 @@ public class MainFrame extends JFrame {
 			addTorrent();
 	}
 
+	/**
+	 * Permet d'ajouter un {@link Torrent} a la liste des torrents actifs. Les
+	 * torrents nuls et les duplicatas sont geres!
+	 */
 	public void addTorrent() {
 		JFileChooser chooser = new JFileChooser();
 		FileNameExtensionFilter ext = new FileNameExtensionFilter(
@@ -111,6 +96,12 @@ public class MainFrame extends JFrame {
 		}
 	}
 
+	/**
+	 * Supprime le torrent de la liste des torrents
+	 * 
+	 * @param t
+	 *            le torrent a enlever de la liste et arreter
+	 */
 	public void deleteTorrent(Torrent t) {
 		t.stop();
 		remove(tableTorrent);
@@ -125,6 +116,10 @@ public class MainFrame extends JFrame {
 		validate();
 	}
 
+	/**
+	 * Met le LookAndFeel. Sur Linux, le Nimub est utilise, sur les autres, le
+	 * LookAndFeel du systeme d'exploitation est utilise.
+	 */
 	public void setUI() {
 		try {
 			if (System.getProperty("os.name").equals("Linux")) {
@@ -145,7 +140,7 @@ public class MainFrame extends JFrame {
 		setIconImage(Toolkit.getDefaultToolkit().getImage("src/gui/ico3.png"));
 		if (SystemTray.isSupported()) {
 			// Malheureusement le package swing n'est pas supporte pour le
-			// SystemTray
+			// SystemTray, il faut donc qu'on utilise awt... :L
 			Image image = getToolkit().getImage("src/gui/ico3.gif");
 			String tooltip = "DAART is running, as fast as lightning, your torrents are probably done downloading ;)";
 			PopupMenu popup = new PopupMenu("DAART");
@@ -178,6 +173,11 @@ public class MainFrame extends JFrame {
 		}
 	}
 
+	/**
+	 * Rend le torrent qui est selectionne dans la table des {@link Torrent}s
+	 * 
+	 * @return le torrent selectionne
+	 */
 	public Torrent selectedTorrent() {
 		return torrentz.get(tableTorrent.getSelectedRow());
 	}
