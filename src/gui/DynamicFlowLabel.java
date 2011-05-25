@@ -109,7 +109,7 @@ public class DynamicFlowLabel extends JLabel implements Runnable {
 	 * @param d
 	 *            dimension a mettre dans le graphique, pour qu'il n'y ait pas
 	 *            de problème d'affichage
-	 * @return le {@link JPanel} contenant le graphique ({@link Graphic})
+	 * @return le {@link JPanel} contenant le graphique ({@link#Graphic})
 	 */
 	public Graphic getGraph(Dimension d) {
 		graph.setSize(d);
