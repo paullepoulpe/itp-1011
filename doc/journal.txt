@@ -95,4 +95,6 @@ La gui avance de plus en plus (cela faisait une semaine que je beugait sur le fo
 -La methode read from file a l'air d'avoir des problemes pour lire les multifiles, elle ne les lit qu'a 98% (je pense pas que je vais reussir a le corriger avant le rendu :'( )
 23.05.2011
 -Finalement j'ai reussi a corriger la methode read from file, mais je viens de remarquer que si on avais la malchance que quelqu'un commence a nous demander des blocs, il y aurait plein de null pointeur exception qui surgiraient( a cause de l'ecriture en continu, le upload ne fonctionne plus)
--Probleme de partage reglé, c'est un peu moche, mais on va relire l'information demandé sur le disque a chaque request!
+-Probleme de partage reglé, c'est un peu moche, mais on va relire l'information demandee sur le disque a chaque request!
+25.05.2011
+-Javadoc, Conception et Readme faits, derniers petits changement au niveau du layout de certaines fenetres, le programme a l'air de donner plutot bien dans l'ensemble meme si l'on sait que l'on pourrait faire plein d'ameliorations et d'optimisation (mais on a d'autres cours aussi)!

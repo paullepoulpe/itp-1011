@@ -1,7 +1,8 @@
 CONCEPTION:
-Comme nous avons suivi la conception reccomandee, nous avons pense qu'il n'y avait pas besoin de schema UML.
+Comme nous avons majoritairement suivi la conception reccomandee, nous avons pense qu'il n'y avait pas besoin de schema UML.
 Voici comment les classes interagissent ensemble pour l'instant:
-Dans la methode main de notre classe src/test/TorrentTest.java, on cree un Torrent a partir du fichier *.torrent.
+
+La classe MainFrame est la classe qui se trouve tout en haut de l'arborescence, elle contient la liste des torrents en cours de telechargement ainsi que les differentes methodes pour ajouter enlever un torrent ou en demmarer le telechargement.
 
 Dans le constructeur de Torrent, une classe MetaInfo.java sert de decodeur du fichier *.torrent, et c'est cette classe qui initialise les attributs du Torrent dont les informations sont dans le fichier metainfo (liste de trackers, tableau de pieces, etc...)
 
@@ -9,9 +10,24 @@ La classe Torrent.java contient une methode massAnnounce() qui cree un objet Tra
 
 A present, un processus TrackerInfo par tracker present dans *.torrent est lance. Cette classe, via run(), creer un objet HTTPGet (src/http/HTTPGet.java) et y ajoute succesivement les parametres necessaires, puis l'envoie au tracker. On recupere la reponse en construisant un objet AnnounceInfo (src/http/AnnounceInfo.java) qui s'occupe de decoder celle-ci, notamment la liste des pairs. A partir de cette liste, la methode initPeers() de TrackerInfo ajoute tous les pairs a la liste des pairs du Torrent.
 
-Nous nous trouvons maintenant dans la classe Peer (src/torrent/peer/Peer.java). Le contructeur demarre un processus PeerHandler (src/torrent/peer/PeerHandler.java), car c'est cette classe qui s'occupe de tout le traffic de donnees avec le pair. Il y a un PeerHandler par Peer.
+Le Torrent possede aussi les classe PieceManager et PeerManager qui permettent la gestion des piece et des pairs respectivement!
+
+La classe Piece manager est celle qui s'occupe de la gestion des pieces (comme son nom l'indique), c'est elle qui s'occupe d'initialiser des pieces, de mettre a jour la liste des pieces en cours de telechargement, et de les ecrires sur le disque.
+Cette classe possède un TorrentFileReader qui lui permet de lire les pieces completes depuis le disque lors de l'initialisation du torrent, ainsi lors d'une requete d'un autre pair, et d'une classe TorrentFileWriter qui lui permet d'ecrire les Piece completement recues sur le disque.
+Elle possede aussi une FunnyBar, qui permet d'avoir une information visuelle sur l'etat du telechargement du torrent.
+
+La classe Piece permet l'encapsulation d'une piece, elle contient les methodes pour contruire la piece grace aux données recues des autres pairs, elle permet aussi de verifier l'integrité de la piece recue grace aux hash contenus dans le fichier metainfo. De plus elle contient les methodes qui lui permettent d'allouer de la memoire quand elle est en cours de telechargment, est de liberer cette memoire par la suite lorsque la piece a ete ecrite sur le disque. 
+Cette classe permet aussi de connaitre a tout moment l'etat de completion d'une piece, soit numeriquement avec la methode getDownloadedCompleteness ou alors visuellement grace a la FunnyBar, l'interface de cette piece renverra toujours l'image d'une piece complete lorsque celle-ci a ete ecrite sur le disque, malgré le fait qu'en realité le tableau de donnée soit seulement une reference vide!
+
+Le PeerManager est la classe qui s'occuppe de gerer les pairs, elle permet de limiter le nombre d'Objets peerHandler qui sont en cours d'excecutions,elle permet aussi d'arreter des pairs qui ne partageraient pas assez avec nous, pour que le telechargement ne ralentisse pas (trop)!
+
+La classe Pair permet d'encapsuler la notion de pair, elle contient les informations qui nous permettent de nous connecter a lui ainsi qu'une information(assez subjective) sur sa "performance de partage"(la notation du pair), qui peut etre modifiée a l'aide des methodes appropriés!
 
 Le PeerHandler fait la connexion avec le pair, en faisant le HandShake (src/torrent/messages/HandShake.java), puis creant un objet MessageReader (src/torrent/messages/MessageReader.java) qui s'occupe de mettre les reponses dans le bon type de message (classes heritant de src/torrent/messages/Message.java). Un Thread KeepAlive (src/torrent/messages/KeepAlive.java) est demarre afin de garder la connexion ouverte.
 Ensuite, jusqu'a la fin du telechargement, une boucle s'occupe de successivement lire les messages recus (src/torrent/messages/MessageHandler.java), preparer et envoyer des Request (src/torrent/messages/Request.java) et d'autres messages.
 
-Si le message recu est de type SendBlock (src/torrent/messages/SendBlock.java), le MessageHandler ajoute le bloc entrant a la piece auquel il appartient, puis s'assure que le PieceManager (src/torrent/piece/PieceManager.java) mette a jour sa liste de Piece a demander (a travers sa methode updatePriorities()). PieceManager s'occupe entre autres aussi de fournir au PeerHandler les Piece a demander. Si le Torrent est entierement telecharge, c'est aussi cette methode updatePriorities qui lance l'ecriture sur le disque par la methode writeToFile de la classe Torrent.java.
+Le message handler s'occupe de gerer les message recu a l'aide du VisitorPattern,elle effectue les traitements appropriés en fonction du message recu elle permet aussi de mettre a jour la notation du pair en fonction du message recu.
+
+La classe General Settings permet de centraliser les Informations generales des paramètres que l'on utilise dans les autres classes. Cette classe permet aussi d'ecrire ces parametres sur le disque, ainsi que de les charger au demarrage du programme
+
+La classe FenBalle qui se trouve dans test est juste un petite classe qui permet aux assistants qui corrigent notre projet de s'amuser s'ils commencent a avoir trop mal a la tete pendant la correction!

@@ -17,6 +17,10 @@ public class MainFrame extends JFrame {
 	private Container c;
 	private TorrentTabPane torrentInfo;
 
+	public MainFrame() {
+		this(new ArrayList<Torrent>());
+	}
+
 	public MainFrame(ArrayList<Torrent> torrents) {
 		super("DAART");
 		requestFocusInWindow();
