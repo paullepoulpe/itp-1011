@@ -15,7 +15,8 @@ import torrent.peer.*;
  */
 public class PeerTableModel extends AbstractTableModel {
 	private Object[][] data;
-	static final String[] colNames = { "Peer IP", "Port", "Upload", "Download", "ID" };
+	static final String[] colNames = { "Peer IP", "Port", "Upload", "Download",
+			"ID" };
 
 	public PeerTableModel(ArrayList<PeerHandler> peers) {
 		data = new Object[peers.size()][colNames.length];
@@ -26,7 +27,7 @@ public class PeerTableModel extends AbstractTableModel {
 			data[i][1] = currentPeer.getPort() + "";
 			data[i][2] = current.getUpload();
 			data[i][3] = current.getDownload();
-			data[i][4] = current.getId();
+			data[i][4] = current.getPeer().getId().substring(0, 8);
 		}
 	}
 

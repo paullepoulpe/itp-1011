@@ -48,6 +48,7 @@ public class GeneralSettings {
 		RSA_KEY_SIZE = 128;
 		DOWNLOADING_FOLDER = new File(System.getProperty("user.home"),
 				"Downloads");
+		writeOnFile();
 	}
 
 	/**
