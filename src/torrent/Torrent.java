@@ -66,7 +66,8 @@ public class Torrent {
 	}
 
 	/**
-	 * Cette methode fait les premieres requetes aux trackers par des objets {@link TrackerInfo}
+	 * Cette methode fait les premieres requetes aux trackers par des objets
+	 * {@link TrackerInfo}
 	 */
 	public void massAnnounce() {
 		this.downloadingStatus = STARTED;
@@ -83,7 +84,6 @@ public class Torrent {
 	 * 
 	 * @param peer
 	 *            le peer qu'on veut ajouter
-	 * @return false si on l'a deja
 	 */
 	public void addPeer(Peer peer) {
 		peerManager.addPeer(peer);
@@ -130,10 +130,11 @@ public class Torrent {
 	public void sentBlock() {
 		upload.add(Piece.BLOCK_SIZE);
 	}
-/**
- * @deprecated
- * Cette methode devait mettre en pause le t�l�chargment; utiliser {@link Torrent#stop} a la place.
- */
+
+	/**
+	 * @deprecated Cette methode devait mettre en pause le telechargment;
+	 *             utiliser {@link Torrent#stop} a la place.
+	 */
 	public void pause() {
 		System.out.println("Torrent Paused (Torrent.pause())");
 		try {
@@ -142,9 +143,11 @@ public class Torrent {
 			e.printStackTrace();
 		}
 	}
-/**
- * @deprecated Tout comme {@link Torrent#pause()}, methode a ne pas utiliser.
- */
+
+	/**
+	 * @deprecated Tout comme {@link Torrent#pause()}, methode a ne pas
+	 *             utiliser.
+	 */
 	public void unPause() {
 		System.out.println("Torrent.unpause()");
 		peerManager.notify();

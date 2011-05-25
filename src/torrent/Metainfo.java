@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.Map;
 
+import torrent.piece.Piece;
 import torrent.tracker.TorrentHash;
 import bencoding.BDecoder;
 import bencoding.BEValue;
@@ -200,6 +201,12 @@ public class Metainfo {
 		return size;
 	}
 
+	/**
+	 * Permet d'avoir la taille du fichier en format lisible de puissances de
+	 * Bytes
+	 * 
+	 * @return le {@link String} bien formate de la taille du/des fichiers
+	 */
 	public String getSizeString() {
 		int power = (int) Math.floor(Math.log(size) / (10 * Math.log(2)));
 		int div = (int) Math.pow(2, 10 * power);
@@ -237,6 +244,12 @@ public class Metainfo {
 		return pieceLength;
 	}
 
+	/**
+	 * Permet d'avoir de facon bien formatee la taille d'une {@link Piece} du
+	 * {@link Torrent}
+	 * 
+	 * @return le {@link String} bien formatee en puissances
+	 */
 	public String getPieceLengthString() {
 		String s = "Bytes";
 		switch ((int) (Math.log(pieceLength) / Math.log(2) / 10)) {
