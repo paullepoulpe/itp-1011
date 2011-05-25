@@ -1,5 +1,7 @@
 package gui;
 
+import gui.TableModels.TorrentTableModel;
+
 import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -90,6 +92,8 @@ public class MainFrame extends JFrame {
 			JOptionPane.showMessageDialog(this,
 					"The selected file is not a valid torrent file! ", "Error",
 					JOptionPane.ERROR_MESSAGE);
+		} catch (NullPointerException e) {
+
 		}
 		if (t != null && !torrentz.contains(t)) {
 			remove(tableTorrent);
@@ -100,6 +104,20 @@ public class MainFrame extends JFrame {
 			validate();
 			tableTorrent.revalidate();
 		}
+	}
+
+	public void deleteTorrent(Torrent t) {
+		t.stop();
+		remove(tableTorrent);
+		torrentz.remove(t);
+		tableTorrent = new TorrentTable(torrentz);
+		tableTorrent.getTable().addMouseListener(torrentInfo);
+		c.add(tableTorrent, BorderLayout.SOUTH);
+		remove(torrentInfo);
+		torrentInfo = new TorrentTabPane();
+		tableTorrent.getTable().addMouseListener(torrentInfo);
+		c.add(torrentInfo, BorderLayout.CENTER);
+		validate();
 	}
 
 	public void setUI() {

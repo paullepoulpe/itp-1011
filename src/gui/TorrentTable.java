@@ -36,7 +36,9 @@ public class TorrentTable extends JPanel {
 				int i = table.getSelectedRow();
 				if (e.isPopupTrigger() && (i > -1)) {
 					popup = new TorrentPopupMenu(torrentlist.get(i));
-					popup.show(TorrentTable.this.getTable(), e.getX(), e.getY());
+					popup
+							.show(TorrentTable.this.getTable(), e.getX(), e
+									.getY());
 				}
 			}
 
@@ -53,7 +55,8 @@ public class TorrentTable extends JPanel {
 		removeAll();
 		tm = new TorrentTableModel(torrentlist);
 		table = new JTable(tm);
-		table.setPreferredScrollableViewportSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width-150, 150));
+		table.setPreferredScrollableViewportSize(new Dimension(Toolkit
+				.getDefaultToolkit().getScreenSize().width - 150, 150));
 		table.getColumnModel().getColumn(0).setPreferredWidth(500);
 		table.getColumnModel().getColumn(1).setPreferredWidth(300);
 		table.setDefaultRenderer(Component.class, new TableCellRenderer() {
@@ -85,7 +88,8 @@ public class TorrentTable extends JPanel {
 	public int getSelectedRow() {
 		return table.getSelectedRow();
 	}
-	public Torrent getSelectedTorrent(){
+
+	public Torrent getSelectedTorrent() {
 		return torrentlist.get(getSelectedRow());
 	}
 
@@ -104,17 +108,3 @@ public class TorrentTable extends JPanel {
 
 	}
 }
-
-//class TorrentTestTable {
-//	public static void main(String[] args) {
-//		ArrayList<Torrent> tor = new ArrayList<Torrent>();
-//		tor.add(new Torrent(new File("data/G6.torrent")));
-//		// tor.add(new Torrent(new File("data/BEP.torrent")));
-//		TorrentTable tab = new TorrentTable(tor);
-//		JFrame fen = new JFrame("test");
-//		fen.getContentPane().add(tab);
-//		fen.pack();
-//		fen.setVisible(true);
-//		fen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//	}
-//}

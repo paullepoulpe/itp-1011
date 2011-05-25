@@ -1,5 +1,7 @@
 package gui.Actions;
 
+import gui.MainFrame;
+
 import java.io.File;
 
 import javax.swing.AbstractAction;
@@ -30,25 +32,23 @@ public abstract class IconActions extends AbstractAction {
 			System.out.println("Start:  massannounce");
 			torrent.massAnnounce();
 		}
-		if (torrent.getDownloadingStatus() == Torrent.PAUSED) {
-			System.out.println("Start: unpause");
-			torrent.unPause();
-		}
-	}
 
-	protected void pause() {
-		if (torrent.getDownloadingStatus() == Torrent.STARTED)
-			torrent.pause();
 	}
 
 	protected File getDownloadFile() {
-		if(torrent.getMetainfo().isMultifile()){
-			return new File(torrent.getDownloadinFolder().getAbsolutePath(), torrent.getMetainfo().getFileName());
+		if (torrent.getMetainfo().isMultifile()) {
+			return new File(torrent.getDownloadinFolder().getAbsolutePath(),
+					torrent.getMetainfo().getFileName());
 		}
 		return torrent.getDownloadinFolder();
 	}
 
 	protected boolean isDownloading() {
 		return (torrent.getDownloadingStatus() == Torrent.STARTED);
+	}
+
+	public void delete(MainFrame mf) {
+		mf.deleteTorrent(torrent);
+
 	}
 }
