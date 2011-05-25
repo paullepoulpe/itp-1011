@@ -7,8 +7,8 @@ import torrent.peer.PeerHandler;
 import torrent.piece.Piece;
 
 /**
- * cette classe s occupe de traiter les messages quon recoit, en faisant le
- * necessaire suivant ce quon recoit.
+ * cette classe s'occupe de traiter les messages qu'on recoit, en faisant le
+ * necessaire suivant ce qu'on recoit.
  * 
  * @author Damien Engels, Maarten Sap
  * 
@@ -29,7 +29,6 @@ public class MessageHandler implements MessageVisitor {
 		// repondra plus a nos requetes
 
 		peerHandler.setChocking(true);
-		System.out.println("Recu un Choke");
 		peerHandler.multiplyNotation(1 / 2);
 
 	}
@@ -68,7 +67,6 @@ public class MessageHandler implements MessageVisitor {
 		peerHandler.setInterested(false);
 		peerHandler.addAEnvoyer(new Choke());
 
-		System.out.println("Recu not Interested");
 		peerHandler.multiplyNotation(1);
 
 	}
@@ -78,11 +76,8 @@ public class MessageHandler implements MessageVisitor {
 		// Ce message indique que le pair a la piece decrite dans le corps
 		// du message (attribut pieceIndex de Have). Il faudra donc ajouter
 		// cette piece a la liste des pieces que le pair possede
-
-		// DONE
 		peerHandler.addPeerPiece(h.getPieceIndex());
 		peerHandler.multiplyNotation(1.0001);
-		// System.out.println("Recu Have piece : " + h.getPieceIndex());
 
 	}
 
@@ -94,9 +89,6 @@ public class MessageHandler implements MessageVisitor {
 
 		peerHandler.setInterested(true);
 		peerHandler.addAEnvoyer(new Unchoke());
-
-		System.out.println("Recu Interested");
-
 	}
 
 	@Override
@@ -105,7 +97,6 @@ public class MessageHandler implements MessageVisitor {
 
 		peerHandler.setPeerPiecesIndex(b.getPosessedPieces());
 		peerHandler.multiplyNotation(Math.pow(1.0001, b.getNbPiece()));
-		// System.out.println("Recu bitfield");
 	}
 
 	@Override
@@ -135,10 +126,6 @@ public class MessageHandler implements MessageVisitor {
 				.getBlocIndex(), s.getBloc().length));
 		peerHandler.getPieceMgr().updatePriorities();
 		peerHandler.multiplyNotation(1.01);
-		// System.out.println("Recu bloc : "
-		// + (s.getBlocIndex() / Piece.BLOCK_SIZE) + " de la Piece "
-		// + s.getPieceIndex());
-
 	}
 
 	@Override
@@ -148,7 +135,6 @@ public class MessageHandler implements MessageVisitor {
 		// liste de pieces interessantes etc
 
 		peerHandler.setChocking(false);
-		// System.out.println("Recu unchoke :):):):):):):):):):):)");
 		peerHandler.multiplyNotation(1.01);
 	}
 

@@ -84,7 +84,7 @@ public class Peer {
 	}
 
 	/**
-	 * Cette methoe permet de changer la notation du pair. Elle est appelee
+	 * Cette methode permet de changer la notation du pair. Elle est appelee
 	 * lorsqu'on recoit des messages
 	 * 
 	 * @param d

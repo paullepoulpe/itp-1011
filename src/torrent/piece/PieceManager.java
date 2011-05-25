@@ -118,9 +118,6 @@ public class PieceManager {
 					.round(getDownloadedCompleteness() * 100)
 					/ 100.0
 					+ " %....................");
-			// System.out.println("Nombre de pieces :" + getNbPieces());
-			// System.out.println(piecesOfInterest.toString());
-			// System.out.println(leftPieces.toString());
 		} else {
 			writer.terminate();
 		}

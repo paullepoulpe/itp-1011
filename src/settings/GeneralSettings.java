@@ -53,7 +53,7 @@ public class GeneralSettings {
 	/**
 	 * Cette methode permet de sauvegarder les parametres personalises sur le
 	 * disque dans un fichier "settings.dat". Les donnes sont stockees sous
-	 * forme de HashMap
+	 * forme de {@link HashMap}shMap
 	 */
 	public static void writeOnFile() {
 		File settingsFile = new File("settings.dat");
