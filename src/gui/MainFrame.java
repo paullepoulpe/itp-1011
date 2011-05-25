@@ -103,6 +103,11 @@ public class MainFrame extends JFrame {
 			c.add(tableTorrent, BorderLayout.SOUTH);
 			validate();
 			tableTorrent.revalidate();
+		} else if (t != null) {
+			JOptionPane.showMessageDialog(this, "The torrent with hash :\n "
+					+ t.getMetainfo().getInfoHash().toString()
+					+ "\nAlready exists in the torrent list!", "Error",
+					JOptionPane.WARNING_MESSAGE);
 		}
 	}
 

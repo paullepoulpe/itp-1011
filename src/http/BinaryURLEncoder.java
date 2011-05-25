@@ -49,7 +49,7 @@ public class BinaryURLEncoder {
 				}
 			}
 			System.err
-					.println("L'encodage url n'est pass supporté, l'encodage sera realisé grace aux classes fournie !");
+					.println("L'encodage url n'est pas supporté, l'encodage sera realisé grace aux classes fournie !");
 			return result.toString();
 		}
 	}
