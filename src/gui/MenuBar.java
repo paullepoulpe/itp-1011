@@ -11,6 +11,13 @@ import java.io.IOException;
 
 import gui.Actions.*;
 
+/**
+ * Classe qui encapsule la barre de menu de notre programme. Contient trois
+ * menus: File, Options, Exit.
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class MenuBar extends JMenuBar {
 	private JMenu file, options, help;
 	private JMenuItem add, openDownloads, exit, settings;
@@ -31,9 +38,9 @@ public class MenuBar extends JMenuBar {
 			public void actionPerformed(ActionEvent e) {
 				if (Desktop.isDesktopSupported()) {
 					try {
-						Desktop.getDesktop().open(GeneralSettings.DOWNLOADING_FOLDER);
+						Desktop.getDesktop().open(
+								GeneralSettings.DOWNLOADING_FOLDER);
 					} catch (IOException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				}

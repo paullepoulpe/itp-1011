@@ -17,7 +17,7 @@ import settings.GeneralSettings;
 
 /**
  * Cette classe est une boite de dialogue permettant de changer les parametres
- * de /src/settings/GeneralSettings.java
+ * de {@link GeneralSettings}
  * 
  * @author Damien, Maarten
  * 
@@ -134,7 +134,7 @@ public class FenetreSettings extends JDialog implements ActionListener,
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
-		
+
 		if (source == browse) {
 			JFileChooser fileChooser = new JFileChooser(
 					GeneralSettings.DOWNLOADING_FOLDER);
@@ -259,14 +259,10 @@ public class FenetreSettings extends JDialog implements ActionListener,
 
 	@Override
 	public void windowActivated(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void windowClosed(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -284,26 +280,18 @@ public class FenetreSettings extends JDialog implements ActionListener,
 
 	@Override
 	public void windowDeactivated(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void windowDeiconified(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void windowIconified(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void windowOpened(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -311,7 +299,6 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		boolean enabled = encryptionEnabled.isSelected();
 		rsaKeySize.setEnabled(enabled);
 		symmetricKeySize.setEnabled(enabled);
-				
 	}
 
 }

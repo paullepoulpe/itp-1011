@@ -13,7 +13,7 @@ public class TorrentPopupMenu extends JPopupMenu {
 	private Torrent t;
 	private MainFrame mf;
 
-	public TorrentPopupMenu(Torrent torrent/*, MainFrame mf*/) {
+	public TorrentPopupMenu(Torrent torrent) {
 		this.t = torrent;
 		stop = new StopAction(t);
 		announce = new StartAction(t);
