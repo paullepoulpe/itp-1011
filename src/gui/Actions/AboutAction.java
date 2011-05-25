@@ -6,7 +6,7 @@ import javax.swing.*;
 
 /**
  * Cette action lorsqu'executee affiche une boite de dialogue qui affiche une
- * petite phrase d'information sur le programme
+ * petite phrase d'information sur le programme.
  * 
  * @author Damien, Maarten
  * 
@@ -23,7 +23,9 @@ public class AboutAction extends AbstractAction {
 		JOptionPane
 				.showMessageDialog(
 						null,
-						"This program was made for a computer science project, and does not qualify for everyday use!",
+						"This program was made for a computer science project, and does not qualify for everyday use!"
+								+ "\n\nThis program may be open-source, but advanced programmers might get a BIG headache while reading the code... so beware" +
+										"\n\nCreated by:        Damien Engels and Maarten Sap",
 						"About the program", JOptionPane.INFORMATION_MESSAGE);
 	}
 
