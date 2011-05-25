@@ -9,6 +9,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 
+import javax.swing.UIDefaults;
+
 /**
  * Cette classe encapsule les diverses "constantes" utilisees dans le
  * telechargement des torrents ainsi que les differentes options visuelles.
@@ -133,5 +135,5 @@ public class GeneralSettings {
 			}
 		}
 	}
-	
+
 }
