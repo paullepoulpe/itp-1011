@@ -28,7 +28,7 @@ public class Torrent {
 
 	/**
 	 * constructeur avec numero de port. Il demarre le {@link PeerManager} ainsi
-	 * que le {@link PeerAccepter} pour g�rer les pairs
+	 * que le {@link PeerAccepter} pour gerer les pairs
 	 * 
 	 * @param metainfoFile
 	 *            le fichier .torrent
