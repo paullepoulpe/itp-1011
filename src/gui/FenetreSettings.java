@@ -32,10 +32,6 @@ public class FenetreSettings extends JDialog implements ActionListener,
 			downloadFolderPath = new JTextField(),
 			rsaKeySize = new JTextField(), symmetricKeySize = new JTextField();
 	private JCheckBox encryptionEnabled = new JCheckBox();
-	private Color[] couleursValues = { Color.ORANGE, Color.BLUE, Color.RED,
-			Color.GRAY, Color.GREEN };
-	private String[] couleursNoms = { "Orange", "Blue", "Red", "Gray", "Green" };
-	private JComboBox couleurs = new JComboBox(couleursNoms);
 	private JButton valider = new JButton("Save"),
 			restoreDefault = new JButton("Default Values"),
 			browse = new JButton("Browse");
@@ -70,7 +66,6 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		JPanel choixDossier = new JPanel(new BorderLayout());
 		JPanel param = new JPanel(new GridLayout(0, 2, 5, 5));
 		JPanel encrypt = new JPanel(new GridLayout(0, 2, 5, 5));
-		JPanel visual = new JPanel(new GridLayout(0, 2, 5, 5));
 		// destination folder
 		choixDossier.setBorder(new TitledBorder(
 				"Choose default downloading folder"));
@@ -102,10 +97,6 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		encrypt.add(rsaKeySize);
 		encrypt.add(new JLabel("Symmetric Key Size"));
 		encrypt.add(symmetricKeySize);
-		// visual
-		visual.setBorder(new TitledBorder("Interface parameters"));
-		visual.add(new JLabel("Downloadbar color"));
-		visual.add(couleurs);
 		// Buttons
 		JPanel boutons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		boutons.add(restoreDefault);
@@ -115,7 +106,6 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		fields1.add(param, BorderLayout.CENTER);
 		fields1.add(encrypt, BorderLayout.SOUTH);
 		fields2.add(fields1, BorderLayout.CENTER);
-		fields2.add(visual, BorderLayout.SOUTH);
 
 		principal.add(fields2, BorderLayout.CENTER);
 		principal.add(boutons, BorderLayout.SOUTH);
@@ -209,9 +199,6 @@ public class FenetreSettings extends JDialog implements ActionListener,
 
 		GeneralSettings.ENCRYPTION_ENABLED = encryptionEnabled.isSelected();
 
-		GeneralSettings.PROGRESS_COLOR = couleursValues[couleurs
-				.getSelectedIndex()];
-
 		GeneralSettings.writeOnFile();
 
 		if (probleme) {
@@ -240,14 +227,6 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		encryptionEnabled.setSelected(GeneralSettings.ENCRYPTION_ENABLED);
 		rsaKeySize.setText(GeneralSettings.RSA_KEY_SIZE + "");
 		symmetricKeySize.setText(GeneralSettings.SYMMETRIC_KEY_SIZE + "");
-		Color couleurCourante = GeneralSettings.PROGRESS_COLOR;
-		int index = 0;
-		for (index = 0; index < couleursValues.length; index++) {
-			if (couleursValues[index].equals(couleurCourante)) {
-				break;
-			}
-		}
-		couleurs.setSelectedIndex(index);
 
 	}
 
