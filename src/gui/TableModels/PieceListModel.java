@@ -1,17 +1,19 @@
 package gui.TableModels;
 
-import gui.FunnyBar;
-
 import java.awt.Component;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.ListIterator;
 
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import torrent.piece.Piece;
 
+/**
+ * Classe model de {@link JTable} pour la liste de {@link Piece} en cours de
+ * telchargement
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class PieceListModel extends AbstractTableModel {
 	static final String[] colNames = { "Piece Number", "Download Progress",
 			"Piece completeness", "Number of Blocs (total)",

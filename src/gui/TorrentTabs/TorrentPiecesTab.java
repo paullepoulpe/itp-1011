@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
 
+import gui.FunnyBar;
 import gui.TableModels.PieceListModel;
 
 import javax.swing.*;
@@ -14,6 +15,13 @@ import javax.swing.table.TableCellRenderer;
 import torrent.Torrent;
 import torrent.piece.Piece;
 
+/**
+ * Onglet qui affiche la liste des {@link Piece}s en cours de telechargement,
+ * avec des jolies {@link FunnyBar} pour visualiser les blocs deja acquis
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class TorrentPiecesTab extends JPanel {
 	private Torrent torrent;
 	private JTable pieceTable;

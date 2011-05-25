@@ -1,19 +1,21 @@
 package gui.TableModels;
 
-import java.awt.Component;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import gui.TorrentTable;
+
 import java.util.ArrayList;
 
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
 import javax.swing.JTable;
-import javax.swing.SwingWorker;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableCellRenderer;
 
 import torrent.Torrent;
 
+/**
+ * Model pour {@link JTable} pour la {@link TorrentTable}, avec colonnes
+ * "Filename", "Progress", "Size", "Upload", "Download"
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class TorrentTableModel extends AbstractTableModel {
 	private Object[][] to;
 	static final String[] colNames = { "Filename", "Progress", "Size",
@@ -51,7 +53,7 @@ public class TorrentTableModel extends AbstractTableModel {
 		try {
 			to[rowIndex][columnIndex] = aValue;
 		} catch (ArrayIndexOutOfBoundsException e) {
-			
+
 		}
 	}
 

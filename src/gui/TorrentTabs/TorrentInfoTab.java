@@ -23,8 +23,8 @@ import javax.swing.border.TitledBorder;
 import torrent.Torrent;
 
 /**
- * Cette classe est le paneau qui contient la plupart des informations pr�sentes
- * dans le torrent, ainsi qu'un jolie barre de t�l�chargement montrant
+ * Cette classe est le paneau qui contient la plupart des informations presentes
+ * dans le torrent, ainsi qu'un jolie barre de telechargement montrant
  * visuellement quelles pieces sont deja telechargees.
  * 
  * @author Damien, Maarten
@@ -136,19 +136,29 @@ public class TorrentInfoTab extends JPanel {
 
 		buttons = new JToolBar("Torrent Controls", JToolBar.HORIZONTAL);
 		buttons.setFloatable(false);
-		add(buttons, BorderLayout.SOUTH);
 		play = new JButton(new StartAction(torrent));
 		stop = new JButton(new StopAction(torrent));
 		openFolder = new JButton(new OpenDirectoryAction(torrent));
 		addButtons();
+		add(buttons, BorderLayout.SOUTH);
 	}
 
+	/**
+	 * Methode pour ajouter les boutons a la barre d'outils
+	 */
 	private void addButtons() {
 		buttons.add(play);
 		buttons.add(stop);
 		buttons.add(openFolder);
 	}
 
+	/**
+	 * {@link JLabel} dynamique qui lis le pourcentage de telechargement du
+	 * torrent et l'affiche
+	 * 
+	 * @author Damien, Maarten
+	 * 
+	 */
 	class DynamicPercent extends JLabel implements Runnable {
 		public DynamicPercent() {
 
@@ -177,20 +187,4 @@ public class TorrentInfoTab extends JPanel {
 
 	}
 
-}
-
-class TorrentTabtest {
-	public static void main(String[] args) {
-		Torrent t = null;
-		try {
-			t = new Torrent(new File("data/BEP.torrent"));
-		} catch (Exception e) {
-		}
-		JFrame fen = new JFrame("Test");
-		TorrentInfoTab tab = new TorrentInfoTab(t);
-		fen.getContentPane().add(tab);
-		fen.pack();
-		fen.setVisible(true);
-		fen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	}
 }
