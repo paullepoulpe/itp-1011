@@ -31,6 +31,7 @@ public class FenetreSettings extends JDialog implements ActionListener,
 			peerResponseDelay = new JTextField(),
 			downloadFolderPath = new JTextField(),
 			rsaKeySize = new JTextField(), symmetricKeySize = new JTextField();
+	private JPanel encrypt;
 	private JCheckBox encryptionEnabled = new JCheckBox();
 	private JButton valider = new JButton("Save"),
 			restoreDefault = new JButton("Default Values"),
@@ -48,6 +49,7 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		restoreDefault.addActionListener(this);
 		browse.addActionListener(this);
 		encryptionEnabled.addItemListener(this);
+		encryptionEnabled.addActionListener(this);
 		rsaKeySize.setEnabled(encryptionEnabled.isSelected());
 		symmetricKeySize.setEnabled(encryptionEnabled.isSelected());
 		arrange();
@@ -65,7 +67,7 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		JPanel fields2 = new JPanel(new BorderLayout());
 		JPanel choixDossier = new JPanel(new BorderLayout());
 		JPanel param = new JPanel(new GridLayout(0, 2, 5, 5));
-		JPanel encrypt = new JPanel(new GridLayout(0, 2, 5, 5));
+		encrypt = new JPanel(new GridLayout(0, 2, 5, 5));
 		// destination folder
 		choixDossier.setBorder(new TitledBorder(
 				"Choose default downloading folder"));
@@ -117,6 +119,7 @@ public class FenetreSettings extends JDialog implements ActionListener,
 
 	public void showDialog() {
 		this.getOwner().setEnabled(false);
+		this.setLocationRelativeTo(getOwner());
 		this.setEnabled(true);
 		this.setVisible(true);
 	}
@@ -140,6 +143,14 @@ public class FenetreSettings extends JDialog implements ActionListener,
 		}
 		if (source == valider && getValues()) {
 			close();
+		}
+		if (source == encryptionEnabled) {
+			JOptionPane
+					.showMessageDialog(
+							this,
+							"This changement will only take effect for future torrents",
+							"Caution", JOptionPane.WARNING_MESSAGE);
+			GeneralSettings.ENCRYPTION_ENABLED = encryptionEnabled.isSelected();
 		}
 
 		setVisual();

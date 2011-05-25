@@ -22,7 +22,7 @@ public class GeneralSettings {
 	public static Integer NUMWANT = 50;
 	public static Boolean ENCRYPTION_ENABLED = false;
 	public static Integer NB_MAX_PEERHANDLERS = 100;
-	public static Integer NB_MAX_REQUESTS = 15;
+	public static Integer NB_MAX_REQUESTS = 20;
 	public static Integer MAX_NUM_OF_CURRENT_PIECES = 15;
 	public static Long PEER_RESPONSE_DELAY = 1000l;
 	public static Integer SYMMETRIC_KEY_SIZE = 128;
@@ -41,9 +41,9 @@ public class GeneralSettings {
 		NUMWANT = 50;
 		ENCRYPTION_ENABLED = false;
 		NB_MAX_PEERHANDLERS = 100;
-		NB_MAX_REQUESTS = 15;
+		NB_MAX_REQUESTS = 20;
 		MAX_NUM_OF_CURRENT_PIECES = 50;
-		PEER_RESPONSE_DELAY = 100l;
+		PEER_RESPONSE_DELAY = 1000l;
 		SYMMETRIC_KEY_SIZE = 128;
 		RSA_KEY_SIZE = 128;
 		DOWNLOADING_FOLDER = new File(System.getProperty("user.home"),
