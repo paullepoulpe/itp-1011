@@ -14,6 +14,13 @@ import javax.swing.JToolBar;
 
 import torrent.Torrent;
 
+/**
+ * Classe qui permet d'encapsuler l'action de supprimer un {@link Torrent} de la
+ * liste des torrents de notre {@link MainFrame}
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class DeleteAction extends IconActions {
 	public DeleteAction() {
 		super("Delete Torrent");

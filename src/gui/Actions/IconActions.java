@@ -6,9 +6,15 @@ import java.io.File;
 
 import javax.swing.AbstractAction;
 
-import settings.GeneralSettings;
 import torrent.Torrent;
 
+/**
+ * Superclasse qui contient la plupart des methodes des classes derivees, afin
+ * que celles-ci soient un peu plus allegees.
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public abstract class IconActions extends AbstractAction {
 	protected Torrent torrent;
 
@@ -22,14 +28,18 @@ public abstract class IconActions extends AbstractAction {
 		this.torrent = t;
 	}
 
+	/**
+	 * Stoppe le torrent auquel appartient l'action.
+	 */
 	protected void stop() {
 		if (torrent.getDownloadingStatus() != Torrent.STOPPED)
 			torrent.stop();
 	}
-
+	/**
+	 * Demarre le torrent auquel appartient l'action.
+	 */
 	protected void start() {
 		if (torrent.getDownloadingStatus() == Torrent.STOPPED) {
-			System.out.println("Start:  massannounce");
 			torrent.massAnnounce();
 		}
 
@@ -49,6 +59,5 @@ public abstract class IconActions extends AbstractAction {
 
 	public void delete(MainFrame mf) {
 		mf.deleteTorrent(torrent);
-
 	}
 }
