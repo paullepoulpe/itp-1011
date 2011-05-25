@@ -23,7 +23,7 @@ public class GeneralSettings {
 	public static Boolean ENCRYPTION_ENABLED = false;
 	public static Integer NB_MAX_PEERHANDLERS = 100;
 	public static Integer NB_MAX_REQUESTS = 20;
-	public static Integer MAX_NUM_OF_CURRENT_PIECES = 15;
+	public static Integer MAX_NUM_OF_CURRENT_PIECES = 20;
 	public static Long PEER_RESPONSE_DELAY = 1000l;
 	public static Integer SYMMETRIC_KEY_SIZE = 128;
 	public static Integer RSA_KEY_SIZE = 128;
@@ -42,7 +42,7 @@ public class GeneralSettings {
 		ENCRYPTION_ENABLED = false;
 		NB_MAX_PEERHANDLERS = 100;
 		NB_MAX_REQUESTS = 20;
-		MAX_NUM_OF_CURRENT_PIECES = 50;
+		MAX_NUM_OF_CURRENT_PIECES = 20;
 		PEER_RESPONSE_DELAY = 1000l;
 		SYMMETRIC_KEY_SIZE = 128;
 		RSA_KEY_SIZE = 128;
