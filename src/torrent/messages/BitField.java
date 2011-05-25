@@ -18,6 +18,11 @@ public class BitField extends Message {
 	private boolean noPieces;
 	private int nbPieces;
 
+	/**
+	 * Decode le tableau de byte en tableau de booleans.
+	 * 
+	 * @param bitField
+	 */
 	public BitField(byte[] bitField) {
 		posessedPieces = new boolean[bitField.length * 8];
 		for (int i = 0; i < bitField.length; i++) {

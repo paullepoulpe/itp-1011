@@ -59,9 +59,7 @@ public class Piece {
 	}
 
 	public void releaseMemory() {
-
 		data = null;
-
 	}
 
 	public void setWritten(boolean isWritten) {
@@ -135,10 +133,8 @@ public class Piece {
 			}
 
 			for (int i = 0; i < peerHandlers.get(begin / BLOCK_SIZE).size(); i++) {
-
 				peerHandlers.get(begin / BLOCK_SIZE).get(i).removeRequest(
 						new Request(index, begin, bloc.length));
-
 			}
 
 			peerHandlers.get(begin / BLOCK_SIZE).clear();
