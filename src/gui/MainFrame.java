@@ -8,6 +8,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.filechooser.*;
 
+import settings.GeneralSettings;
 import torrent.*;
 
 public class MainFrame extends JFrame {
@@ -23,6 +24,7 @@ public class MainFrame extends JFrame {
 
 	public MainFrame(ArrayList<Torrent> torrents) {
 		super("DAART");
+		GeneralSettings.readFromFile();
 		requestFocusInWindow();
 		this.torrentz = torrents;
 		c = getContentPane();
