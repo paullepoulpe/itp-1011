@@ -9,6 +9,13 @@ import settings.GeneralSettings;
 import torrent.Metainfo;
 import torrent.Torrent;
 
+/**
+ * Cette classe est un supertype representant l'acces aux fichiers du torrent.
+ * Implement la methode pour creer des fichiers vides s'ils n'existent pas
+ * encore.
+ * 
+ * @author Damien, Maarten
+ */
 public class TorrentIO {
 	protected Metainfo metainfo;
 	protected File[] allFiles;
@@ -18,9 +25,15 @@ public class TorrentIO {
 
 	public TorrentIO(Torrent torrent) {
 		this.dossier = new File(GeneralSettings.DOWNLOADING_FOLDER.getAbsolutePath());
-		this.metainfo = torrent.getMetainfo();	
+		this.metainfo = torrent.getMetainfo();
 	}
 
+	/**
+	 * Permet de creer les fichiers sur le disque s'ils n'existent pas encore.
+	 * Ensuite les informations sur les fichiers contenus dans le
+	 * {@link Metainfo} sont utilisees pour creer les {@link File}s si c'est un
+	 * torrent multifile.
+	 */
 	protected void buildFiles() {
 		if (!dossier.exists()) {
 			dossier.mkdirs();

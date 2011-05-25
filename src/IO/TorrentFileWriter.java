@@ -7,6 +7,12 @@ import java.io.RandomAccessFile;
 import torrent.Torrent;
 import torrent.piece.Piece;
 
+/**
+ * Cette classe permet l'ecriture sur le disque des donnees telechargees.
+ * 
+ * @author Damien, Maarten
+ * 
+ */
 public class TorrentFileWriter extends TorrentIO implements Runnable {
 	private boolean[] piecesWritten;
 	private boolean writtenOnFile;
@@ -22,19 +28,31 @@ public class TorrentFileWriter extends TorrentIO implements Runnable {
 		buildFiles();
 	}
 
+	/**
+	 * Cette methode permet d'ecrire une {@link Piece} sur le disque a l'aide
+	 * d'un {@link RandomAccessFile}. une fois ecrite, on libere la memoire en
+	 * vidant la piece.
+	 * 
+	 * @param piece
+	 *            la {@link Piece} qu'on veut ecrire sur le disque
+	 * @return true si tout s'est bien passe et la piece a ete ecrite, false
+	 *         sinon
+	 * @throws FileNotFoundException
+	 *             si le fichier n'a pas ete trouve
+	 */
 	public boolean writePiece(Piece piece) throws FileNotFoundException {
 		if (!piecesWritten[piece.getIndex()] && piece.isChecked()) {
-			//data a ecrire
+			// data a ecrire
 			byte[] data = piece.getData();
-			//ce qu'il reste a ecrire
+			// ce qu'il reste a ecrire
 			int toWrite = data.length;
 			// jusqu'a ou on a ecrit dans le tableau data
 			int positionWritten = 0;
-			//position de depart de data dans les fichiers
+			// position de depart de data dans les fichiers
 			int beginPosition = piece.getIndex() * metainfo.getPieceLength();
-			//quand on a trouve le bon fichier
+			// quand on a trouve le bon fichier
 			boolean stop = false;
-			//l'index du fichier dans lequel il faut ecrire
+			// l'index du fichier dans lequel il faut ecrire
 			int fileIndex = 0;
 			// je trouve dans quel fichier ma piece commence
 			while (fileIndex < filesLength.length && !stop) {
@@ -53,8 +71,6 @@ public class TorrentFileWriter extends TorrentIO implements Runnable {
 					throw new FileNotFoundException();
 				}
 				raf = new RandomAccessFile(allFiles[fileIndex], "rw");
-				// System.out.println("New RAF sur "
-				// + allFiles[fileIndex].getAbsolutePath());
 
 				try {
 					// je me positionne a l'endroit ou je vais commencer a
@@ -96,6 +112,9 @@ public class TorrentFileWriter extends TorrentIO implements Runnable {
 
 	}
 
+	/**
+	 * Verifie si tout a bien ete ecrit dans les fichiers
+	 */
 	public void terminate() {
 		if (!writtenOnFile) {
 			writtenOnFile = true;
@@ -106,7 +125,7 @@ public class TorrentFileWriter extends TorrentIO implements Runnable {
 				}
 			}
 			if (writtenOnFile) {
-				System.out.println("Fichier ecris dans : "
+				System.out.println("Fichier ecrit dans : "
 						+ dossier.getAbsolutePath());
 			}
 		}
