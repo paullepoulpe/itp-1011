@@ -19,10 +19,12 @@ import IO.TorrentFileWriter;
 import settings.GeneralSettings;
 import torrent.Metainfo;
 import torrent.Torrent;
+import torrent.messages.MessageHandler;
+import torrent.peer.Peer;
 
 /**
- * Cette classe s'occupe de la gestion des pieces. Elle selectionne lesquelles
- * doivent etre demandees aux peers.
+ * Cette classe s'occupe de la gestion des {@link Piece}s. Elle selectionne
+ * lesquelles doivent etre demandees aux {@link Peer}s.
  * 
  * @author Damien Engels, Maarten Sap
  */
@@ -34,6 +36,13 @@ public class PieceManager {
 	private TorrentFileReader reader;
 	private FunnyBar funnyBar;
 
+	/**
+	 * Contructeur qui initialise les champs ainsi que la {@link FunnyBar} a
+	 * partir de la liste des {@link Piece}s
+	 * 
+	 * @param torrent
+	 *            le {@link Torrent} conteneur des {@link Piece}
+	 */
 	public PieceManager(Torrent torrent) {
 		this.torrent = torrent;
 		this.leftPieces = new LinkedList<Piece>();
@@ -75,11 +84,11 @@ public class PieceManager {
 	}
 
 	/**
-	 * Cette methode doit tout d abord tester si le torrent est complet. Si c
-	 * est pas le cas, on enleve les pieces completes des pieces a telecharger
+	 * Cette methode doit tout d abord tester si le torrent est complet. Si
+	 * c'est pas le cas, on enleve les pieces completes des pieces a telecharger
 	 * 
-	 * Cette methode est appelee dans la classe MessageHandler lors d'un
-	 * visit(SendBlock s).
+	 * Cette methode est appelee dans la classe {@link MessageHandler} lors d'un
+	 * {@link MessageHandler#visit(torrent.messages.SendBlock)}.
 	 */
 	public void updatePriorities() {
 		if (!isComplete()) {
@@ -89,7 +98,6 @@ public class PieceManager {
 					Piece piece = iterator.next();
 					if (piece.isChecked()) {
 						iterator.remove();
-
 						try {
 							writer.writePiece(piece);
 						} catch (FileNotFoundException e) {
@@ -110,9 +118,9 @@ public class PieceManager {
 					.round(getDownloadedCompleteness() * 100)
 					/ 100.0
 					+ " %....................");
-			// System.err.println("Nombre de pieces :" + getNbPieces());
-			// System.err.println(piecesOfInterest.toString());
-			// System.err.println(leftPieces.toString());
+			// System.out.println("Nombre de pieces :" + getNbPieces());
+			// System.out.println(piecesOfInterest.toString());
+			// System.out.println(leftPieces.toString());
 		} else {
 			writer.terminate();
 		}
@@ -124,7 +132,8 @@ public class PieceManager {
 	 * sinon retourne l'index -1
 	 * 
 	 * @param peerPieceIndex
-	 * @return
+	 * @return l'index de la {@link Piece} que l'on voudrait bien telecharger
+	 *         (int)
 	 */
 	public int getPieceOfInterest(boolean[] peerPieceIndex) {
 		int index = 0;
@@ -151,7 +160,7 @@ public class PieceManager {
 	/**
 	 * retourne la completion du telechargement
 	 * 
-	 * @return le pourcentage d'avancement du telechargement (un double)
+	 * @return le pourcentage d'avancement du telechargement (double)
 	 */
 	public double getDownloadedCompleteness() {
 		double downloadedCompleteness = 0;
@@ -229,6 +238,16 @@ public class PieceManager {
 		return writer.getDownloadingFolder();
 	}
 
+	/**
+	 * Lit dans le fichier la piece a l'index avec l'objet
+	 * {@link TorrentFileReader}
+	 * 
+	 * @param index
+	 *            index de la {@link Piece} a lire sur le disque
+	 * @return la piece lue, vide ou non vide
+	 * @throws FileNotFoundException
+	 *             si le fichier n'est pas trouve
+	 */
 	public Piece readPiece(int index) throws FileNotFoundException {
 		reader.readPiece(allPieces.get(index));
 		return allPieces.get(index);
