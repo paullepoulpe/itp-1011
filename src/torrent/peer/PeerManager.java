@@ -7,10 +7,14 @@ import java.util.ListIterator;
 
 import settings.GeneralSettings;
 import torrent.Torrent;
+import torrent.piece.Piece;
 
 /**
  * Cette classe est le gestionnaire des objets {@link PeerHandler}. Elle
  * s'occupe d'optimiser le telechargement en recherchant les meilleurs pairs.
+ * Les {@link Peer}s les plus performants sont mis dans la liste de
+ * {@link PeerHandler}s actif, les moins bons sont mis dans une liste de
+ * {@link Peer}s - eux, inactifs.
  * 
  * @author Damien, Maarten
  * 
@@ -28,6 +32,13 @@ public class PeerManager extends Thread {
 				GeneralSettings.NB_MAX_PEERHANDLERS);
 	}
 
+	/**
+	 * Cree un {@link PeerHandler} avec le {@link Peer} a ajouter dans la liste
+	 * de pairs de ce {@link PeerManager}
+	 * 
+	 * @param peer
+	 *            le {@link Peer} a ajouter
+	 */
 	public void addPeer(Peer peer) {
 		boolean started = false;
 		// System.out.println("PeerAjoute :" + peer);
@@ -174,6 +185,12 @@ public class PeerManager extends Thread {
 		return null;
 	}
 
+	/**
+	 * Notifie les {@link PeerHandler} qu'on a recu une certaine {@link Piece}.
+	 * 
+	 * @param index
+	 *            l'index de la {@link Piece} qu'on vient de recevoir
+	 */
 	public void notifyPeerHandlers(int index) {
 		if (!interrupted()) {
 			synchronized (peerHandlers) {
