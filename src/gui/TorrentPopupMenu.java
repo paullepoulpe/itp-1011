@@ -9,20 +9,21 @@ import torrent.Torrent;
 import gui.Actions.*;
 
 public class TorrentPopupMenu extends JPopupMenu {
-	private IconActions announce, stop, pause, openDirectory;
+	private IconActions announce, stop, pause, openDirectory, delete;
 	private Torrent t;
+	private MainFrame mf;
 
-	public TorrentPopupMenu(Torrent torrent) {
+	public TorrentPopupMenu(Torrent torrent/*, MainFrame mf*/) {
 		this.t = torrent;
 		stop = new StopAction(t);
 		announce = new StartAction(t);
 		openDirectory = new OpenDirectoryAction(t);
-//		pause = new PauseAction(t);
+		delete = new DeleteAction(t);
 		add(announce);
-//		add(pause);
 		add(stop);
+		add(delete);
 		addSeparator();
 		add(openDirectory);
-		
+
 	}
 }
