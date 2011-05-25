@@ -24,9 +24,10 @@ public class TorrentTabPane extends JTabbedPane implements MouseListener {
 				g.translate(getSize().width / 4, 200);
 				g.setFont(new Font(g.getFont().getFontName(), g.getFont()
 						.getStyle(), 20));
-				g.drawString(
-						"Start downloading by clicking on the start button\n or by right-clicking the torrent. ",
-						0, 0);
+				g
+						.drawString(
+								"Start downloading by clicking on the start button\n or by right-clicking the torrent. ",
+								0, 0);
 			}
 		};
 		peers = new JPanel();
@@ -56,14 +57,18 @@ public class TorrentTabPane extends JTabbedPane implements MouseListener {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		int i = getSelectedIndex();
-		Torrent newTorrent = ((TorrentTable) ((JTable) e.getSource()).getParent()
-				.getParent().getParent()).getSelectedTorrent();
-		if(!newTorrent.equals(currentTorrent)){
-			currentTorrent = newTorrent;
-			contructAllTabs();
+		try {
+			int i = getSelectedIndex();
+			Torrent newTorrent = ((TorrentTable) ((JTable) e.getSource())
+					.getParent().getParent().getParent()).getSelectedTorrent();
+			if (!newTorrent.equals(currentTorrent)) {
+				currentTorrent = newTorrent;
+				contructAllTabs();
+			}
+			setSelectedIndex(i);
+		} catch (ArrayIndexOutOfBoundsException exc) {
+
 		}
-		setSelectedIndex(i);		
 	}
 
 	private void contructAllTabs() {

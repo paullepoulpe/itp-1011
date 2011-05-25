@@ -8,6 +8,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import javax.swing.JProgressBar;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 
 import settings.GeneralSettings;
 import torrent.peer.*;
@@ -47,7 +49,6 @@ public class Torrent {
 		this.downloadingStatus = STOPPED;
 		progressBar = new JProgressBar(0, 100);
 		progressBar.setStringPainted(true);
-		progressBar.setForeground(GeneralSettings.PROGRESS_COLOR);
 		System.out.println(this.metainfo);
 		new PeerAccepter(this.numPort, this).start();
 	}

@@ -63,10 +63,9 @@ public class TorrentPiecesTab extends JPanel {
 							tm.setData(data);
 						}
 					} catch (InterruptedException e) {
-						e.printStackTrace();
+					} catch (NullPointerException e) {
 					}
 				}
-				// tm.setData(new Piece[0]);
 			}
 		}).start();
 	}
