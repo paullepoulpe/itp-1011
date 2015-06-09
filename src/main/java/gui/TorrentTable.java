@@ -16,7 +16,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 
 import torrent.Torrent;
-import src.gui.TableModels.*;
+import gui.TableModels.*;
 
 /**
  * Classe qui contient la table des {@link Torrent}s. La table elle-même estr un
